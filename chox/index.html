@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chox — Private Search</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <main class="container">
+    <div class="logo">
+      <span class="logo-circle">C</span>
+      <h1>Chox</h1>
+    </div>
+
+    <p class="subtitle">Private, simple search.</p>
+
+    <form id="searchForm">
+      <div class="search-box">
+        <input
+          id="searchInput"
+          type="text"
+          placeholder="Search the web..."
+          autocomplete="off"
+          required
+        >
+        <button type="submit">Search</button>
+      </div>
+    </form>
+
+    <div class="options">
+      <label>
+        <input type="checkbox" id="safeSearch" checked>
+        Safe Search
+      </label>
+    </div>
+
+    <p class="privacy">
+      Chox does not store your searches locally in this page.
+    </p>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
