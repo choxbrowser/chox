@@ -1,0 +1,117 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Chox — Private Search</title>
+  <meta name="description" content="Chox — a clean and simple private search experience.">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <div class="background-glow glow-one"></div>
+  <div class="background-glow glow-two"></div>
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-icon">C</div>
+      <span>Chox</span>
+    </div>
+
+    <button class="theme-button" id="themeButton" aria-label="Toggle theme">
+      ☼
+    </button>
+  </header>
+
+  <main class="hero">
+
+    <div class="hero-content">
+
+      <div class="logo-large">
+        <div class="logo-mark">C</div>
+      </div>
+
+      <h1>Search <span>freely.</span></h1>
+
+      <p class="subtitle">
+        A simple, clean search experience built with privacy in mind.
+      </p>
+
+      <form id="searchForm" class="search-form">
+
+        <div class="search-container">
+
+          <div class="search-icon">
+            <svg viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="7"></circle>
+              <path d="M16.5 16.5L21 21"></path>
+            </svg>
+          </div>
+
+          <input
+            id="searchInput"
+            type="text"
+            placeholder="Search the web..."
+            autocomplete="off"
+            spellcheck="false"
+            required
+          >
+
+          <button class="clear-button" id="clearButton" type="button">
+            ×
+          </button>
+
+          <button class="search-button" type="submit">
+            Search
+          </button>
+
+        </div>
+
+      </form>
+
+      <div class="settings">
+
+        <label class="toggle-label">
+          <input type="checkbox" id="safeSearch" checked>
+          <span class="toggle"></span>
+          Safe Search
+        </label>
+
+        <span class="separator">•</span>
+
+        <span class="status">
+          <span class="status-dot"></span>
+          Private mode
+        </span>
+
+      </div>
+
+      <div class="quick-links">
+
+        <button data-search="technology">Technology</button>
+        <button data-search="gaming">Gaming</button>
+        <button data-search="news">News</button>
+        <button data-search="science">Science</button>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <footer>
+    <span>© 2026 Chox</span>
+    <span>•</span>
+    <span>Simple. Fast. Private.</span>
+  </footer>
+
+  <script src="script.js"></script>
+
+</body>
+</html>
+```
+
