@@ -1,12 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Chox</title>
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>Chox Browser</title>
+
 
 <style>
+
+/* =========================================
+   RESET
+========================================= */
+
 * {
     box-sizing: border-box;
 }
@@ -15,100 +27,359 @@ html,
 body {
     margin: 0;
     padding: 0;
+
     width: 100%;
-    min-height: 100%;
+    height: 100%;
+
+    overflow: hidden;
 }
 
 body {
-    background: #08090c;
-    color: white;
-    font-family: Arial, Helvetica, sans-serif;
-    min-height: 100vh;
+
+    background: #0b0c0f;
+
+    color: #ffffff;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
 }
 
-/* HEADER */
 
-.topbar {
-    height: 70px;
+/* =========================================
+   BROWSER
+========================================= */
+
+.browser {
+
     width: 100%;
+    height: 100vh;
 
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
 
-    padding: 0 25px;
-
-    background: #08090c;
-    border-bottom: 1px solid #202228;
+    background: #0b0c0f;
 }
 
-.brand {
-    display: flex;
-    align-items: center;
-    gap: 10px;
 
-    font-size: 22px;
-    font-weight: 700;
+/* =========================================
+   TAB BAR
+========================================= */
+
+.tab-bar {
+
+    height: 42px;
+
+    display: flex;
+    align-items: flex-end;
+
+    background: #15161a;
+
+    padding-left: 8px;
+
+    border-bottom:
+        1px solid #292b31;
 }
 
-.brand-icon {
-    width: 38px;
-    height: 38px;
+
+.tab {
+
+    height: 34px;
+
+    min-width: 210px;
+    max-width: 280px;
 
     display: flex;
     align-items: center;
-    justify-content: center;
 
-    background: #e00000;
+    gap: 9px;
+
+    padding: 0 12px;
+
+    background: #24262c;
+
+    border-radius:
+        10px 10px 0 0;
+
+    color: #d8d9dd;
+
+    font-size: 13px;
+
+    position: relative;
+}
+
+
+.tab::before {
+
+    content: "";
+
+    width: 16px;
+    height: 16px;
+
     border-radius: 50%;
 
-    font-weight: 900;
+    background: #e00000;
 }
 
-/* BROWSER CONTROLS */
 
-.browser-controls {
-    display: flex;
-    gap: 8px;
+.tab-title {
+
+    flex: 1;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
 }
 
-.browser-button {
-    border: 1px solid #292c34;
-    background: #121419;
-    color: white;
 
-    border-radius: 10px;
+.tab-close {
 
-    padding: 9px 13px;
+    border: 0;
+
+    background: transparent;
+
+    color: #999da6;
+
+    font-size: 17px;
 
     cursor: pointer;
 
+    padding: 2px 5px;
+}
+
+
+.tab-close:hover {
+
+    color: white;
+
+    background: #363941;
+
+    border-radius: 5px;
+}
+
+
+.new-tab {
+
+    width: 38px;
+    height: 34px;
+
+    border: 0;
+
+    background: transparent;
+
+    color: #c8c9ce;
+
+    font-size: 21px;
+
+    cursor: pointer;
+}
+
+
+.new-tab:hover {
+
+    background: #292b31;
+
+    border-radius: 8px;
+}
+
+
+/* =========================================
+   TOOLBAR
+========================================= */
+
+.toolbar {
+
+    height: 58px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 7px;
+
+    padding:
+        8px 12px;
+
+    background: #1b1c20;
+
+    border-bottom:
+        1px solid #292b31;
+}
+
+
+/* =========================================
+   NAVIGATION BUTTONS
+========================================= */
+
+.nav-button {
+
+    width: 38px;
+    height: 38px;
+
+    flex-shrink: 0;
+
+    border: 0;
+
+    border-radius: 50%;
+
+    background: transparent;
+
+    color: #d5d6da;
+
+    font-size: 20px;
+
+    cursor: pointer;
+}
+
+
+.nav-button:hover {
+
+    background: #303239;
+}
+
+
+/* =========================================
+   ADDRESS BAR
+========================================= */
+
+.address-area {
+
+    flex: 1;
+
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+
+    background: #292b31;
+
+    border-radius: 21px;
+
+    padding: 0 14px;
+
+    min-width: 100px;
+}
+
+
+.lock {
+
+    color: #9da1aa;
+
     font-size: 14px;
+
+    margin-right: 9px;
 }
 
-.browser-button:hover {
-    background: #1c1f26;
-}
 
-/* HOME */
+.address-input {
 
-#homeView {
+    flex: 1;
+
     width: 100%;
+
+    border: 0;
+    outline: 0;
+
+    background: transparent;
+
+    color: #ffffff;
+
+    font-size: 15px;
 }
+
+
+.address-input::placeholder {
+
+    color: #9a9da5;
+}
+
+
+.address-search {
+
+    width: 30px;
+    height: 30px;
+
+    border: 0;
+
+    background: transparent;
+
+    color: #aaaeb7;
+
+    cursor: pointer;
+
+    font-size: 16px;
+}
+
+
+/* =========================================
+   BOOKMARK
+========================================= */
+
+.bookmark {
+
+    width: 38px;
+    height: 38px;
+
+    border: 0;
+
+    border-radius: 50%;
+
+    background: transparent;
+
+    color: #c8c9ce;
+
+    font-size: 19px;
+
+    cursor: pointer;
+}
+
+
+.bookmark:hover {
+
+    background: #303239;
+}
+
+
+/* =========================================
+   CONTENT
+========================================= */
+
+.content {
+
+    flex: 1;
+
+    position: relative;
+
+    overflow: hidden;
+
+    background: #08090c;
+}
+
+
+/* =========================================
+   HOME PAGE
+========================================= */
 
 .home {
+
     width: 100%;
-    max-width: 900px;
+    height: 100%;
 
-    margin: auto;
+    overflow-y: auto;
 
-    padding: 60px 20px;
+    padding:
+        55px 20px 50px;
 
     text-align: center;
 }
 
-.chox-logo {
+
+.logo {
+
     font-size: 76px;
+
     font-weight: 900;
 
     letter-spacing: -6px;
@@ -116,34 +387,51 @@ body {
     margin: 0;
 }
 
-.subtitle {
-    color: #9699a3;
 
-    font-size: 18px;
+.tagline {
 
     margin-top: 8px;
     margin-bottom: 35px;
+
+    color: #9699a3;
+
+    font-size: 18px;
 }
 
-/* SEARCH */
 
-.search-form {
+/* =========================================
+   HOME SEARCH
+========================================= */
+
+.home-search {
+
     width: 100%;
-    height: 60px;
+
+    max-width: 760px;
+
+    height: 58px;
+
+    margin:
+        0 auto;
 
     display: flex;
 
     background: #121419;
 
-    border: 1px solid #2a2d35;
+    border:
+        1px solid #2b2e36;
 
     border-radius: 18px;
 
     overflow: hidden;
 }
 
-.search-input {
+
+.home-search input {
+
     flex: 1;
+
+    min-width: 0;
 
     border: 0;
     outline: 0;
@@ -152,36 +440,49 @@ body {
 
     color: white;
 
-    padding: 0 20px;
-
     font-size: 17px;
+
+    padding:
+        0 20px;
 }
 
-.search-input::placeholder {
+
+.home-search input::placeholder {
+
     color: #777b85;
 }
 
-.search-button {
+
+.home-search button {
+
     border: 0;
 
+    padding:
+        0 28px;
+
     background: #e00000;
+
     color: white;
 
-    padding: 0 28px;
+    font-size: 16px;
 
     font-weight: bold;
 
     cursor: pointer;
 }
 
-.search-button:hover {
+
+.home-search button:hover {
+
     background: #ff1717;
 }
 
-/* SAFE SEARCH */
+
+/* =========================================
+   SAFE SEARCH
+========================================= */
 
 .safe-search {
-    margin-top: 15px;
 
     display: flex;
 
@@ -190,39 +491,58 @@ body {
 
     gap: 8px;
 
-    color: #a5a8b1;
+    margin-top: 14px;
+
+    color: #a4a7b0;
 
     font-size: 14px;
 }
 
-/* QUICK LINKS */
+
+/* =========================================
+   QUICK LINKS
+========================================= */
 
 .quick-title {
+
     margin-top: 45px;
     margin-bottom: 18px;
+
+    font-size: 16px;
 
     font-weight: bold;
 
     color: #d8d9de;
 }
 
+
 .quick-links {
+
+    width: 100%;
+
+    max-width: 760px;
+
+    margin: auto;
+
     display: grid;
 
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns:
+        repeat(4, 1fr);
 
     gap: 12px;
 }
 
+
 .site-link {
+
     min-height: 105px;
 
     display: flex;
 
     flex-direction: column;
 
-    align-items: center;
     justify-content: center;
+    align-items: center;
 
     gap: 8px;
 
@@ -232,56 +552,68 @@ body {
 
     background: #111318;
 
-    border: 1px solid #252830;
+    border:
+        1px solid #272a31;
 
     border-radius: 15px;
 
     cursor: pointer;
 
-    transition: 0.2s;
+    transition:
+        transform .2s,
+        background .2s,
+        border-color .2s;
 }
+
 
 .site-link:hover {
-    transform: translateY(-3px);
 
-    background: #17191f;
+    transform:
+        translateY(-3px);
 
-    border-color: #e00000;
+    background: #181a20;
+
+    border-color:
+        #e00000;
 }
 
+
 .site-icon {
+
     width: 40px;
     height: 40px;
 
     display: flex;
 
-    align-items: center;
     justify-content: center;
+    align-items: center;
 
-    background: #20232a;
+    border-radius: 11px;
 
-    border-radius: 10px;
+    background: #23262d;
 
-    font-size: 21px;
+    font-size: 20px;
 
     font-weight: bold;
 }
+
 
 .site-name {
+
     font-size: 14px;
+
     font-weight: bold;
 }
 
-/* WEBSITE VIEW */
 
-#browserView {
-    display: none;
-
-    width: 100%;
-    height: calc(100vh - 70px);
-}
+/* =========================================
+   WEBSITE FRAME
+========================================= */
 
 #websiteFrame {
+
+    display: none;
+
     width: 100%;
     height: 100%;
 
@@ -290,50 +622,67 @@ body {
     background: white;
 }
 
-/* BLOCKED WEBSITE MESSAGE */
 
-#blockedMessage {
+/* =========================================
+   BLOCKED PAGE
+========================================= */
+
+.blocked {
+
     display: none;
 
-    width: 100%;
-    height: 100%;
+    position: absolute;
 
-    align-items: center;
+    inset: 0;
+
     justify-content: center;
+    align-items: center;
+
+    background: #08090c;
 
     text-align: center;
 
-    padding: 30px;
+    padding: 25px;
 }
+
 
 .blocked-box {
+
     max-width: 500px;
 
-    background: #111318;
+    padding: 35px;
 
-    border: 1px solid #292c34;
+    background: #15171c;
+
+    border:
+        1px solid #2b2e35;
 
     border-radius: 20px;
-
-    padding: 35px;
 }
 
+
 .blocked-box h2 {
+
     margin-top: 0;
 }
 
+
 .blocked-box p {
-    color: #9699a3;
+
+    color: #999da7;
 
     line-height: 1.6;
 }
 
-.open-button {
+
+.open-site {
+
     display: inline-block;
 
-    margin-top: 15px;
+    margin-top: 12px;
 
-    padding: 12px 20px;
+    padding:
+        12px 22px;
 
     background: #e00000;
 
@@ -346,315 +695,457 @@ body {
     font-weight: bold;
 }
 
-/* FOOTER */
 
-.footer {
-    text-align: center;
-
-    color: #666a74;
-
-    padding: 25px;
-
-    font-size: 13px;
-}
-
-/* MOBILE */
+/* =========================================
+   MOBILE
+========================================= */
 
 @media (max-width: 700px) {
 
-    .chox-logo {
-        font-size: 58px;
+    .tab {
+
+        min-width: 150px;
     }
 
-    .quick-links {
-        grid-template-columns: repeat(2, 1fr);
+    .bookmark {
+
+        display: none;
+    }
+
+    .logo {
+
+        font-size: 58px;
+
+        letter-spacing: -4px;
     }
 
     .home {
-        padding: 40px 15px;
+
+        padding-top: 40px;
     }
 
-    .browser-controls {
-        gap: 4px;
+    .quick-links {
+
+        grid-template-columns:
+            repeat(2, 1fr);
     }
 
-    .browser-button {
-        padding: 8px 10px;
+    .toolbar {
+
+        padding-left: 7px;
+        padding-right: 7px;
+    }
+
+    .nav-button {
+
+        width: 34px;
+        height: 34px;
     }
 }
+
+
+@media (max-width: 450px) {
+
+    .tab {
+
+        min-width: 120px;
+    }
+
+    .tab-title {
+
+        font-size: 12px;
+    }
+
+    .address-input {
+
+        font-size: 13px;
+    }
+
+    .home-search button {
+
+        padding:
+            0 18px;
+    }
+}
+
 </style>
+
 </head>
+
 
 <body>
 
-<!-- HEADER -->
 
-<header class="topbar">
+<div class="browser">
 
-    <div class="brand">
 
-        <div class="brand-icon">
-            C
+    <!-- =====================================
+         TABS
+    ====================================== -->
+
+    <div class="tab-bar">
+
+        <div class="tab">
+
+            <div class="tab-title">
+                Chox
+            </div>
+
+            <button
+                class="tab-close"
+                onclick="goHome()"
+            >
+                ×
+            </button>
+
         </div>
 
-        <span>
-            Chox
-        </span>
+
+        <button
+            class="new-tab"
+            onclick="goHome()"
+        >
+            +
+        </button>
 
     </div>
 
-    <div class="browser-controls">
+
+    <!-- =====================================
+         TOOLBAR
+    ====================================== -->
+
+    <div class="toolbar">
+
 
         <button
-            class="browser-button"
+            class="nav-button"
             onclick="goBack()"
+            title="Back"
         >
             ←
         </button>
 
+
         <button
-            class="browser-button"
-            onclick="goHome()"
+            class="nav-button"
+            onclick="goForward()"
+            title="Forward"
         >
-            Home
+            →
         </button>
 
-    </div>
 
-</header>
-
-
-<!-- HOME VIEW -->
-
-<div id="homeView">
-
-    <main class="home">
-
-        <h1 class="chox-logo">
-            Chox
-        </h1>
-
-        <div class="subtitle">
-            Search the web your way.
-        </div>
-
-
-        <!-- SEARCH -->
-
-        <form
-            id="searchForm"
-            class="search-form"
+        <button
+            class="nav-button"
+            onclick="reloadPage()"
+            title="Reload"
         >
+            ↻
+        </button>
+
+
+        <button
+            class="nav-button"
+            onclick="goHome()"
+            title="Home"
+        >
+            ⌂
+        </button>
+
+
+        <div class="address-area">
+
+            <span class="lock">
+                🔒
+            </span>
 
             <input
-                id="searchInput"
-                class="search-input"
+                id="addressInput"
+                class="address-input"
                 type="text"
-                placeholder="Search Chox..."
+                placeholder="Search Chox or enter an address"
                 autocomplete="off"
-                required
+                spellcheck="false"
             >
 
             <button
-                class="search-button"
-                type="submit"
+                class="address-search"
+                onclick="addressSearch()"
             >
-                Search
+                🔍
             </button>
 
-        </form>
-
-
-        <!-- SAFE SEARCH -->
-
-        <label class="safe-search">
-
-            <input
-                id="safeSearch"
-                type="checkbox"
-                checked
-            >
-
-            <span>
-                Safe Search
-            </span>
-
-        </label>
-
-
-        <!-- QUICK LINKS -->
-
-        <div class="quick-title">
-            Quick Links
         </div>
 
-        <div class="quick-links">
+
+        <button
+            class="bookmark"
+            onclick="bookmarkPage()"
+            title="Bookmark"
+        >
+            ☆
+        </button>
 
 
-            <a
-                class="site-link"
-                href="https://www.youtube.com/"
-                onclick="openSite(event, this.href)"
+    </div>
+
+
+    <!-- =====================================
+         CONTENT
+    ====================================== -->
+
+    <div class="content">
+
+
+        <!-- HOME -->
+
+        <div
+            id="home"
+            class="home"
+        >
+
+            <h1 class="logo">
+                Chox
+            </h1>
+
+
+            <div class="tagline">
+                Search the web your way.
+            </div>
+
+
+            <!-- HOME SEARCH -->
+
+            <form
+                id="homeSearch"
+                class="home-search"
             >
-                <div class="site-icon">
-                    ▶
-                </div>
 
-                <div class="site-name">
-                    YouTube
-                </div>
-            </a>
-
-
-            <a
-                class="site-link"
-                href="https://www.facebook.com/"
-                onclick="openSite(event, this.href)"
-            >
-                <div class="site-icon">
-                    f
-                </div>
-
-                <div class="site-name">
-                    Facebook
-                </div>
-            </a>
+                <input
+                    id="homeInput"
+                    type="text"
+                    placeholder="Search Chox..."
+                    autocomplete="off"
+                    required
+                >
 
 
-            <a
-                class="site-link"
-                href="https://www.instagram.com/"
-                onclick="openSite(event, this.href)"
-            >
-                <div class="site-icon">
-                    ◎
-                </div>
+                <button type="submit">
+                    Search
+                </button>
 
-                <div class="site-name">
-                    Instagram
-                </div>
-            </a>
+            </form>
 
 
-            <a
-                class="site-link"
-                href="https://www.tiktok.com/"
-                onclick="openSite(event, this.href)"
-            >
-                <div class="site-icon">
-                    ♪
-                </div>
+            <!-- SAFE SEARCH -->
 
-                <div class="site-name">
-                    TikTok
-                </div>
-            </a>
+            <label class="safe-search">
 
+                <input
+                    id="safeSearch"
+                    type="checkbox"
+                    checked
+                >
 
-            <a
-                class="site-link"
-                href="https://www.reddit.com/"
-                onclick="openSite(event, this.href)"
-            >
-                <div class="site-icon">
-                    ●
-                </div>
+                <span>
+                    Safe Search
+                </span>
 
-                <div class="site-name">
-                    Reddit
-                </div>
-            </a>
+            </label>
 
 
-            <a
-                class="site-link"
-                href="https://discord.com/"
-                onclick="openSite(event, this.href)"
-            >
-                <div class="site-icon">
-                    ☁
-                </div>
+            <!-- QUICK LINKS -->
 
-                <div class="site-name">
-                    Discord
-                </div>
-            </a>
+            <div class="quick-title">
+                Quick Links
+            </div>
 
 
-            <a
-                class="site-link"
-                href="https://github.com/"
-                onclick="openSite(event, this.href)"
-            >
-                <div class="site-icon">
-                    ◉
-                </div>
-
-                <div class="site-name">
-                    GitHub
-                </div>
-            </a>
+            <div class="quick-links">
 
 
-            <a
-                class="site-link"
-                href="https://www.google.com/"
-                onclick="openSite(event, this.href)"
-            >
-                <div class="site-icon">
-                    G
-                </div>
+                <a
+                    class="site-link"
+                    href="https://www.youtube.com/"
+                    onclick="openSite(event, this.href, 'YouTube')"
+                >
 
-                <div class="site-name">
-                    Google
-                </div>
-            </a>
+                    <div class="site-icon">
+                        ▶
+                    </div>
+
+                    <div class="site-name">
+                        YouTube
+                    </div>
+
+                </a>
+
+
+                <a
+                    class="site-link"
+                    href="https://www.facebook.com/"
+                    onclick="openSite(event, this.href, 'Facebook')"
+                >
+
+                    <div class="site-icon">
+                        f
+                    </div>
+
+                    <div class="site-name">
+                        Facebook
+                    </div>
+
+                </a>
+
+
+                <a
+                    class="site-link"
+                    href="https://www.instagram.com/"
+                    onclick="openSite(event, this.href, 'Instagram')"
+                >
+
+                    <div class="site-icon">
+                        ◎
+                    </div>
+
+                    <div class="site-name">
+                        Instagram
+                    </div>
+
+                </a>
+
+
+                <a
+                    class="site-link"
+                    href="https://www.tiktok.com/"
+                    onclick="openSite(event, this.href, 'TikTok')"
+                >
+
+                    <div class="site-icon">
+                        ♪
+                    </div>
+
+                    <div class="site-name">
+                        TikTok
+                    </div>
+
+                </a>
+
+
+                <a
+                    class="site-link"
+                    href="https://www.reddit.com/"
+                    onclick="openSite(event, this.href, 'Reddit')"
+                >
+
+                    <div class="site-icon">
+                        ●
+                    </div>
+
+                    <div class="site-name">
+                        Reddit
+                    </div>
+
+                </a>
+
+
+                <a
+                    class="site-link"
+                    href="https://discord.com/"
+                    onclick="openSite(event, this.href, 'Discord')"
+                >
+
+                    <div class="site-icon">
+                        ☁
+                    </div>
+
+                    <div class="site-name">
+                        Discord
+                    </div>
+
+                </a>
+
+
+                <a
+                    class="site-link"
+                    href="https://github.com/"
+                    onclick="openSite(event, this.href, 'GitHub')"
+                >
+
+                    <div class="site-icon">
+                        ◉
+                    </div>
+
+                    <div class="site-name">
+                        GitHub
+                    </div>
+
+                </a>
+
+
+                <a
+                    class="site-link"
+                    href="https://www.google.com/"
+                    onclick="openSite(event, this.href, 'Google')"
+                >
+
+                    <div class="site-icon">
+                        G
+                    </div>
+
+                    <div class="site-name">
+                        Google
+                    </div>
+
+                </a>
+
+
+            </div>
 
         </div>
 
-    </main>
+
+        <!-- WEBSITE -->
+
+        <iframe
+            id="websiteFrame"
+            title="Chox Web View"
+            sandbox="allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-popups allow-presentation allow-same-origin allow-scripts"
+        >
+        </iframe>
 
 
-    <footer class="footer">
-        Chox Search
-    </footer>
+        <!-- BLOCKED MESSAGE -->
 
-</div>
+        <div
+            id="blocked"
+            class="blocked"
+        >
 
+            <div class="blocked-box">
 
-<!-- BROWSER VIEW -->
+                <h2>
+                    Website can't be displayed here
+                </h2>
 
-<div id="browserView">
+                <p>
+                    This website doesn't allow itself
+                    to be displayed inside another website.
+                </p>
 
-    <iframe
-        id="websiteFrame"
-        src=""
-        title="Chox Browser"
-    ></iframe>
+                <a
+                    id="openSiteButton"
+                    class="open-site"
+                    href="#"
+                >
+                    Open Website
+                </a>
 
-
-    <div id="blockedMessage">
-
-        <div class="blocked-box">
-
-            <h2>
-                This website can't be embedded
-            </h2>
-
-            <p>
-                This website doesn't allow other websites
-                to display it inside an embedded frame.
-            </p>
-
-            <a
-                id="openExternal"
-                class="open-button"
-                href="#"
-            >
-                Open Website
-            </a>
+            </div>
 
         </div>
+
 
     </div>
 
@@ -663,142 +1154,380 @@ body {
 
 <script>
 
-/* =========================
+/* =========================================
    ELEMENTS
-========================= */
+========================================= */
 
-const homeView =
-    document.getElementById("homeView");
+const home =
+    document.getElementById("home");
 
-const browserView =
-    document.getElementById("browserView");
-
-const websiteFrame =
+const frame =
     document.getElementById("websiteFrame");
 
-const blockedMessage =
-    document.getElementById("blockedMessage");
+const blocked =
+    document.getElementById("blocked");
 
-const openExternal =
-    document.getElementById("openExternal");
+const openSiteButton =
+    document.getElementById("openSiteButton");
 
-const searchForm =
-    document.getElementById("searchForm");
+const addressInput =
+    document.getElementById("addressInput");
 
-const searchInput =
-    document.getElementById("searchInput");
+const homeInput =
+    document.getElementById("homeInput");
+
+const homeSearch =
+    document.getElementById("homeSearch");
 
 
-/* =========================
-   OPEN WEBSITE
-========================= */
+/* =========================================
+   OPEN SITE
+========================================= */
 
-function openSite(event, url) {
+function openSite(
+    event,
+    url,
+    name
+) {
 
     event.preventDefault();
 
-    homeView.style.display = "none";
 
-    browserView.style.display = "block";
+    home.style.display = "none";
 
-    websiteFrame.style.display = "block";
+    blocked.style.display = "none";
 
-    blockedMessage.style.display = "none";
+    frame.style.display = "block";
 
-    websiteFrame.src = url;
 
-    openExternal.href = url;
+    frame.src = url;
+
+
+    addressInput.value = url;
+
+
+    document.title =
+        name + " - Chox";
+
+
+    openSiteButton.href = url;
 
 }
 
 
-/* =========================
+/* =========================================
    HOME
-========================= */
+========================================= */
 
 function goHome() {
 
-    browserView.style.display = "none";
+    frame.style.display = "none";
 
-    homeView.style.display = "block";
+    blocked.style.display = "none";
 
-    websiteFrame.src = "";
+    home.style.display = "block";
+
+
+    frame.src = "";
+
+
+    addressInput.value = "";
+
+
+    document.title =
+        "Chox Browser";
 
 }
 
 
-/* =========================
+/* =========================================
    BACK
-========================= */
+========================================= */
 
 function goBack() {
 
-    /*
-     * Try to go back inside the iframe.
-     */
+    if (
+        frame.style.display === "block"
+    ) {
 
-    try {
+        try {
 
-        websiteFrame.contentWindow.history.back();
+            frame.contentWindow.history.back();
 
-    } catch (error) {
+        }
 
-        goHome();
+        catch (error) {
+
+            goHome();
+
+        }
+
+    }
+
+    else {
+
+        window.history.back();
 
     }
 
 }
 
 
-/* =========================
-   SEARCH
-========================= */
+/* =========================================
+   FORWARD
+========================================= */
 
-searchForm.addEventListener(
-    "submit",
-    function(event) {
+function goForward() {
 
-        event.preventDefault();
+    if (
+        frame.style.display === "block"
+    ) {
 
-        const query =
-            searchInput.value.trim();
+        try {
 
-        if (!query) {
-
-            searchInput.focus();
-
-            return;
+            frame.contentWindow.history.forward();
 
         }
 
-        /*
-         * Keep your existing Chox
-         * results page.
-         */
+        catch (error) {
 
-        window.location.href =
-            "results.html?q=" +
-            encodeURIComponent(query);
+            console.log(error);
+
+        }
+
+    }
+
+}
+
+
+/* =========================================
+   RELOAD
+========================================= */
+
+function reloadPage() {
+
+    if (
+        frame.style.display === "block"
+    ) {
+
+        frame.src =
+            frame.src;
+
+    }
+
+    else {
+
+        location.reload();
+
+    }
+
+}
+
+
+/* =========================================
+   ADDRESS BAR
+========================================= */
+
+function addressSearch() {
+
+    const value =
+        addressInput.value.trim();
+
+
+    if (!value) {
+
+        return;
+
+    }
+
+
+    openAddress(value);
+
+}
+
+
+addressInput.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (
+            event.key === "Enter"
+        ) {
+
+            addressSearch();
+
+        }
 
     }
 );
 
 
-/* =========================
-   IFRAME ERROR HANDLING
-========================= */
+/* =========================================
+   OPEN ADDRESS
+========================================= */
 
-websiteFrame.addEventListener(
-    "load",
-    function() {
+function openAddress(value) {
+
+    /*
+     * Detect normal URLs.
+     */
+
+    if (
+        value.startsWith("http://") ||
+        value.startsWith("https://")
+    ) {
+
+        openSite(
+            {
+                preventDefault: function() {}
+            },
+            value,
+            "Website"
+        );
+
+        return;
+
+    }
+
+
+    /*
+     * Detect common domains.
+     */
+
+    if (
+        value.includes(".")
+        &&
+        !value.includes(" ")
+    ) {
+
+        openSite(
+            {
+                preventDefault: function() {}
+            },
+            "https://" + value,
+            value
+        );
+
+        return;
+
+    }
+
+
+    /*
+     * Otherwise search Chox.
+     */
+
+    searchChox(value);
+
+}
+
+
+/* =========================================
+   SEARCH
+========================================= */
+
+function searchChox(query) {
+
+    query =
+        query.trim();
+
+
+    if (!query) {
+
+        return;
+
+    }
+
+
+    window.location.href =
+        "results.html?q=" +
+        encodeURIComponent(query);
+
+}
+
+
+/* =========================================
+   HOME SEARCH
+========================================= */
+
+homeSearch.addEventListener(
+    "submit",
+    function(event) {
+
+        event.preventDefault();
+
+
+        const query =
+            homeInput.value.trim();
+
+
+        if (!query) {
+
+            homeInput.focus();
+
+            return;
+
+        }
+
+
+        searchChox(query);
+
+    }
+);
+
+
+/* =========================================
+   BOOKMARK
+========================================= */
+
+function bookmarkPage() {
+
+    const url =
+        addressInput.value;
+
+
+    if (!url) {
+
+        alert(
+            "You are currently on the Chox homepage."
+        );
+
+        return;
+
+    }
+
+
+    alert(
+        "Bookmarking is controlled by your browser."
+    );
+
+}
+
+
+/* =========================================
+   KEYBOARD SHORTCUT
+========================================= */
+
+document.addEventListener(
+    "keydown",
+    function(event) {
 
         /*
-         * Some websites block iframe
-         * embedding. Browsers don't always
-         * expose the error directly, so the
-         * fallback message is provided by
-         * the browser/site when necessary.
+         * Ctrl + L
          */
+
+        if (
+            event.ctrlKey &&
+            event.key.toLowerCase() === "l"
+        ) {
+
+            event.preventDefault();
+
+            addressInput.focus();
+
+            addressInput.select();
+
+        }
 
     }
 );
