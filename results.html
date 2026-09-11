@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Chox Search</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #08090c;
+            color: #f5f5f5;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            padding: 18px 28px;
+            background: rgba(8, 9, 12, 0.92);
+            border-bottom: 1px solid #20232b;
+            backdrop-filter: blur(15px);
+        }
+
+        .top {
+            max-width: 1000px;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            color: #ff3333;
+            text-decoration: none;
+        }
+
+        form {
+            flex: 1;
+            display: flex;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 18px;
+            border: 1px solid #30333c;
+            border-radius: 14px 0 0 14px;
+            outline: none;
+            background: #111319;
+            color: white;
+            font-size: 16px;
+        }
+
+        button {
+            border: 0;
+            padding: 0 22px;
+            border-radius: 0 14px 14px 0;
+            background: #ff3333;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #ff4d4d;
+        }
+
+        main {
+            max-width: 900px;
+            margin: 35px auto;
+            padding: 0 25px;
+        }
+
+        .query-title {
+            color: #aaa;
+            margin-bottom: 25px;
+        }
+
+        .result {
+            padding: 20px 0;
+            border-bottom: 1px solid #20232b;
+        }
+
+        .result a {
+            color: #6ea8ff;
+            font-size: 20px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .result a:hover {
+            text-decoration: underline;
+        }
+
+        .url {
+            color: #58c98b;
+            font-size: 14px;
+            margin: 8px 0;
+        }
+
+        .description {
+            color: #b8bbc3;
+            line-height: 1.6;
+        }
+
+        .notice {
+            padding: 18px;
+            margin-top: 30px;
+            border: 1px solid #282c35;
+            border-radius: 14px;
+            background: #101218;
+            color: #aaa;
+        }
+
+        @media (max-width: 650px) {
+            .top {
+                gap: 12px;
+            }
+
+            .logo {
+                font-size: 22px;
+            }
+
+            header {
+                padding: 14px;
+            }
+
+            main {
+                padding: 0 18px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="top">
+
+        <a class="logo" href="index.html">
+            Chox
+        </a>
+
+        <form id="resultsSearch">
+            <input
+                id="resultsInput"
+                type="search"
+                placeholder="Search Chox..."
+                autocomplete="off"
+            >
+
+            <button type="submit">
+                Search
+            </button>
+        </form>
+
+    </div>
+</header>
+
+<main>
+
+    <div class="query-title" id="queryTitle">
+        Searching...
+    </div>
+
+    <div id="results"></div>
+
+</main>
+
+<script>
+    const params = new URLSearchParams(window.location.search);
+    const query = params.get("q") || "";
+
+    const title = document.getElementById("queryTitle");
+    const results = document.getElementById("results");
+    const input = document.getElementById("resultsInput");
+    const form = document.getElementById("resultsSearch");
+
+    input.value = query;
+
+    if (query) {
+        title.textContent = "Results for: " + query;
+    } else {
+        title.textContent = "Search Chox";
+    }
+
+    /*
+     * Temporary Chox results interface.
+     *
+     * Real search results should be supplied by a search API.
+     * This keeps the interface ready without scraping another
+     * website or trying to bypass browser/network restrictions.
+     */
+
+    if (query) {
+        results.innerHTML = `
+            <div class="notice">
+                <strong>Chox Search</strong>
+                <p>
+                    Your search for
+                    <strong>${escapeHTML(query)}</strong>
+                    was received.
+                </p>
+
+                <p>
+                    The Chox results interface is ready.
+                    Connect a search API to display live web results here.
+                </p>
+            </div>
+        `;
+    }
+
+    form.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        const newQuery = input.value.trim();
+
+        if (!newQuery) {
+            input.focus();
+            return;
+        }
+
+        window.location.href =
+            "results.html?q=" + encodeURIComponent(newQuery);
+    });
+
+    function escapeHTML(text) {
+        return text
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+    }
+</script>
+
+</body>
+</html>
