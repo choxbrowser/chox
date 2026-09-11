@@ -1,245 +1,360 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Chox Search</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            font-family: Arial, Helvetica, sans-serif;
-            background: #08090c;
-            color: #f5f5f5;
-        }
-
-        header {
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            padding: 18px 28px;
-            background: rgba(8, 9, 12, 0.92);
-            border-bottom: 1px solid #20232b;
-            backdrop-filter: blur(15px);
-        }
-
-        .top {
-            max-width: 1000px;
-            margin: auto;
-            display: flex;
-            align-items: center;
-            gap: 24px;
-        }
-
-        .logo {
-            font-size: 28px;
-            font-weight: 800;
-            color: #ff3333;
-            text-decoration: none;
-        }
-
-        form {
-            flex: 1;
-            display: flex;
-        }
-
-        input {
-            width: 100%;
-            padding: 14px 18px;
-            border: 1px solid #30333c;
-            border-radius: 14px 0 0 14px;
-            outline: none;
-            background: #111319;
-            color: white;
-            font-size: 16px;
-        }
-
-        button {
-            border: 0;
-            padding: 0 22px;
-            border-radius: 0 14px 14px 0;
-            background: #ff3333;
-            color: white;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background: #ff4d4d;
-        }
-
-        main {
-            max-width: 900px;
-            margin: 35px auto;
-            padding: 0 25px;
-        }
-
-        .query-title {
-            color: #aaa;
-            margin-bottom: 25px;
-        }
-
-        .result {
-            padding: 20px 0;
-            border-bottom: 1px solid #20232b;
-        }
-
-        .result a {
-            color: #6ea8ff;
-            font-size: 20px;
-            font-weight: 700;
-            text-decoration: none;
-        }
-
-        .result a:hover {
-            text-decoration: underline;
-        }
-
-        .url {
-            color: #58c98b;
-            font-size: 14px;
-            margin: 8px 0;
-        }
-
-        .description {
-            color: #b8bbc3;
-            line-height: 1.6;
-        }
-
-        .notice {
-            padding: 18px;
-            margin-top: 30px;
-            border: 1px solid #282c35;
-            border-radius: 14px;
-            background: #101218;
-            color: #aaa;
-        }
-
-        @media (max-width: 650px) {
-            .top {
-                gap: 12px;
-            }
-
-            .logo {
-                font-size: 22px;
-            }
-
-            header {
-                padding: 14px;
-            }
-
-            main {
-                padding: 0 18px;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<header>
-    <div class="top">
+<header class="results-header">
 
-        <a class="logo" href="index.html">
-            Chox
-        </a>
+    <a href="index.html" class="results-logo">
+        <span class="logo-mark">C</span>
+        Chox
+    </a>
 
-        <form id="resultsSearch">
-            <input
-                id="resultsInput"
-                type="search"
-                placeholder="Search Chox..."
-                autocomplete="off"
-            >
+    <form id="resultsSearchForm" class="small-search">
 
-            <button type="submit">
-                Search
-            </button>
-        </form>
+        <input
+            id="resultsSearchInput"
+            type="text"
+            autocomplete="off"
+            placeholder="Search Chox..."
+            required
+        >
 
-    </div>
+        <button type="submit">Search</button>
+
+    </form>
+
 </header>
 
-<main>
 
-    <div class="query-title" id="queryTitle">
-        Searching...
+<main class="results-container">
+
+    <div id="searchInfo"></div>
+
+    <div id="results">
+
+        <div class="loading">
+            Searching Chox...
+        </div>
+
     </div>
-
-    <div id="results"></div>
 
 </main>
 
+
 <script>
-    const params = new URLSearchParams(window.location.search);
-    const query = params.get("q") || "";
 
-    const title = document.getElementById("queryTitle");
-    const results = document.getElementById("results");
-    const input = document.getElementById("resultsInput");
-    const form = document.getElementById("resultsSearch");
+const params = new URLSearchParams(window.location.search);
+const query = params.get("q") || "";
 
-    input.value = query;
+const input = document.getElementById("resultsSearchInput");
+const results = document.getElementById("results");
+const searchInfo = document.getElementById("searchInfo");
 
-    if (query) {
-        title.textContent = "Results for: " + query;
-    } else {
-        title.textContent = "Search Chox";
+input.value = query;
+
+async function searchChox() {
+
+    if (!query.trim()) {
+        results.innerHTML = `
+            <div class="empty">
+                Enter something to search for.
+            </div>
+        `;
+        return;
     }
 
-    /*
-     * Temporary Chox results interface.
-     *
-     * Real search results should be supplied by a search API.
-     * This keeps the interface ready without scraping another
-     * website or trying to bypass browser/network restrictions.
-     */
+    searchInfo.innerHTML = `
+        <div class="result-title">
+            Results for <strong>${escapeHTML(query)}</strong>
+        </div>
+    `;
 
-    if (query) {
+    try {
+
+        const apiURL =
+            "https://api.duckduckgo.com/" +
+            "?q=" + encodeURIComponent(query) +
+            "&format=json" +
+            "&no_html=1" +
+            "&skip_disambig=0";
+
+        const response = await fetch(apiURL);
+
+        if (!response.ok) {
+            throw new Error("Search request failed");
+        }
+
+        const data = await response.json();
+
+        displayResults(data);
+
+    } catch (error) {
+
+        console.error(error);
+
         results.innerHTML = `
-            <div class="notice">
-                <strong>Chox Search</strong>
-                <p>
-                    Your search for
-                    <strong>${escapeHTML(query)}</strong>
-                    was received.
-                </p>
+            <div class="error-card">
+                <h2>Chox couldn't load the search</h2>
 
                 <p>
-                    The Chox results interface is ready.
-                    Connect a search API to display live web results here.
+                    Try searching again or use DuckDuckGo directly.
                 </p>
+
+                <a
+                    class="external-search"
+                    href="https://duckduckgo.com/?q=${encodeURIComponent(query)}&kp=1"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    Search DuckDuckGo
+                </a>
             </div>
         `;
     }
+}
 
-    form.addEventListener("submit", (event) => {
-        event.preventDefault();
 
-        const newQuery = input.value.trim();
+function displayResults(data) {
 
-        if (!newQuery) {
-            input.focus();
-            return;
+    let items = [];
+
+    /*
+     * DuckDuckGo Instant Answers can return
+     * a main abstract plus RelatedTopics.
+     */
+
+    if (data.AbstractText && data.AbstractURL) {
+
+        items.push({
+            title: data.Heading || query,
+            description: data.AbstractText,
+            url: data.AbstractURL
+        });
+
+    }
+
+
+    if (Array.isArray(data.RelatedTopics)) {
+
+        for (const item of data.RelatedTopics) {
+
+            if (
+                item &&
+                item.Text &&
+                item.FirstURL
+            ) {
+
+                items.push({
+                    title: getTitle(item.Text),
+                    description: item.Text,
+                    url: item.FirstURL
+                });
+
+            }
+
+            /*
+             * Some DuckDuckGo responses use
+             * nested topic groups.
+             */
+
+            if (Array.isArray(item.Topics)) {
+
+                for (const topic of item.Topics) {
+
+                    if (
+                        topic &&
+                        topic.Text &&
+                        topic.FirstURL
+                    ) {
+
+                        items.push({
+                            title: getTitle(topic.Text),
+                            description: topic.Text,
+                            url: topic.FirstURL
+                        });
+
+                    }
+
+                }
+
+            }
+
         }
 
-        window.location.href =
-            "results.html?q=" + encodeURIComponent(newQuery);
+    }
+
+
+    /*
+     * Remove duplicates.
+     */
+
+    const unique = [];
+
+    const seen = new Set();
+
+    for (const item of items) {
+
+        if (!seen.has(item.url)) {
+
+            seen.add(item.url);
+            unique.push(item);
+
+        }
+
+    }
+
+
+    if (unique.length === 0) {
+
+        results.innerHTML = `
+            <div class="no-results">
+
+                <h2>No Chox instant results</h2>
+
+                <p>
+                    DuckDuckGo didn't return an Instant Answer
+                    for this search.
+                </p>
+
+                <a
+                    class="external-search"
+                    href="https://duckduckgo.com/?q=${encodeURIComponent(query)}&kp=1"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    Continue searching
+                </a>
+
+            </div>
+        `;
+
+        return;
+    }
+
+
+    results.innerHTML = "";
+
+    unique.slice(0, 20).forEach(item => {
+
+        const card = document.createElement("article");
+
+        card.className = "result-card";
+
+        const domain = getDomain(item.url);
+
+        card.innerHTML = `
+
+            <div class="result-domain">
+                ${escapeHTML(domain)}
+            </div>
+
+            <a
+                class="result-link"
+                href="${escapeAttribute(item.url)}"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                ${escapeHTML(item.title)}
+            </a>
+
+            <p>
+                ${escapeHTML(item.description)}
+            </p>
+
+        `;
+
+        results.appendChild(card);
+
     });
 
-    function escapeHTML(text) {
-        return text
-            .replaceAll("&", "&amp;")
-            .replaceAll("<", "&lt;")
-            .replaceAll(">", "&gt;")
-            .replaceAll('"', "&quot;")
-            .replaceAll("'", "&#039;");
+}
+
+
+function getTitle(text) {
+
+    const separator = " - ";
+
+    if (text.includes(separator)) {
+
+        return text.split(separator)[0];
+
     }
+
+    return text.substring(0, 100);
+
+}
+
+
+function getDomain(url) {
+
+    try {
+
+        return new URL(url).hostname;
+
+    } catch {
+
+        return "";
+
+    }
+
+}
+
+
+function escapeHTML(text) {
+
+    return String(text)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
+}
+
+
+function escapeAttribute(text) {
+
+    return String(text)
+        .replaceAll('"', "&quot;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;");
+
+}
+
+
+document
+    .getElementById("resultsSearchForm")
+    .addEventListener("submit", event => {
+
+        event.preventDefault();
+
+        const newQuery =
+            document
+                .getElementById("resultsSearchInput")
+                .value
+                .trim();
+
+        if (!newQuery) return;
+
+        window.location.href =
+            "results.html?q=" +
+            encodeURIComponent(newQuery);
+
+    });
+
+
+searchChox();
+
 </script>
 
 </body>
