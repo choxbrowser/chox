@@ -1,76 +1,38 @@
 const form = document.getElementById("searchForm");
 const input = document.getElementById("searchInput");
-const clearButton = document.getElementById("clearButton");
-const themeButton = document.getElementById("themeButton");
-const quickLinks = document.querySelectorAll("[data-search]");
 
-form.addEventListener("submit", function (event) {
-    event.preventDefault();
+if (form && input) {
 
-    const query = input.value.trim();
+    form.addEventListener("submit", function (event) {
 
-    if (!query) {
-        input.focus();
-        return;
-    }
+        event.preventDefault();
 
-    window.location.href =
-        "results.html?q=" + encodeURIComponent(query);
-});
+        const query = input.value.trim();
 
-input.addEventListener("input", function () {
-    clearButton.style.display =
-        input.value.length > 0 ? "block" : "none";
-});
-
-clearButton.addEventListener("click", function () {
-    input.value = "";
-    clearButton.style.display = "none";
-    input.focus();
-});
-
-quickLinks.forEach(function (button) {
-    button.addEventListener("click", function () {
-        const query = button.dataset.search;
+        if (!query) {
+            input.focus();
+            return;
+        }
 
         window.location.href =
-            "results.html?q=" + encodeURIComponent(query);
-    });
-});
-
-let lightMode = false;
-
-if (themeButton) {
-    themeButton.addEventListener("click", function () {
-
-        lightMode = !lightMode;
-
-        if (lightMode) {
-            document.documentElement.style.setProperty(
-                "--bg",
-                "#f4f5f7"
-            );
-
-            document.documentElement.style.setProperty(
-                "--text",
-                "#111216"
-            );
-
-            themeButton.textContent = "☾";
-
-        } else {
-
-            document.documentElement.style.setProperty(
-                "--bg",
-                "#07080b"
-            );
-
-            document.documentElement.style.setProperty(
-                "--text",
-                "#f5f5f7"
-            );
-
-            themeButton.textContent = "☼";
-        }
+            "results.html?q=" +
+            encodeURIComponent(query);
     });
 }
+
+
+document
+    .querySelectorAll("[data-search]")
+    .forEach(function (button) {
+
+        button.addEventListener("click", function () {
+
+            const query =
+                button.getAttribute("data-search");
+
+            window.location.href =
+                "results.html?q=" +
+                encodeURIComponent(query);
+        });
+
+    });
