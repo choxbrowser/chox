@@ -35,12 +35,7 @@ form.addEventListener("submit", function (event) {
   if (safeSearch.checked) {
     url += "&kp=1";
   }
-
-  window.open(
-    url,
-    "_blank",
-    "noopener,noreferrer"
-  );
+window.location.href = url;
 });
 
 
