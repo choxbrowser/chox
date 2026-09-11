@@ -1,65 +1,575 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chox</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Chox Search</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --bg: #07080b;
+    --text: #f5f5f7;
+    --muted: #8d919d;
+    --red: #e51b23;
+    --red2: #ff343c;
+    --border: rgba(255,255,255,.09);
+}
+
+html,
+body {
+    width: 100%;
+    min-height: 100%;
+}
+
+body {
+    min-height: 100vh;
+
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    color: var(--text);
+
+    background:
+        radial-gradient(
+            circle at 50% 35%,
+            rgba(229,27,35,.12),
+            transparent 35%
+        ),
+        #07080b;
+
+    overflow-x: hidden;
+}
+
+
+/* HEADER */
+
+header {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+
+    padding: 28px 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.brand-icon {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 13px;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--red2),
+            #a70f16
+        );
+
+    font-size: 24px;
+    font-weight: 900;
+
+    box-shadow:
+        0 10px 35px rgba(229,27,35,.3);
+}
+
+
+/* MAIN */
+
+main {
+    min-height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 100px 20px 90px;
+
+    text-align: center;
+}
+
+
+/* LOGO */
+
+.logo {
+    font-size:
+        clamp(70px, 10vw, 110px);
+
+    font-weight: 900;
+
+    letter-spacing: -7px;
+
+    line-height: 1;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ffffff,
+            #8c92a0
+        );
+
+    -webkit-background-clip: text;
+    background-clip: text;
+
+    color: transparent;
+
+    margin-bottom: 16px;
+}
+
+.tagline {
+    color: var(--muted);
+
+    font-size: 18px;
+
+    margin-bottom: 35px;
+}
+
+
+/* SEARCH */
+
+.search-form {
+    width: 100%;
+    max-width: 800px;
+}
+
+.search-box {
+    width: 100%;
+
+    min-height: 68px;
+
+    display: flex;
+    align-items: center;
+
+    padding: 7px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 21px;
+
+    background:
+        rgba(20,22,28,.8);
+
+    backdrop-filter: blur(20px);
+
+    box-shadow:
+        0 25px 80px rgba(0,0,0,.4);
+
+    transition: .2s;
+}
+
+.search-box:focus-within {
+    border-color:
+        rgba(229,27,35,.6);
+
+    box-shadow:
+        0 25px 80px rgba(0,0,0,.45),
+        0 0 0 4px rgba(229,27,35,.08);
+}
+
+.search-icon {
+    width: 50px;
+
+    font-size: 25px;
+
+    color: #777c87;
+}
+
+.search-box input {
+    flex: 1;
+
+    min-width: 0;
+
+    height: 52px;
+
+    border: 0;
+    outline: 0;
+
+    background: transparent;
+
+    color: white;
+
+    font-size: 17px;
+
+    padding: 0 10px;
+}
+
+.search-box input::placeholder {
+    color: #656a75;
+}
+
+.search-button {
+    height: 52px;
+
+    padding: 0 25px;
+
+    border: 0;
+
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--red2),
+            var(--red)
+        );
+
+    color: white;
+
+    font-weight: 700;
+
+    font-size: 15px;
+
+    cursor: pointer;
+
+    transition: .2s;
+}
+
+.search-button:hover {
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 10px 30px rgba(229,27,35,.35);
+}
+
+
+/* SETTINGS */
+
+.settings {
+    margin-top: 18px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 12px;
+
+    color: var(--muted);
+
+    font-size: 14px;
+}
+
+.settings label {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    cursor: pointer;
+}
+
+.settings input {
+    width: 16px;
+    height: 16px;
+
+    accent-color: var(--red);
+}
+
+
+/* QUICK LINKS */
+
+.quick-links {
+    margin-top: 32px;
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    justify-content: center;
+
+    gap: 10px;
+}
+
+.quick-links button {
+    padding: 10px 16px;
+
+    border-radius: 11px;
+
+    border:
+        1px solid var(--border);
+
+    background:
+        rgba(255,255,255,.035);
+
+    color: #9da1aa;
+
+    cursor: pointer;
+
+    transition: .2s;
+}
+
+.quick-links button:hover {
+    color: white;
+
+    background:
+        rgba(255,255,255,.08);
+
+    transform: translateY(-1px);
+}
+
+
+/* FOOTER */
+
+footer {
+    position: fixed;
+
+    bottom: 22px;
+
+    width: 100%;
+
+    text-align: center;
+
+    color: #555963;
+
+    font-size: 12px;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+
+    header {
+        padding: 20px;
+    }
+
+    main {
+        padding:
+            100px 15px 80px;
+    }
+
+    .logo {
+        font-size: 70px;
+
+        letter-spacing: -5px;
+    }
+
+    .tagline {
+        font-size: 15px;
+    }
+
+    .search-box {
+        min-height: 60px;
+    }
+
+    .search-button {
+        height: 46px;
+
+        padding: 0 16px;
+    }
+
+    .search-box input {
+        font-size: 15px;
+    }
+
+}
+
+</style>
 </head>
 
-<body class="home">
 
-<header class="topbar">
-    <div class="logo">
-        <span class="logo-mark">C</span>
-        <span>Chox</span>
+<body>
+
+
+<header>
+
+    <div class="brand">
+
+        <div class="brand-icon">
+            C
+        </div>
+
+        <span>
+            Chox
+        </span>
+
     </div>
+
 </header>
 
-<main class="home-container">
 
-    <div class="hero">
-        <div class="big-logo">Chox</div>
-        <p>Search the web your way.</p>
+<main>
+
+    <div class="logo">
+        Chox
     </div>
 
-    <form id="searchForm" class="search-box">
+    <div class="tagline">
+        Search the web your way.
+    </div>
 
-        <span class="search-icon">⌕</span>
 
-        <input
-            id="searchInput"
-            type="text"
-            autocomplete="off"
-            placeholder="Search Chox..."
-            required
-        >
+    <form
+        id="searchForm"
+        class="search-form"
+    >
 
-        <button type="submit">
-            Search
-        </button>
+        <div class="search-box">
+
+            <div class="search-icon">
+                ⌕
+            </div>
+
+            <input
+                id="searchInput"
+                type="text"
+                placeholder="Search Chox..."
+                autocomplete="off"
+                spellcheck="false"
+                required
+            >
+
+            <button
+                class="search-button"
+                type="submit"
+            >
+                Search
+            </button>
+
+        </div>
 
     </form>
 
-    <label class="safe-search">
-        <input id="safeSearch" type="checkbox" checked>
-        <span>Safe Search</span>
-    </label>
+
+    <div class="settings">
+
+        <label>
+
+            <input
+                id="safeSearch"
+                type="checkbox"
+                checked
+            >
+
+            Safe Search
+
+        </label>
+
+        <span>•</span>
+
+        <span>
+            Private mode
+        </span>
+
+    </div>
+
 
     <div class="quick-links">
-        <button data-search="Wikipedia">Wikipedia</button>
-        <button data-search="YouTube">YouTube</button>
-        <button data-search="GitHub">GitHub</button>
-        <button data-search="Google">Google</button>
+
+        <button data-search="technology">
+            Technology
+        </button>
+
+        <button data-search="gaming">
+            Gaming
+        </button>
+
+        <button data-search="news">
+            News
+        </button>
+
+        <button data-search="science">
+            Science
+        </button>
+
     </div>
 
 </main>
+
 
 <footer>
     Chox Search
 </footer>
 
-<script src="script.js?v=4"></script>
+
+<script>
+
+const form =
+    document.getElementById("searchForm");
+
+const input =
+    document.getElementById("searchInput");
+
+
+form.addEventListener("submit", function(event) {
+
+    event.preventDefault();
+
+    const query =
+        input.value.trim();
+
+    if (!query) {
+        input.focus();
+        return;
+    }
+
+    window.location.href =
+        "results.html?q=" +
+        encodeURIComponent(query);
+
+});
+
+
+document
+    .querySelectorAll("[data-search]")
+    .forEach(function(button) {
+
+        button.addEventListener(
+            "click",
+            function() {
+
+                const query =
+                    button.getAttribute(
+                        "data-search"
+                    );
+
+                window.location.href =
+                    "results.html?q=" +
+                    encodeURIComponent(query);
+
+            }
+        );
+
+    });
+
+</script>
+
 
 </body>
 </html>
