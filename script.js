@@ -1,46 +1,105 @@
-// Chox Search
-// Simple, reliable client-side search handler
-
-document.addEventListener("DOMContentLoaded", () => {
-    const searchForm = document.getElementById("searchForm");
-    const searchInput = document.getElementById("searchInput");
+document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("searchForm");
+    const input = document.getElementById("searchInput");
+    const clearButton = document.getElementById("clearButton");
     const safeSearch = document.getElementById("safeSearch");
+    const themeButton = document.getElementById("themeButton");
+    const quickLinks = document.querySelectorAll("[data-search]");
 
-    if (!searchForm || !searchInput) {
-        console.error("Chox: Search form or search input was not found.");
+    // Make sure the search form exists
+    if (!form || !input) {
+        console.error("Chox: Search form not found.");
         return;
     }
 
-    searchForm.addEventListener("submit", (event) => {
-        // Stop the browser from refreshing the page
+    // SEARCH
+    form.addEventListener("submit", function (event) {
         event.preventDefault();
+        event.stopPropagation();
 
-        const query = searchInput.value.trim();
+        const query = input.value.trim();
 
-        // Don't search if the box is empty
-        if (!query) {
-            searchInput.focus();
+        if (query === "") {
+            input.focus();
             return;
         }
 
-        // Use DuckDuckGo for the search
-        let searchURL =
-            "https://duckduckgo.com/?q=" +
+        let url =
+            "https://www.google.com/search?q=" +
             encodeURIComponent(query);
 
-        // Enable strict Safe Search when the option is checked
+        // Safe Search
         if (safeSearch && safeSearch.checked) {
-            searchURL += "&kp=1";
+            url += "&safe=active";
         }
 
-        // Go to the search results
-        window.location.href = searchURL;
+        // Navigate to results
+        window.location.assign(url);
     });
 
-    // Allow pressing Escape to clear the search box
-    searchInput.addEventListener("keydown", (event) => {
-        if (event.key === "Escape") {
-            searchInput.value = "";
-        }
+    // CLEAR SEARCH
+    if (input && clearButton) {
+        input.addEventListener("input", function () {
+            clearButton.style.display =
+                input.value.length > 0 ? "block" : "none";
+        });
+
+        clearButton.addEventListener("click", function (event) {
+            event.preventDefault();
+
+            input.value = "";
+            clearButton.style.display = "none";
+            input.focus();
+        });
+    }
+
+    // QUICK SEARCH BUTTONS
+    quickLinks.forEach(function (button) {
+        button.addEventListener("click", function (event) {
+            event.preventDefault();
+
+            const query = button.getAttribute("data-search");
+
+            if (query) {
+                input.value = query;
+
+                if (clearButton) {
+                    clearButton.style.display = "block";
+                }
+
+                input.focus();
+            }
+        });
     });
+
+    // THEME BUTTON
+    if (themeButton) {
+        let lightMode = false;
+
+        themeButton.addEventListener("click", function () {
+            lightMode = !lightMode;
+
+            if (lightMode) {
+                document.documentElement.style.setProperty(
+                    "--bg",
+                    "#f4f5f7"
+                );
+
+                document.documentElement.style.setProperty(
+                    "--text",
+                    "#111216"
+                );
+            } else {
+                document.documentElement.style.setProperty(
+                    "--bg",
+                    "#08090c"
+                );
+
+                document.documentElement.style.setProperty(
+                    "--text",
+                    "#ffffff"
+                );
+            }
+        });
+    }
 });
