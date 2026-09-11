@@ -19,19 +19,15 @@ form.addEventListener("submit", function (event) {
 });
 
 input.addEventListener("input", function () {
-    if (clearButton) {
-        clearButton.style.display =
-            input.value.length > 0 ? "block" : "none";
-    }
+    clearButton.style.display =
+        input.value.length > 0 ? "block" : "none";
 });
 
-if (clearButton) {
-    clearButton.addEventListener("click", function () {
-        input.value = "";
-        clearButton.style.display = "none";
-        input.focus();
-    });
-}
+clearButton.addEventListener("click", function () {
+    input.value = "";
+    clearButton.style.display = "none";
+    input.focus();
+});
 
 quickLinks.forEach(function (button) {
     button.addEventListener("click", function () {
@@ -42,21 +38,38 @@ quickLinks.forEach(function (button) {
     });
 });
 
-if (themeButton) {
-    let lightMode = false;
+let lightMode = false;
 
+if (themeButton) {
     themeButton.addEventListener("click", function () {
+
         lightMode = !lightMode;
 
         if (lightMode) {
-            document.documentElement.style.setProperty("--bg", "#f4f5f7");
-            document.documentElement.style.setProperty("--text", "#111216");
-            document.documentElement.style.setProperty("--muted", "#626773");
+            document.documentElement.style.setProperty(
+                "--bg",
+                "#f4f5f7"
+            );
+
+            document.documentElement.style.setProperty(
+                "--text",
+                "#111216"
+            );
+
             themeButton.textContent = "☾";
+
         } else {
-            document.documentElement.style.setProperty("--bg", "#07080b");
-            document.documentElement.style.setProperty("--text", "#f5f5f7");
-            document.documentElement.style.setProperty("--muted", "#8d919d");
+
+            document.documentElement.style.setProperty(
+                "--bg",
+                "#07080b"
+            );
+
+            document.documentElement.style.setProperty(
+                "--text",
+                "#f5f5f7"
+            );
+
             themeButton.textContent = "☼";
         }
     });
