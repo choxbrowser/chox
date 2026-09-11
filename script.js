@@ -1,14 +1,13 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("searchForm");
     const input = document.getElementById("searchInput");
-    const safeSearch = document.getElementById("safeSearch");
 
     if (!form || !input) {
         console.error("Chox: Search elements not found.");
         return;
     }
 
-    form.addEventListener("submit", function (event) {
+    form.addEventListener("submit", (event) => {
         event.preventDefault();
 
         const query = input.value.trim();
@@ -18,16 +17,10 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        let searchURL =
-            "https://duckduckgo.com/?q=" +
-            encodeURIComponent(query);
+        // Send the query to Chox's own results page
+        const resultsURL =
+            "results.html?q=" + encodeURIComponent(query);
 
-        // DuckDuckGo Safe Search
-        if (safeSearch && safeSearch.checked) {
-            searchURL += "&kp=1";
-        }
-
-        // Open the DuckDuckGo results in the current tab
-        window.location.href = searchURL;
+        window.location.href = resultsURL;
     });
 });
