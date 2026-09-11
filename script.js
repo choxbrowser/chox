@@ -1,26 +1,39 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const form = document.getElementById("searchForm");
-    const input = document.getElementById("searchInput");
+const searchForm = document.getElementById("searchForm");
+const searchInput = document.getElementById("searchInput");
 
-    if (!form || !input) {
-        console.error("Chox: Search elements not found.");
-        return;
-    }
+if (searchForm) {
 
-    form.addEventListener("submit", (event) => {
+    searchForm.addEventListener("submit", function(event) {
+
         event.preventDefault();
 
-        const query = input.value.trim();
+        const query = searchInput.value.trim();
 
-        if (!query) {
-            input.focus();
-            return;
-        }
+        if (!query) return;
 
-        // Send the query to Chox's own results page
-        const resultsURL =
-            "results.html?q=" + encodeURIComponent(query);
+        window.location.href =
+            "results.html?q=" +
+            encodeURIComponent(query);
 
-        window.location.href = resultsURL;
     });
+
+}
+
+
+/*
+ * Quick search buttons
+ */
+
+document.querySelectorAll("[data-search]").forEach(button => {
+
+    button.addEventListener("click", function() {
+
+        const query = this.dataset.search;
+
+        window.location.href =
+            "results.html?q=" +
+            encodeURIComponent(query);
+
+    });
+
 });
