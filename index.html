@@ -1,737 +1,834 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
-  <title>Chox</title>
-
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    html,
-    body {
-      margin: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      font-family:
-        Inter,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        sans-serif;
-      background: #0f1115;
-      color: #ffffff;
-    }
-
-    button,
-    input {
-      font: inherit;
-    }
-
-    button {
-      border: 0;
-      cursor: pointer;
-    }
-
-    /* =========================
-       APP
-    ========================= */
-
-    #app {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      background: #0f1115;
-    }
-
-    /* =========================
-       TABS
-    ========================= */
-
-    .tab-bar {
-      height: 42px;
-      display: flex;
-      align-items: center;
-      background: #17191f;
-      border-bottom: 1px solid #292c34;
-      padding: 0 8px;
-      gap: 4px;
-      user-select: none;
-    }
-
-    .tabs {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      flex: 1;
-      overflow-x: auto;
-      scrollbar-width: none;
-    }
-
-    .tabs::-webkit-scrollbar {
-      display: none;
-    }
-
-    .tab {
-      min-width: 160px;
-      max-width: 240px;
-      height: 34px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 0 10px;
-      background: #20232a;
-      border-radius: 8px 8px 0 0;
-      color: #aeb4c0;
-      font-size: 13px;
-      flex-shrink: 0;
-    }
-
-    .tab.active {
-      background: #0f1115;
-      color: #ffffff;
-    }
-
-    .tab-title {
-      flex: 1;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .tab-close {
-      width: 20px;
-      height: 20px;
-      border-radius: 5px;
-      background: transparent;
-      color: #8d94a1;
-    }
-
-    .tab-close:hover {
-      background: #30343d;
-      color: white;
-    }
-
-    .new-tab {
-      width: 32px;
-      height: 32px;
-      border-radius: 7px;
-      background: transparent;
-      color: #aeb4c0;
-      font-size: 20px;
-    }
-
-    .new-tab:hover {
-      background: #292d36;
-      color: white;
-    }
-
-    /* =========================
-       TOOLBAR
-    ========================= */
-
-    .toolbar {
-      height: 52px;
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      padding: 7px 10px;
-      background: #13151a;
-      border-bottom: 1px solid #292c34;
-    }
-
-    .toolbar-button {
-      width: 36px;
-      height: 36px;
-      border-radius: 8px;
-      background: transparent;
-      color: #aeb4c0;
-      font-size: 18px;
-    }
-
-    .toolbar-button:hover {
-      background: #252932;
-      color: white;
-    }
-
-    .address-wrapper {
-      flex: 1;
-      height: 36px;
-      display: flex;
-      align-items: center;
-      background: #20232a;
-      border: 1px solid #30343d;
-      border-radius: 10px;
-      padding: 0 12px;
-    }
-
-    .address-icon {
-      color: #7f8795;
-      margin-right: 8px;
-    }
-
-    #address-bar {
-      flex: 1;
-      min-width: 0;
-      border: 0;
-      outline: 0;
-      background: transparent;
-      color: white;
-      font-size: 14px;
-    }
-
-    #address-bar::placeholder {
-      color: #777f8d;
-    }
-
-    /* =========================
-       CONTENT
-    ========================= */
-
-    .browser-content {
-      flex: 1;
-      min-height: 0;
-      position: relative;
-    }
-
-    .tab-page {
-      position: absolute;
-      inset: 0;
-      display: none;
-      overflow: hidden;
-      background: #0f1115;
-    }
-
-    .tab-page.active {
-      display: block;
-    }
-
-    .page-frame {
-      width: 100%;
-      height: 100%;
-      border: 0;
-      background: white;
-    }
-
-    /* =========================
-       HOME
-    ========================= */
-
-    .home-page {
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      padding: 55px 25px;
-      background:
-        radial-gradient(
-          circle at top center,
-          rgba(85, 95, 130, 0.18),
-          transparent 45%
-        ),
-        #0f1115;
-    }
-
-    .home-container {
-      width: min(1000px, 100%);
-      margin: 0 auto;
-    }
-
-    .logo-area {
-      text-align: center;
-      margin-bottom: 35px;
-    }
-
-    .logo {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 72px;
-      height: 72px;
-      border-radius: 50%;
-      background: #e53935;
-      color: #0f1115;
-      font-size: 34px;
-      font-weight: 900;
-      letter-spacing: -4px;
-      box-shadow:
-        0 12px 40px rgba(0, 0, 0, 0.35);
-    }
-
-    .brand-name {
-      margin-top: 15px;
-      font-size: 42px;
-      font-weight: 800;
-      letter-spacing: -2px;
-    }
-
-    .brand-subtitle {
-      margin-top: 8px;
-      color: #8e96a5;
-      font-size: 15px;
-    }
-
-    .search-box {
-      width: min(760px, 100%);
-      height: 56px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      padding: 0 18px;
-      background: #1b1e24;
-      border: 1px solid #30343d;
-      border-radius: 16px;
-      box-shadow:
-        0 15px 45px rgba(0, 0, 0, 0.25);
-    }
-
-    .search-box-icon {
-      color: #8f97a5;
-      font-size: 20px;
-      margin-right: 12px;
-    }
-
-    #home-search {
-      flex: 1;
-      min-width: 0;
-      border: 0;
-      outline: 0;
-      background: transparent;
-      color: white;
-      font-size: 16px;
-    }
-
-    #home-search::placeholder {
-      color: #777f8d;
-    }
-
-    .search-button {
-      height: 40px;
-      padding: 0 18px;
-      border-radius: 10px;
-      background: #ffffff;
-      color: #101216;
-      font-weight: 700;
-    }
-
-    .search-button:hover {
-      background: #e6e8ec;
-    }
-
-    .quick-links-title {
-      margin: 45px 0 15px;
-      color: #9aa2af;
-      font-size: 13px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .quick-links {
-      display: grid;
-      grid-template-columns:
-        repeat(auto-fit, minmax(170px, 1fr));
-      gap: 12px;
-    }
-
-    .quick-link {
-      min-height: 95px;
-      padding: 18px;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      justify-content: center;
-      gap: 9px;
-      border-radius: 14px;
-      background: #191c22;
-      border: 1px solid #292d35;
-      color: #ffffff;
-      text-align: left;
-      transition:
-        transform 0.15s ease,
-        background 0.15s ease;
-    }
-
-    .quick-link:hover {
-      transform: translateY(-2px);
-      background: #22262e;
-    }
-
-    .quick-icon {
-      font-size: 23px;
-    }
-
-    .quick-link span:last-child {
-      color: #c9ced7;
-      font-size: 14px;
-      font-weight: 600;
-    }
-
-    /* =========================
-       CHOX VIDEO
-    ========================= */
-
-    .chox-video-page {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      overflow: hidden;
-      background: #0c0e12;
-    }
-
-    .cv-sidebar {
-      width: 220px;
-      flex-shrink: 0;
-      padding: 18px 12px;
-      background: #111319;
-      border-right: 1px solid #292d35;
-      overflow-y: auto;
-    }
-
-    .cv-brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 10px 20px;
-      font-size: 20px;
-      font-weight: 800;
-    }
-
-    .cv-brand-logo {
-      width: 34px;
-      height: 34px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      background: #e53935;
-      color: #101216;
-      font-weight: 900;
-    }
-
-    .cv-nav {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-
-    .cv-nav-button {
-      width: 100%;
-      padding: 11px 13px;
-      display: flex;
-      align-items: center;
-      gap: 11px;
-      border-radius: 9px;
-      background: transparent;
-      color: #9ca4b2;
-      text-align: left;
-      font-size: 14px;
-    }
-
-    .cv-nav-button:hover,
-    .cv-nav-button.active {
-      background: #242831;
-      color: white;
-    }
-
-    .cv-main {
-      flex: 1;
-      min-width: 0;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-
-    .cv-topbar {
-      min-height: 60px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 10px 18px;
-      background: #111319;
-      border-bottom: 1px solid #292d35;
-    }
-
-    .cv-search {
-      flex: 1;
-      max-width: 720px;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      background: #1d2027;
-      border: 1px solid #30343d;
-      border-radius: 10px;
-      padding: 0 12px;
-    }
-
-    .cv-search input {
-      flex: 1;
-      min-width: 0;
-      border: 0;
-      outline: 0;
-      background: transparent;
-      color: white;
-    }
-
-    .cv-search button {
-      background: transparent;
-      color: #aeb4c0;
-    }
-
-    .cv-content {
-      flex: 1;
-      overflow-y: auto;
-      padding: 24px;
-    }
-
-    .cv-heading {
-      margin-bottom: 20px;
-    }
-
-    .cv-heading h1 {
-      margin: 0;
-      font-size: 25px;
-    }
-
-    .cv-heading p {
-      margin: 7px 0 0;
-      color: #838b99;
-      font-size: 14px;
-    }
-
-    .cv-video-grid {
-      display: grid;
-      grid-template-columns:
-        repeat(auto-fill, minmax(250px, 1fr));
-      gap: 20px;
-    }
-
-    .cv-card {
-      overflow: hidden;
-      border-radius: 12px;
-      background: #171a20;
-      border: 1px solid #282c34;
-      cursor: pointer;
-      transition:
-        transform 0.15s ease,
-        background 0.15s ease;
-    }
-
-    .cv-card:hover {
-      transform: translateY(-3px);
-      background: #1e2229;
-    }
-
-    .cv-thumb {
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      object-fit: cover;
-      display: block;
-      background: #252932;
-    }
-
-    .cv-card-info {
-      padding: 13px;
-    }
-
-    .cv-card-title {
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      font-size: 14px;
-      font-weight: 700;
-      line-height: 1.4;
-    }
-
-    .cv-card-description {
-      margin-top: 7px;
-      color: #828a98;
-      font-size: 12px;
-      line-height: 1.4;
-    }
-
-    .cv-player {
-      width: 100%;
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-
-    .cv-player video,
-    .cv-player iframe {
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      border: 0;
-      border-radius: 12px;
-      background: black;
-    }
-
-    .cv-player-title {
-      margin-top: 15px;
-      font-size: 20px;
-      font-weight: 700;
-    }
-
-    .cv-player-actions {
-      display: flex;
-      gap: 8px;
-      margin-top: 12px;
-    }
-
-    .cv-action {
-      padding: 9px 13px;
-      border-radius: 8px;
-      background: #252932;
-      color: #d5dae2;
-    }
-
-    .cv-action:hover {
-      background: #303540;
-    }
-
-    .cv-empty {
-      padding: 60px 20px;
-      text-align: center;
-      color: #7e8694;
-    }
-
-    /* =========================
-       RESPONSIVE
-    ========================= */
-
-    @media (max-width: 700px) {
-      .tab {
-        min-width: 130px;
-      }
-
-      .toolbar-button {
-        width: 32px;
-      }
-
-      .home-page {
-        padding: 35px 15px;
-      }
-
-      .brand-name {
-        font-size: 34px;
-      }
-
-      .cv-sidebar {
-        width: 68px;
-        padding: 15px 8px;
-      }
-
-      .cv-brand span:last-child,
-      .cv-nav-button span:last-child {
-        display: none;
-      }
-
-      .cv-nav-button {
-        justify-content: center;
-      }
-
-      .cv-content {
-        padding: 15px;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Chox Browser</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #101010;
+            color: #fff;
+        }
+
+        button,
+        input {
+            font: inherit;
+        }
+
+        /* =========================
+           MAIN APP
+        ========================= */
+
+        #app {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: #111;
+        }
+
+        /* =========================
+           TAB BAR
+        ========================= */
+
+        .tab-bar {
+            height: 48px;
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 8px 0;
+            background: #171717;
+            border-bottom: 1px solid #292929;
+        }
+
+        .tabs {
+            flex: 1;
+            height: 100%;
+            display: flex;
+            align-items: flex-end;
+            gap: 4px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scrollbar-width: none;
+        }
+
+        .tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab {
+            position: relative;
+            flex: 0 1 220px;
+            min-width: 130px;
+            max-width: 240px;
+            height: 38px;
+
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            padding: 0 8px 0 14px;
+
+            border-radius: 10px 10px 0 0;
+            background: #202020;
+            color: #aaa;
+
+            cursor: pointer;
+            user-select: none;
+
+            transform: translateX(0);
+            opacity: 1;
+
+            transition:
+                transform 280ms cubic-bezier(.2,.8,.2,1),
+                opacity 180ms ease,
+                background 160ms ease,
+                color 160ms ease;
+        }
+
+        .tab:hover {
+            background: #292929;
+            color: #ddd;
+        }
+
+        .tab.active {
+            background: #2b2b2b;
+            color: #fff;
+        }
+
+        .tab-title {
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            font-size: 13px;
+        }
+
+        .tab-close {
+            width: 25px;
+            height: 25px;
+            flex-shrink: 0;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border: 0;
+            border-radius: 6px;
+
+            background: transparent;
+            color: #888;
+
+            cursor: pointer;
+            font-size: 17px;
+
+            transition:
+                background 140ms ease,
+                color 140ms ease;
+        }
+
+        .tab-close:hover {
+            background: rgba(255,255,255,.1);
+            color: white;
+        }
+
+        .new-tab {
+            width: 38px;
+            height: 34px;
+            flex-shrink: 0;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            margin-bottom: 2px;
+
+            border: 0;
+            border-radius: 9px;
+
+            background: transparent;
+            color: #aaa;
+
+            cursor: pointer;
+            font-size: 24px;
+            line-height: 1;
+
+            transition:
+                background 150ms ease,
+                color 150ms ease,
+                transform 150ms ease;
+        }
+
+        .new-tab:hover {
+            background: #292929;
+            color: white;
+        }
+
+        .new-tab:active {
+            transform: scale(.9);
+        }
+
+        .tab-moving {
+            transition:
+                transform 280ms cubic-bezier(.2,.8,.2,1);
+        }
+
+        .tab-closing {
+            opacity: 0;
+            transform: scale(.92);
+            transition:
+                opacity 180ms ease,
+                transform 180ms ease;
+        }
+
+        .tab-opening {
+            opacity: 0;
+            transform: translateX(12px) scale(.97);
+        }
+
+        /* =========================
+           TOOLBAR
+        ========================= */
+
+        .toolbar {
+            height: 52px;
+            min-height: 52px;
+
+            display: flex;
+            align-items: center;
+            gap: 7px;
+
+            padding: 7px 10px;
+
+            background: #1b1b1b;
+            border-bottom: 1px solid #292929;
+        }
+
+        .nav-button {
+            width: 36px;
+            height: 36px;
+
+            border: 0;
+            border-radius: 9px;
+
+            background: transparent;
+            color: #aaa;
+
+            cursor: pointer;
+            font-size: 18px;
+
+            transition:
+                background 150ms ease,
+                color 150ms ease;
+        }
+
+        .nav-button:hover {
+            background: #292929;
+            color: white;
+        }
+
+        .address-container {
+            flex: 1;
+            height: 36px;
+
+            display: flex;
+            align-items: center;
+
+            padding: 0 14px;
+
+            border-radius: 10px;
+
+            background: #252525;
+            border: 1px solid #303030;
+
+            transition:
+                border-color 150ms ease,
+                background 150ms ease;
+        }
+
+        .address-container:focus-within {
+            background: #202020;
+            border-color: #555;
+        }
+
+        #addressBar {
+            width: 100%;
+            height: 100%;
+
+            border: 0;
+            outline: 0;
+
+            background: transparent;
+            color: white;
+
+            font-size: 14px;
+        }
+
+        #addressBar::placeholder {
+            color: #777;
+        }
+
+        /* =========================
+           PAGE AREA
+        ========================= */
+
+        #pages {
+            position: relative;
+            flex: 1;
+            min-height: 0;
+            background: #111;
+        }
+
+        .tab-page {
+            position: absolute;
+            inset: 0;
+
+            display: none;
+
+            overflow: auto;
+
+            background: #111;
+        }
+
+        .tab-page.active {
+            display: block;
+        }
+
+        /* =========================
+           HOME PAGE
+        ========================= */
+
+        .home {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            padding: 70px 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            margin-bottom: 12px;
+        }
+
+        .logo-circle {
+            width: 48px;
+            height: 48px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border: 3px solid #fff;
+            border-radius: 50%;
+
+            font-size: 22px;
+            font-weight: 800;
+        }
+
+        .logo-text {
+            font-size: 38px;
+            font-weight: 800;
+            letter-spacing: -2px;
+        }
+
+        .home-subtitle {
+            margin-bottom: 30px;
+            color: #777;
+            font-size: 14px;
+        }
+
+        .search-box {
+            width: min(700px, 90%);
+            height: 52px;
+
+            display: flex;
+            align-items: center;
+
+            padding: 0 8px 0 18px;
+
+            border: 1px solid #333;
+            border-radius: 15px;
+
+            background: #1c1c1c;
+
+            transition:
+                border-color 160ms ease,
+                box-shadow 160ms ease;
+        }
+
+        .search-box:focus-within {
+            border-color: #555;
+            box-shadow: 0 0 0 3px rgba(255,255,255,.04);
+        }
+
+        .search-box input {
+            flex: 1;
+
+            border: 0;
+            outline: 0;
+
+            background: transparent;
+            color: white;
+
+            font-size: 15px;
+        }
+
+        .search-button {
+            width: 40px;
+            height: 40px;
+
+            border: 0;
+            border-radius: 11px;
+
+            background: #fff;
+            color: #111;
+
+            cursor: pointer;
+            font-size: 17px;
+        }
+
+        .quick-links {
+            width: min(850px, 95%);
+
+            display: grid;
+            grid-template-columns: repeat(
+                auto-fit,
+                minmax(145px, 1fr)
+            );
+
+            gap: 12px;
+
+            margin-top: 35px;
+        }
+
+        .quick-link {
+            min-height: 100px;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            gap: 9px;
+
+            border: 1px solid #292929;
+            border-radius: 15px;
+
+            background: #191919;
+            color: #ddd;
+
+            cursor: pointer;
+
+            transition:
+                transform 160ms ease,
+                background 160ms ease,
+                border-color 160ms ease;
+        }
+
+        .quick-link:hover {
+            transform: translateY(-2px);
+            background: #222;
+            border-color: #3a3a3a;
+        }
+
+        .quick-icon {
+            font-size: 25px;
+        }
+
+        /* =========================
+           CHOX VIDEO
+        ========================= */
+
+        .video-app {
+            min-height: 100%;
+            display: flex;
+            background: #111;
+        }
+
+        .video-sidebar {
+            width: 210px;
+            flex-shrink: 0;
+
+            padding: 20px 12px;
+
+            background: #161616;
+            border-right: 1px solid #292929;
+        }
+
+        .video-brand {
+            padding: 8px 12px 20px;
+
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .video-nav {
+            width: 100%;
+
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            padding: 11px 12px;
+
+            border: 0;
+            border-radius: 9px;
+
+            background: transparent;
+            color: #aaa;
+
+            cursor: pointer;
+            text-align: left;
+
+            transition:
+                background 150ms ease,
+                color 150ms ease;
+        }
+
+        .video-nav:hover,
+        .video-nav.active {
+            background: #272727;
+            color: white;
+        }
+
+        .video-content {
+            flex: 1;
+            min-width: 0;
+
+            padding: 25px;
+            overflow: auto;
+        }
+
+        .video-heading {
+            margin: 0 0 8px;
+            font-size: 26px;
+        }
+
+        .video-description {
+            margin: 0 0 22px;
+            color: #777;
+        }
+
+        .video-search {
+            width: min(700px, 100%);
+            height: 45px;
+
+            display: flex;
+
+            margin-bottom: 25px;
+        }
+
+        .video-search input {
+            flex: 1;
+
+            padding: 0 14px;
+
+            border: 1px solid #333;
+            border-radius: 9px 0 0 9px;
+
+            outline: 0;
+
+            background: #1c1c1c;
+            color: white;
+        }
+
+        .video-search button {
+            width: 55px;
+
+            border: 0;
+            border-radius: 0 9px 9px 0;
+
+            background: white;
+            color: #111;
+
+            cursor: pointer;
+        }
+
+        .video-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(auto-fill, minmax(240px, 1fr));
+
+            gap: 20px;
+        }
+
+        .video-card {
+            overflow: hidden;
+
+            border: 1px solid #292929;
+            border-radius: 12px;
+
+            background: #181818;
+
+            cursor: pointer;
+
+            transition:
+                transform 160ms ease,
+                border-color 160ms ease;
+        }
+
+        .video-card:hover {
+            transform: translateY(-2px);
+            border-color: #444;
+        }
+
+        .video-thumbnail {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: #222;
+
+            color: #888;
+        }
+
+        .video-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-card-body {
+            padding: 13px;
+        }
+
+        .video-card-title {
+            display: -webkit-box;
+
+            overflow: hidden;
+
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        /* =========================
+           VIDEO PLAYER
+        ========================= */
+
+        .video-player-page {
+            padding: 25px;
+        }
+
+        .video-player {
+            width: min(100%, 1000px);
+            margin: 0 auto;
+        }
+
+        .video-player iframe {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+
+            border: 0;
+            border-radius: 12px;
+
+            background: black;
+        }
+
+        .player-title {
+            margin-top: 18px;
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .back-button {
+            margin-bottom: 15px;
+
+            padding: 9px 13px;
+
+            border: 0;
+            border-radius: 8px;
+
+            background: #252525;
+            color: #ddd;
+
+            cursor: pointer;
+        }
+
+        .back-button:hover {
+            background: #303030;
+        }
+
+        /* =========================
+           IFRAME PAGES
+        ========================= */
+
+        .browser-frame {
+            width: 100%;
+            height: 100%;
+
+            border: 0;
+
+            background: white;
+        }
+
+        /* =========================
+           EMPTY / MESSAGE
+        ========================= */
+
+        .empty-state {
+            padding: 50px 20px;
+
+            text-align: center;
+            color: #666;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 700px) {
+            .tab {
+                min-width: 115px;
+                max-width: 180px;
+            }
+
+            .video-sidebar {
+                width: 65px;
+            }
+
+            .video-brand {
+                font-size: 0;
+                text-align: center;
+            }
+
+            .video-nav {
+                justify-content: center;
+            }
+
+            .video-nav span:last-child {
+                display: none;
+            }
+
+            .video-content {
+                padding: 15px;
+            }
+
+            .home {
+                padding-top: 40px;
+            }
+
+            .logo-text {
+                font-size: 32px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .tab,
+            .tab-moving,
+            .tab-closing,
+            .tab-opening {
+                transition: none !important;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
 <div id="app">
 
-  <!-- =========================
-       TAB BAR
-  ========================== -->
+    <!-- =========================
+         TABS
+    ========================= -->
 
-  <div class="tab-bar">
+    <div class="tab-bar">
 
-    <div id="tabs" class="tabs"></div>
+        <div
+            class="tabs"
+            id="tabs"
+        ></div>
 
-    <button
-      class="new-tab"
-      title="New tab"
-      onclick="createNewTab()"
-    >
-      +
-    </button>
-
-  </div>
-
-
-  <!-- =========================
-       BROWSER TOOLBAR
-  ========================== -->
-
-  <div class="toolbar">
-
-    <button
-      class="toolbar-button"
-      title="Back"
-      onclick="goBack()"
-    >
-      ←
-    </button>
-
-    <button
-      class="toolbar-button"
-      title="Forward"
-      onclick="goForward()"
-    >
-      →
-    </button>
-
-    <button
-      class="toolbar-button"
-      title="Reload"
-      onclick="reloadPage()"
-    >
-      ↻
-    </button>
-
-    <button
-      class="toolbar-button"
-      title="Home"
-      onclick="goHome()"
-    >
-      ⌂
-    </button>
-
-    <div class="address-wrapper">
-
-      <span class="address-icon">🔒</span>
-
-      <input
-        id="address-bar"
-        type="text"
-        placeholder="Search or enter a web address"
-        autocomplete="off"
-        spellcheck="false"
-        onkeydown="handleAddressKey(event)"
-      >
+        <button
+            class="new-tab"
+            id="newTabButton"
+            title="New tab"
+            type="button"
+        >+</button>
 
     </div>
 
-  </div>
+    <!-- =========================
+         TOOLBAR
+    ========================= -->
 
+    <div class="toolbar">
 
-  <!-- =========================
-       CONTENT
-  ========================== -->
+        <button
+            class="nav-button"
+            onclick="goBack()"
+            title="Back"
+            type="button"
+        >←</button>
 
-  <div
-    id="browser-content"
-    class="browser-content"
-  ></div>
+        <button
+            class="nav-button"
+            onclick="goForward()"
+            title="Forward"
+            type="button"
+        >→</button>
+
+        <button
+            class="nav-button"
+            onclick="reloadPage()"
+            title="Reload"
+            type="button"
+        >↻</button>
+
+        <button
+            class="nav-button"
+            onclick="goHome()"
+            title="Home"
+            type="button"
+        >⌂</button>
+
+        <div class="address-container">
+
+            <input
+                id="addressBar"
+                type="text"
+                placeholder="Search or enter address"
+                autocomplete="off"
+                spellcheck="false"
+            >
+
+        </div>
+
+    </div>
+
+    <!-- =========================
+         PAGES
+    ========================= -->
+
+    <div id="pages"></div>
 
 </div>
 
@@ -739,169 +836,179 @@
 <script>
 
 /* =========================================================
-   CHOX STATE
+   CHOX BROWSER
 ========================================================= */
 
 let tabs = [];
 let activeTabId = null;
-let tabCounter = 0;
 
 
 /* =========================================================
-   CREATE TAB
+   INITIALIZE
 ========================================================= */
 
-function createNewTab(url = "") {
+document.addEventListener("DOMContentLoaded", () => {
 
-  tabCounter++;
+    const newTabButton =
+        document.getElementById("newTabButton");
 
-  const id = `tab-${Date.now()}-${tabCounter}`;
-
-  const tab = {
-    id,
-    title: "New Tab",
-    url: "",
-    type: "home",
-    history: [],
-    historyIndex: -1
-  };
-
-  tabs.push(tab);
-
-  createTabButton(tab);
-  createTabPage(tab);
-
-  switchTab(id);
-
-  if (url) {
-    navigate(url);
-  } else {
-    renderHome(tab);
-  }
-}
-
-
-/* =========================================================
-   CREATE TAB BUTTON
-========================================================= */
-
-function createTabButton(tab) {
-
-  const tabsContainer =
-    document.getElementById("tabs");
-
-  const button =
-    document.createElement("div");
-
-  button.className = "tab";
-
-  button.id =
-    `tab-button-${tab.id}`;
-
-  button.innerHTML = `
-    <span class="tab-title"></span>
-    <button
-      class="tab-close"
-      title="Close tab"
-    >
-      ×
-    </button>
-  `;
-
-  button.addEventListener("click", (event) => {
-
-    if (
-      event.target.classList.contains(
-        "tab-close"
-      )
-    ) {
-      closeTab(tab.id);
-      return;
-    }
-
-    switchTab(tab.id);
-  });
-
-  tabsContainer.appendChild(button);
-
-  updateTabButton(tab);
-}
-
-
-/* =========================================================
-   UPDATE TAB BUTTON
-========================================================= */
-
-function updateTabButton(tab) {
-
-  const button =
-    document.getElementById(
-      `tab-button-${tab.id}`
+    newTabButton.addEventListener(
+        "click",
+        createNewTab
     );
 
-  if (!button) return;
+    const addressBar =
+        document.getElementById("addressBar");
 
-  const title =
-    button.querySelector(".tab-title");
+    addressBar.addEventListener(
+        "keydown",
+        event => {
 
-  title.textContent =
-    tab.title || "New Tab";
-}
+            if (event.key === "Enter") {
+                navigateAddress();
+            }
 
+        }
+    );
 
-/* =========================================================
-   CREATE PAGE
-========================================================= */
+    createNewTab();
 
-function createTabPage(tab) {
-
-  const page =
-    document.createElement("div");
-
-  page.className = "tab-page";
-
-  page.id =
-    `tab-page-${tab.id}`;
-
-  document
-    .getElementById("browser-content")
-    .appendChild(page);
-}
+});
 
 
 /* =========================================================
-   SWITCH TAB
+   CREATE NEW TAB
 ========================================================= */
 
-function switchTab(id) {
+function createNewTab() {
 
-  activeTabId = id;
+    const id =
+        "tab-" +
+        Date.now() +
+        "-" +
+        Math.random()
+            .toString(36)
+            .substring(2, 7);
 
-  document
-    .querySelectorAll(".tab")
-    .forEach(button => {
+    const tab = {
 
-      button.classList.toggle(
-        "active",
-        button.id ===
-          `tab-button-${id}`
-      );
+        id: id,
+
+        title: "New Tab",
+
+        url: "chox://home",
+
+        type: "home",
+
+        history: [
+            "chox://home"
+        ],
+
+        historyIndex: 0
+
+    };
+
+    tabs.push(tab);
+
+
+    /* CREATE TAB BUTTON */
+
+    const tabButton =
+        document.createElement("div");
+
+    tabButton.className =
+        "tab tab-opening";
+
+    tabButton.id =
+        id + "-button";
+
+    tabButton.innerHTML = `
+
+        <span class="tab-title">
+            New Tab
+        </span>
+
+        <button
+            class="tab-close"
+            type="button"
+            title="Close tab"
+        >×</button>
+
+    `;
+
+
+    const closeButton =
+        tabButton.querySelector(
+            ".tab-close"
+        );
+
+
+    closeButton.addEventListener(
+        "click",
+        event => {
+
+            event.stopPropagation();
+
+            closeTab(id);
+
+        }
+    );
+
+
+    tabButton.addEventListener(
+        "click",
+        () => {
+
+            switchTab(id);
+
+        }
+    );
+
+
+    const tabsContainer =
+        document.getElementById("tabs");
+
+    tabsContainer.appendChild(
+        tabButton
+    );
+
+
+    /* CREATE PAGE */
+
+    const page =
+        document.createElement("div");
+
+    page.className =
+        "tab-page";
+
+    page.id =
+        id + "-page";
+
+    document
+        .getElementById("pages")
+        .appendChild(page);
+
+
+    /* RENDER HOME */
+
+    renderHome(tab);
+
+
+    /* SWITCH TO TAB */
+
+    switchTab(id);
+
+
+    /* OPENING ANIMATION */
+
+    requestAnimationFrame(() => {
+
+        tabButton.classList.remove(
+            "tab-opening"
+        );
 
     });
 
-  document
-    .querySelectorAll(".tab-page")
-    .forEach(page => {
-
-      page.classList.toggle(
-        "active",
-        page.id ===
-          `tab-page-${id}`
-      );
-
-    });
-
-  updateAddressBar();
 }
 
 
@@ -911,350 +1018,466 @@ function switchTab(id) {
 
 function closeTab(id) {
 
-  const index =
-    tabs.findIndex(
-      tab => tab.id === id
-    );
+    if (tabs.length <= 1) {
 
-  if (index === -1) return;
+        return;
 
-  document
-    .getElementById(`tab-button-${id}`)
-    ?.remove();
+    }
 
-  document
-    .getElementById(`tab-page-${id}`)
-    ?.remove();
 
-  tabs.splice(index, 1);
+    const button =
+        document.getElementById(
+            id + "-button"
+        );
 
-  if (tabs.length === 0) {
-    createNewTab();
-    return;
-  }
+    const page =
+        document.getElementById(
+            id + "-page"
+        );
 
-  if (activeTabId === id) {
 
-    const newIndex =
-      Math.max(
-        0,
-        index - 1
-      );
+    /*
+       Save old positions
+       for smooth FLIP animation.
+    */
 
-    switchTab(
-      tabs[newIndex].id
-    );
-  }
+    const oldPositions =
+        new Map();
+
+    document
+        .querySelectorAll(".tab")
+        .forEach(element => {
+
+            oldPositions.set(
+                element.id,
+                element.getBoundingClientRect().left
+            );
+
+        });
+
+
+    const index =
+        tabs.findIndex(
+            tab => tab.id === id
+        );
+
+
+    const wasActive =
+        activeTabId === id;
+
+
+    tabs.splice(index, 1);
+
+
+    /* CLOSE ANIMATION */
+
+    if (button) {
+
+        button.classList.add(
+            "tab-closing"
+        );
+
+    }
+
+
+    setTimeout(() => {
+
+        if (button) {
+            button.remove();
+        }
+
+        if (page) {
+            page.remove();
+        }
+
+
+        /*
+           Move remaining tabs smoothly
+        */
+
+        document
+            .querySelectorAll(".tab")
+            .forEach(element => {
+
+                const oldLeft =
+                    oldPositions.get(
+                        element.id
+                    );
+
+                if (
+                    oldLeft === undefined
+                ) {
+                    return;
+                }
+
+
+                const newLeft =
+                    element
+                        .getBoundingClientRect()
+                        .left;
+
+
+                const distance =
+                    oldLeft - newLeft;
+
+
+                if (
+                    Math.abs(distance) > 1
+                ) {
+
+                    element.style.transform =
+                        `translateX(${distance}px)`;
+
+                    element.classList.add(
+                        "tab-moving"
+                    );
+
+
+                    requestAnimationFrame(() => {
+
+                        element.style.transform =
+                            "";
+
+                    });
+
+
+                    setTimeout(() => {
+
+                        element.classList.remove(
+                            "tab-moving"
+                        );
+
+                    }, 300);
+
+                }
+
+            });
+
+    }, 180);
+
+
+    /* SELECT ANOTHER TAB */
+
+    if (wasActive) {
+
+        const newIndex =
+            Math.min(
+                index,
+                tabs.length - 1
+            );
+
+
+        const nextTab =
+            tabs[newIndex];
+
+
+        if (nextTab) {
+
+            switchTab(
+                nextTab.id
+            );
+
+        }
+
+    }
+
 }
 
 
 /* =========================================================
-   ACTIVE TAB
+   SWITCH TAB
 ========================================================= */
 
-function getActiveTab() {
+function switchTab(id) {
 
-  return tabs.find(
-    tab => tab.id === activeTabId
-  );
+    const tab =
+        tabs.find(
+            item => item.id === id
+        );
+
+
+    if (!tab) {
+        return;
+    }
+
+
+    activeTabId = id;
+
+
+    /* HIDE ALL PAGES */
+
+    document
+        .querySelectorAll(".tab-page")
+        .forEach(page => {
+
+            page.classList.remove(
+                "active"
+            );
+
+        });
+
+
+    /* DEACTIVATE ALL TABS */
+
+    document
+        .querySelectorAll(".tab")
+        .forEach(button => {
+
+            button.classList.remove(
+                "active"
+            );
+
+        });
+
+
+    /* ACTIVATE PAGE */
+
+    const page =
+        document.getElementById(
+            id + "-page"
+        );
+
+
+    if (page) {
+
+        page.classList.add(
+            "active"
+        );
+
+    }
+
+
+    /* ACTIVATE TAB BUTTON */
+
+    const button =
+        document.getElementById(
+            id + "-button"
+        );
+
+
+    if (button) {
+
+        button.classList.add(
+            "active"
+        );
+
+    }
+
+
+    updateAddressBar();
+
 }
 
 
 /* =========================================================
-   ADDRESS BAR
+   UPDATE TAB BUTTON
+========================================================= */
+
+function updateTabButton(tab) {
+
+    const button =
+        document.getElementById(
+            tab.id + "-button"
+        );
+
+
+    if (!button) {
+        return;
+    }
+
+
+    const title =
+        button.querySelector(
+            ".tab-title"
+        );
+
+
+    if (title) {
+
+        title.textContent =
+            tab.title || "New Tab";
+
+    }
+
+}
+
+
+/* =========================================================
+   UPDATE ADDRESS BAR
 ========================================================= */
 
 function updateAddressBar() {
 
-  const input =
-    document.getElementById(
-      "address-bar"
-    );
-
-  const tab =
-    getActiveTab();
-
-  if (!tab) {
-    input.value = "";
-    return;
-  }
-
-  input.value =
-    tab.url || "";
-}
-
-
-/* =========================================================
-   ADDRESS KEY
-========================================================= */
-
-function handleAddressKey(event) {
-
-  if (event.key !== "Enter") {
-    return;
-  }
-
-  const value =
-    event.target.value.trim();
-
-  if (!value) return;
-
-  openAddress(value);
-}
-
-
-/* =========================================================
-   OPEN ADDRESS
-========================================================= */
-
-function openAddress(value) {
-
-  const tab =
-    getActiveTab();
-
-  if (!tab) return;
-
-  if (
-    value.startsWith(
-      "chox://video"
-    )
-  ) {
-
-    openChoxVideoPage(tab.id);
-    return;
-  }
-
-  let url = value;
-
-  if (
-    !/^https?:\/\//i.test(url)
-  ) {
-
-    if (
-      value.includes(".") &&
-      !value.includes(" ")
-    ) {
-
-      url =
-        "https://" + value;
-
-    } else {
-
-      url =
-        "results.html?q=" +
-        encodeURIComponent(value);
-
-      tab.type = "search";
-      tab.url = url;
-      tab.title = "Search";
-
-      const page =
+    const addressBar =
         document.getElementById(
-          `tab-page-${tab.id}`
+            "addressBar"
         );
 
-      page.innerHTML = `
-        <iframe
-          class="page-frame"
-          src="${url}"
-        ></iframe>
-      `;
 
-      updateTabButton(tab);
-      updateAddressBar();
+    const tab =
+        tabs.find(
+            item =>
+                item.id === activeTabId
+        );
 
-      return;
+
+    if (!tab) {
+        return;
     }
-  }
 
-  navigate(url);
+
+    addressBar.value =
+        tab.url === "chox://home" ||
+        tab.url === "chox://video"
+
+            ? ""
+
+            : tab.url;
+
 }
 
 
 /* =========================================================
-   NAVIGATE
+   HOME PAGE
 ========================================================= */
-
-function navigate(url) {
-
-  const tab =
-    getActiveTab();
-
-  if (!tab) return;
-
-  if (
-    url === "chox://video"
-  ) {
-
-    openChoxVideoPage(tab.id);
-    return;
-  }
-
-  tab.type = "web";
-  tab.url = url;
-  tab.title = url;
-
-  tab.history =
-    tab.history.slice(
-      0,
-      tab.historyIndex + 1
-    );
-
-  tab.history.push(url);
-
-  tab.historyIndex =
-    tab.history.length - 1;
-
-  const page =
-    document.getElementById(
-      `tab-page-${tab.id}`
-    );
-
-  page.innerHTML = `
-    <iframe
-      class="page-frame"
-      src="${escapeAttribute(url)}"
-      sandbox="allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-popups allow-presentation allow-same-origin allow-scripts"
-    ></iframe>
-  `;
-
-  updateTabButton(tab);
-  updateAddressBar();
-}
-
-
-/* =========================================================
-   HOME
-========================================================= */
-
-function goHome() {
-
-  const tab =
-    getActiveTab();
-
-  if (!tab) return;
-
-  renderHome(tab);
-  switchTab(tab.id);
-}
-
 
 function renderHome(tab) {
 
-  tab.type = "home";
-  tab.url = "";
-  tab.title = "New Tab";
+    const page =
+        document.getElementById(
+            tab.id + "-page"
+        );
 
-  const page =
-    document.getElementById(
-      `tab-page-${tab.id}`
-    );
 
-  page.innerHTML = `
+    if (!page) {
+        return;
+    }
 
-    <div class="home-page">
 
-      <div class="home-container">
+    page.innerHTML = `
 
-        <div class="logo-area">
+        <div class="home">
 
-          <div class="logo">
-            LD
-          </div>
+            <div class="logo">
 
-          <div class="brand-name">
-            Chox
-          </div>
+                <div class="logo-circle">
+                    C
+                </div>
 
-          <div class="brand-subtitle">
-            Search. Browse. Watch.
-          </div>
+                <div class="logo-text">
+                    Chox
+                </div>
+
+            </div>
+
+            <div class="home-subtitle">
+                Fast. Simple. Yours.
+            </div>
+
+
+            <div class="search-box">
+
+                <input
+                    id="home-search-${tab.id}"
+                    type="text"
+                    placeholder="Search Chox..."
+                    autocomplete="off"
+                >
+
+                <button
+                    type="button"
+                    onclick="homeSearch('${tab.id}')"
+                >⌕</button>
+
+            </div>
+
+
+            <div class="quick-links">
+
+                <button
+                    class="quick-link"
+                    type="button"
+                    onclick="openChoxVideoPage('${tab.id}')"
+                >
+
+                    <span class="quick-icon">
+                        ▶
+                    </span>
+
+                    <span>
+                        Chox Video
+                    </span>
+
+                </button>
+
+
+                <button
+                    class="quick-link"
+                    type="button"
+                    onclick="focusAddressBar()"
+                >
+
+                    <span class="quick-icon">
+                        🔍
+                    </span>
+
+                    <span>
+                        Search
+                    </span>
+
+                </button>
+
+
+                <button
+                    class="quick-link"
+                    type="button"
+                    onclick="createNewTab()"
+                >
+
+                    <span class="quick-icon">
+                        ＋
+                    </span>
+
+                    <span>
+                        New Tab
+                    </span>
+
+                </button>
+
+            </div>
 
         </div>
 
-
-        <div class="search-box">
-
-          <span class="search-box-icon">
-            🔍
-          </span>
-
-          <input
-            id="home-search"
-            type="text"
-            placeholder="Search the web..."
-            autocomplete="off"
-            onkeydown="handleHomeSearch(event)"
-          >
-
-          <button
-            class="search-button"
-            onclick="performHomeSearch()"
-          >
-            Search
-          </button>
-
-        </div>
+    `;
 
 
-        <div class="quick-links-title">
-          Quick access
-        </div>
+    const searchInput =
+        document.getElementById(
+            "home-search-" + tab.id
+        );
 
 
-        <div class="quick-links">
+    if (searchInput) {
 
-          <button
-            class="quick-link"
-            onclick="openChoxVideoDesktop()"
-          >
-            <span class="quick-icon">
-              ▶
-            </span>
+        searchInput.addEventListener(
+            "keydown",
+            event => {
 
-            <span>
-              Chox Video
-            </span>
-          </button>
+                if (
+                    event.key === "Enter"
+                ) {
 
+                    homeSearch(
+                        tab.id
+                    );
 
-          <button
-            class="quick-link"
-            onclick="focusHomeSearch()"
-          >
-            <span class="quick-icon">
-              🔎
-            </span>
+                }
 
-            <span>
-              Web Search
-            </span>
-          </button>
+            }
+        );
 
+    }
 
-          <button
-            class="quick-link"
-            onclick="openAddress('https://www.google.com')"
-          >
-            <span class="quick-icon">
-              🌐
-            </span>
-
-            <span>
-              Website
-            </span>
-          </button>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  `;
-
-  updateTabButton(tab);
-  updateAddressBar();
 }
 
 
@@ -1262,68 +1485,93 @@ function renderHome(tab) {
    HOME SEARCH
 ========================================================= */
 
-function handleHomeSearch(event) {
+function homeSearch(tabId) {
 
-  if (event.key === "Enter") {
-    performHomeSearch();
-  }
+    const input =
+        document.getElementById(
+            "home-search-" + tabId
+        );
+
+
+    if (!input) {
+        return;
+    }
+
+
+    const query =
+        input.value.trim();
+
+
+    if (!query) {
+        return;
+    }
+
+
+    navigateToSearch(
+        tabId,
+        query
+    );
+
 }
 
 
-function performHomeSearch() {
+/* =========================================================
+   SEARCH
+========================================================= */
 
-  const input =
-    document.getElementById(
-      "home-search"
-    );
+function navigateToSearch(
+    tabId,
+    query
+) {
 
-  if (!input) return;
-
-  const query =
-    input.value.trim();
-
-  if (!query) return;
-
-  const tab =
-    getActiveTab();
-
-  if (!tab) return;
-
-  const url =
-    "results.html?q=" +
-    encodeURIComponent(query);
-
-  tab.type = "search";
-  tab.url = url;
-  tab.title = query;
-
-  const page =
-    document.getElementById(
-      `tab-page-${tab.id}`
-    );
-
-  page.innerHTML = `
-    <iframe
-      class="page-frame"
-      src="${escapeAttribute(url)}"
-    ></iframe>
-  `;
-
-  updateTabButton(tab);
-  updateAddressBar();
-}
+    const tab =
+        tabs.find(
+            item => item.id === tabId
+        );
 
 
-function focusHomeSearch() {
+    if (!tab) {
+        return;
+    }
 
-  const input =
-    document.getElementById(
-      "home-search"
-    );
 
-  if (input) {
-    input.focus();
-  }
+    const encoded =
+        encodeURIComponent(
+            query
+        );
+
+
+    tab.url =
+        "results.html?q=" +
+        encoded;
+
+    tab.type =
+        "search";
+
+    tab.title =
+        "Search: " + query;
+
+
+    const page =
+        document.getElementById(
+            tab.id + "-page"
+        );
+
+
+    page.innerHTML = `
+
+        <iframe
+            class="browser-frame"
+            src="results.html?q=${encoded}"
+        ></iframe>
+
+    `;
+
+
+    updateTabButton(tab);
+
+    switchTab(tab.id);
+
 }
 
 
@@ -1333,200 +1581,177 @@ function focusHomeSearch() {
 
 function openChoxVideoPage(tabId) {
 
-  const tab =
-    tabs.find(
-      item => item.id === tabId
-    );
+    const tab =
+        tabs.find(
+            item => item.id === tabId
+        );
 
-  if (!tab) return;
 
-  tab.type = "chox-video";
-  tab.url = "chox://video";
-  tab.title = "Chox Video";
+    if (!tab) {
+        return;
+    }
 
-  const page =
-    document.getElementById(
-      `tab-page-${tab.id}`
-    );
 
-  page.innerHTML = `
+    tab.type =
+        "chox-video";
 
-    <div class="chox-video-page">
+    tab.url =
+        "chox://video";
 
-      <aside class="cv-sidebar">
+    tab.title =
+        "Chox Video";
 
-        <div class="cv-brand">
 
-          <div class="cv-brand-logo">
-            C
-          </div>
+    const page =
+        document.getElementById(
+            tab.id + "-page"
+        );
 
-          <span>
-            Chox Video
-          </span>
+
+    page.innerHTML = `
+
+        <div class="video-app">
+
+            <aside class="video-sidebar">
+
+                <div class="video-brand">
+                    Chox Video
+                </div>
+
+                <button
+                    class="video-nav active"
+                    onclick="showVideoHome('${tab.id}')"
+                >
+                    🏠
+                    <span>Home</span>
+                </button>
+
+                <button
+                    class="video-nav"
+                    onclick="focusVideoSearch('${tab.id}')"
+                >
+                    🔍
+                    <span>Search</span>
+                </button>
+
+                <button
+                    class="video-nav"
+                    onclick="showVideoMessage('${tab.id}', 'History')"
+                >
+                    🕘
+                    <span>History</span>
+                </button>
+
+                <button
+                    class="video-nav"
+                    onclick="showVideoMessage('${tab.id}', 'Favorites')"
+                >
+                    ★
+                    <span>Favorites</span>
+                </button>
+
+                <button
+                    class="video-nav"
+                    onclick="showVideoMessage('${tab.id}', 'Subscriptions')"
+                >
+                    ♥
+                    <span>Subscriptions</span>
+                </button>
+
+            </aside>
+
+
+            <main class="video-content">
+
+                <h1 class="video-heading">
+                    Chox Video
+                </h1>
+
+                <p class="video-description">
+                    Search and watch supported videos through Chox.
+                </p>
+
+
+                <div class="video-search">
+
+                    <input
+                        id="video-search-${tab.id}"
+                        type="text"
+                        placeholder="Search videos..."
+                        autocomplete="off"
+                    >
+
+                    <button
+                        type="button"
+                        onclick="searchVideos('${tab.id}')"
+                    >⌕</button>
+
+                </div>
+
+
+                <div
+                    id="video-results-${tab.id}"
+                    class="video-grid"
+                >
+
+                    <div class="empty-state">
+                        Search for a video to get started.
+                    </div>
+
+                </div>
+
+            </main>
 
         </div>
 
-
-        <nav class="cv-nav">
-
-          <button
-            class="cv-nav-button active"
-            onclick="cvShowHome('${tab.id}')"
-          >
-            <span>⌂</span>
-            <span>Home</span>
-          </button>
-
-          <button
-            class="cv-nav-button"
-            onclick="cvSearchPrompt('${tab.id}')"
-          >
-            <span>🔎</span>
-            <span>Search</span>
-          </button>
-
-          <button
-            class="cv-nav-button"
-            onclick="cvShowHistory('${tab.id}')"
-          >
-            <span>◷</span>
-            <span>History</span>
-          </button>
-
-          <button
-            class="cv-nav-button"
-            onclick="cvShowFavorites('${tab.id}')"
-          >
-            <span>★</span>
-            <span>Favorites</span>
-          </button>
-
-          <button
-            class="cv-nav-button"
-            onclick="cvShowSubscriptions('${tab.id}')"
-          >
-            <span>♟</span>
-            <span>Subscriptions</span>
-          </button>
-
-        </nav>
-
-      </aside>
+    `;
 
 
-      <main class="cv-main">
-
-        <div class="cv-topbar">
-
-          <div class="cv-search">
-
-            <input
-              id="cv-search-${tab.id}"
-              type="text"
-              placeholder="Search videos..."
-              onkeydown="cvSearchKey(event, '${tab.id}')"
-            >
-
-            <button
-              onclick="cvSearch('${tab.id}')"
-            >
-              🔎
-            </button>
-
-          </div>
-
-        </div>
+    const searchInput =
+        document.getElementById(
+            "video-search-" + tab.id
+        );
 
 
-        <div
-          id="cv-content-${tab.id}"
-          class="cv-content"
-        ></div>
+    if (searchInput) {
 
-      </main>
+        searchInput.addEventListener(
+            "keydown",
+            event => {
 
-    </div>
+                if (
+                    event.key === "Enter"
+                ) {
 
-  `;
+                    searchVideos(
+                        tab.id
+                    );
 
-  updateTabButton(tab);
-  updateAddressBar();
+                }
 
-  switchTab(tab.id);
+            }
+        );
 
-  cvShowHome(tab.id);
+    }
+
+
+    updateTabButton(tab);
+
+    switchTab(tab.id);
+
 }
 
 
 /* =========================================================
-   DESKTOP CHOX VIDEO
+   VIDEO HOME
 ========================================================= */
 
-function openChoxVideoDesktop() {
+function showVideoHome(tabId) {
 
-  if (
-    window.choxDesktop &&
-    typeof window.choxDesktop.openChoxVideo ===
-      "function"
-  ) {
-
-    window.choxDesktop
-      .openChoxVideo("")
-      .catch(console.error);
-
-    return;
-  }
-
-  const tab =
-    getActiveTab();
-
-  if (tab) {
-    openChoxVideoPage(tab.id);
-  }
-}
-
-
-/* =========================================================
-   CHOX VIDEO HOME
-========================================================= */
-
-function cvShowHome(tabId) {
-
-  const content =
-    document.getElementById(
-      `cv-content-${tabId}`
+    openChoxVideoPage(
+        tabId
     );
 
-  if (!content) return;
-
-  content.innerHTML = `
-
-    <div class="cv-heading">
-
-      <h1>
-        Chox Video
-      </h1>
-
-      <p>
-        Browse and watch videos with Chox.
-      </p>
-
-    </div>
-
-
-    <div
-      id="cv-grid-${tabId}"
-      class="cv-video-grid"
-    >
-
-      <div class="cv-empty">
-        Search for a video to get started.
-      </div>
-
-    </div>
-
-  `;
 }
 
 
@@ -1534,207 +1759,193 @@ function cvShowHome(tabId) {
    VIDEO SEARCH
 ========================================================= */
 
-function cvSearchKey(event, tabId) {
+async function searchVideos(tabId) {
 
-  if (event.key === "Enter") {
-    cvSearch(tabId);
-  }
-}
+    const input =
+        document.getElementById(
+            "video-search-" + tabId
+        );
 
-
-async function cvSearch(tabId) {
-
-  const input =
-    document.getElementById(
-      `cv-search-${tabId}`
-    );
-
-  if (!input) return;
-
-  const query =
-    input.value.trim();
-
-  if (!query) return;
-
-  const content =
-    document.getElementById(
-      `cv-content-${tabId}`
-    );
-
-  content.innerHTML = `
-    <div class="cv-empty">
-      Searching...
-    </div>
-  `;
-
-  try {
-
-    const response =
-      await fetch(
-        "/api/search?q=" +
-        encodeURIComponent(
-          query + " site:youtube.com/watch"
-        )
-      );
-
-    if (!response.ok) {
-      throw new Error(
-        "Search request failed"
-      );
-    }
-
-    const data =
-      await response.json();
 
     const results =
-      data.results || [];
+        document.getElementById(
+            "video-results-" + tabId
+        );
 
-    const videos =
-      results.filter(result =>
-        getYouTubeId(result.url)
-      );
 
-    if (!videos.length) {
+    if (!input || !results) {
+        return;
+    }
 
-      content.innerHTML = `
-        <div class="cv-empty">
-          No videos found.
+
+    const query =
+        input.value.trim();
+
+
+    if (!query) {
+        return;
+    }
+
+
+    results.innerHTML = `
+
+        <div class="empty-state">
+            Searching...
         </div>
-      `;
-
-      return;
-    }
-
-    content.innerHTML = `
-
-      <div class="cv-heading">
-
-        <h1>
-          Search results
-        </h1>
-
-        <p>
-          Results for "${escapeHtml(query)}"
-        </p>
-
-      </div>
-
-      <div
-        class="cv-video-grid"
-        id="cv-grid-${tabId}"
-      ></div>
 
     `;
 
-    const grid =
-      document.getElementById(
-        `cv-grid-${tabId}`
-      );
 
-    videos.forEach(video => {
+    try {
 
-      grid.appendChild(
-        createVideoCard(
-          video,
-          tabId
-        )
-      );
-
-    });
-
-  } catch (error) {
-
-    console.error(error);
-
-    content.innerHTML = `
-      <div class="cv-empty">
-        Unable to search right now.
-      </div>
-    `;
-  }
-}
+        const response =
+            await fetch(
+                "/api/search?q=" +
+                encodeURIComponent(
+                    query
+                )
+            );
 
 
-function cvSearchPrompt(tabId) {
-
-  const input =
-    document.getElementById(
-      `cv-search-${tabId}`
-    );
-
-  if (!input) return;
-
-  input.focus();
-}
+        if (!response.ok) {
+            throw new Error(
+                "Search failed"
+            );
+        }
 
 
-/* =========================================================
-   VIDEO CARD
-========================================================= */
+        const data =
+            await response.json();
 
-function createVideoCard(
-  video,
-  tabId
-) {
 
-  const card =
-    document.createElement(
-      "article"
-    );
+        const items =
+            Array.isArray(data)
+                ? data
+                : (
+                    data.results ||
+                    data.web ||
+                    []
+                );
 
-  card.className = "cv-card";
 
-  const videoId =
-    getYouTubeId(video.url);
+        const videoItems =
+            items.filter(item => {
 
-  const thumbnail =
-    videoId
-      ? `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`
-      : "";
+                const url =
+                    item.url ||
+                    item.link ||
+                    "";
 
-  card.innerHTML = `
 
-    <img
-      class="cv-thumb"
-      src="${escapeAttribute(thumbnail)}"
-      alt=""
-      loading="lazy"
-    >
+                return (
+                    url.includes(
+                        "youtube.com/watch"
+                    ) ||
+                    url.includes(
+                        "youtu.be/"
+                    )
+                );
 
-    <div class="cv-card-info">
+            });
 
-      <div class="cv-card-title">
-        ${escapeHtml(
-          video.title || "Untitled video"
-        )}
-      </div>
 
-      <div class="cv-card-description">
-        ${escapeHtml(
-          stripHtml(
-            video.description || ""
-          )
-        )}
-      </div>
+        if (!videoItems.length) {
 
-    </div>
+            results.innerHTML = `
 
-  `;
+                <div class="empty-state">
+                    No supported videos found.
+                </div>
 
-  card.addEventListener(
-    "click",
-    () => {
+            `;
 
-      cvWatch(
-        video.url,
-        video.title,
-        tabId
-      );
+            return;
+
+        }
+
+
+        results.innerHTML =
+            videoItems
+                .map(item => {
+
+                    const url =
+                        item.url ||
+                        item.link ||
+                        "";
+
+
+                    const title =
+                        item.title ||
+                        "Video";
+
+
+                    const videoId =
+                        getYouTubeId(
+                            url
+                        );
+
+
+                    const thumbnail =
+                        videoId
+                            ? `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`
+                            : "";
+
+
+                    return `
+
+                        <div
+                            class="video-card"
+                            onclick="watchVideo('${escapeHtml(videoId || "")}', '${escapeHtml(title)}')"
+                        >
+
+                            <div class="video-thumbnail">
+
+                                ${
+                                    thumbnail
+
+                                    ? `
+                                        <img
+                                            src="${thumbnail}"
+                                            alt=""
+                                        >
+                                      `
+
+                                    : "▶"
+                                }
+
+                            </div>
+
+                            <div class="video-card-body">
+
+                                <div class="video-card-title">
+                                    ${escapeHtml(title)}
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    `;
+
+                })
+                .join("");
+
+
+    } catch (error) {
+
+        console.error(error);
+
+
+        results.innerHTML = `
+
+            <div class="empty-state">
+                Search is unavailable right now.
+            </div>
+
+        `;
 
     }
-  );
 
-  return card;
 }
 
 
@@ -1742,72 +1953,81 @@ function createVideoCard(
    WATCH VIDEO
 ========================================================= */
 
-function cvWatch(
-  url,
-  title,
-  tabId
+function watchVideo(
+    videoId,
+    title
 ) {
 
-  const videoId =
-    getYouTubeId(url);
+    if (!videoId) {
+        return;
+    }
 
-  if (!videoId) return;
 
-  const content =
-    document.getElementById(
-      `cv-content-${tabId}`
-    );
+    const tab =
+        tabs.find(
+            item =>
+                item.id === activeTabId
+        );
 
-  if (!content) return;
 
-  saveVideoHistory({
-    id: videoId,
-    url,
-    title
-  });
+    if (!tab) {
+        return;
+    }
 
-  content.innerHTML = `
 
-    <div class="cv-player">
+    tab.type =
+        "video-player";
 
-      <iframe
-        src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(videoId)}"
-        title="${escapeAttribute(title || "Video")}"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        allowfullscreen
-      ></iframe>
+    tab.title =
+        title || "Video";
 
-      <div class="cv-player-title">
-        ${escapeHtml(
-          title || "Video"
-        )}
-      </div>
+    tab.url =
+        "https://www.youtube.com/watch?v=" +
+        videoId;
 
-      <div class="cv-player-actions">
 
-        <button
-          class="cv-action"
-          onclick='cvToggleFavorite(${JSON.stringify({
-            id: videoId,
-            url,
-            title
-          })})'
-        >
-          ★ Favorite
-        </button>
+    const page =
+        document.getElementById(
+            tab.id + "-page"
+        );
 
-        <button
-          class="cv-action"
-          onclick="cvShowHome('${tabId}')"
-        >
-          ← Back
-        </button>
 
-      </div>
+    page.innerHTML = `
 
-    </div>
+        <div class="video-player-page">
 
-  `;
+            <button
+                class="back-button"
+                onclick="openChoxVideoPage('${tab.id}')"
+            >
+                ← Back to Chox Video
+            </button>
+
+
+            <div class="video-player">
+
+                <iframe
+                    src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(videoId)}"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen
+                ></iframe>
+
+
+                <div class="player-title">
+                    ${escapeHtml(title || "Video")}
+                </div>
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    updateTabButton(tab);
+
+    updateAddressBar();
+
 }
 
 
@@ -1817,411 +2037,239 @@ function cvWatch(
 
 function getYouTubeId(url) {
 
-  try {
+    if (!url) {
+        return null;
+    }
 
-    const parsed =
-      new URL(url);
 
-    if (
-      parsed.hostname.includes(
-        "youtube.com"
-      )
-    ) {
+    try {
 
-      return parsed.searchParams.get(
-        "v"
-      );
+        const parsed =
+            new URL(url);
+
+
+        if (
+            parsed.hostname.includes(
+                "youtube.com"
+            )
+        ) {
+
+            return parsed.searchParams.get(
+                "v"
+            );
+
+        }
+
+
+        if (
+            parsed.hostname.includes(
+                "youtu.be"
+            )
+        ) {
+
+            return parsed.pathname
+                .replace("/", "");
+
+        }
+
+    } catch (error) {
+
+        return null;
 
     }
 
-    if (
-      parsed.hostname ===
-        "youtu.be"
-    ) {
 
-      return parsed.pathname
-        .replace("/", "")
-        .split("/")[0];
-
-    }
-
-  } catch {
     return null;
-  }
 
-  return null;
 }
 
 
 /* =========================================================
-   VIDEO STORAGE
+   ADDRESS NAVIGATION
 ========================================================= */
 
-function getVideoState() {
+function navigateAddress() {
 
-  try {
+    const addressBar =
+        document.getElementById(
+            "addressBar"
+        );
 
-    return JSON.parse(
-      localStorage.getItem(
-        "choxVideoState"
-      ) ||
-      '{"history":[],"favorites":[],"subscriptions":[]}'
+
+    const value =
+        addressBar.value.trim();
+
+
+    if (!value) {
+        return;
+    }
+
+
+    const tab =
+        tabs.find(
+            item =>
+                item.id === activeTabId
+        );
+
+
+    if (!tab) {
+        return;
+    }
+
+
+    if (
+        value === "chox://home"
+    ) {
+
+        goHome();
+
+        return;
+
+    }
+
+
+    if (
+        value === "chox://video"
+    ) {
+
+        openChoxVideoPage(
+            tab.id
+        );
+
+        return;
+
+    }
+
+
+    let url =
+        value;
+
+
+    if (
+        !/^https?:\/\//i.test(
+            url
+        )
+    ) {
+
+        if (
+            url.includes(".") &&
+            !url.includes(" ")
+        ) {
+
+            url =
+                "https://" +
+                url;
+
+        } else {
+
+            navigateToSearch(
+                tab.id,
+                value
+            );
+
+            return;
+
+        }
+
+    }
+
+
+    openWebsite(
+        tab.id,
+        url
     );
 
-  } catch {
-
-    return {
-      history: [],
-      favorites: [],
-      subscriptions: []
-    };
-
-  }
-}
-
-
-function saveVideoState(state) {
-
-  localStorage.setItem(
-    "choxVideoState",
-    JSON.stringify(state)
-  );
 }
 
 
 /* =========================================================
-   HISTORY
+   OPEN WEBSITE
 ========================================================= */
 
-function saveVideoHistory(video) {
-
-  const state =
-    getVideoState();
-
-  state.history =
-    state.history.filter(
-      item =>
-        item.id !== video.id
-    );
-
-  state.history.unshift(video);
-
-  state.history =
-    state.history.slice(
-      0,
-      100
-    );
-
-  saveVideoState(state);
-}
-
-
-function cvShowHistory(tabId) {
-
-  const content =
-    document.getElementById(
-      `cv-content-${tabId}`
-    );
-
-  if (!content) return;
-
-  const state =
-    getVideoState();
-
-  if (!state.history.length) {
-
-    content.innerHTML = `
-      <div class="cv-empty">
-        No watch history yet.
-      </div>
-    `;
-
-    return;
-  }
-
-  content.innerHTML = `
-
-    <div class="cv-heading">
-
-      <h1>
-        History
-      </h1>
-
-    </div>
-
-    <div
-      class="cv-video-grid"
-      id="cv-grid-${tabId}"
-    ></div>
-
-  `;
-
-  const grid =
-    document.getElementById(
-      `cv-grid-${tabId}`
-    );
-
-  state.history.forEach(video => {
-
-    grid.appendChild(
-      createVideoCard(
-        video,
-        tabId
-      )
-    );
-
-  });
-}
-
-
-/* =========================================================
-   FAVORITES
-========================================================= */
-
-function cvToggleFavorite(video) {
-
-  const state =
-    getVideoState();
-
-  const exists =
-    state.favorites.some(
-      item =>
-        item.id === video.id
-    );
-
-  if (exists) {
-
-    state.favorites =
-      state.favorites.filter(
-        item =>
-          item.id !== video.id
-      );
-
-  } else {
-
-    state.favorites.unshift(
-      video
-    );
-
-  }
-
-  saveVideoState(state);
-}
-
-
-function cvShowFavorites(tabId) {
-
-  const content =
-    document.getElementById(
-      `cv-content-${tabId}`
-    );
-
-  if (!content) return;
-
-  const state =
-    getVideoState();
-
-  if (!state.favorites.length) {
-
-    content.innerHTML = `
-      <div class="cv-empty">
-        No favorites yet.
-      </div>
-    `;
-
-    return;
-  }
-
-  content.innerHTML = `
-
-    <div class="cv-heading">
-
-      <h1>
-        Favorites
-      </h1>
-
-    </div>
-
-    <div
-      class="cv-video-grid"
-      id="cv-grid-${tabId}"
-    ></div>
-
-  `;
-
-  const grid =
-    document.getElementById(
-      `cv-grid-${tabId}`
-    );
-
-  state.favorites.forEach(video => {
-
-    grid.appendChild(
-      createVideoCard(
-        video,
-        tabId
-      )
-    );
-
-  });
-}
-
-
-/* =========================================================
-   SUBSCRIPTIONS
-========================================================= */
-
-function cvShowSubscriptions(tabId) {
-
-  const content =
-    document.getElementById(
-      `cv-content-${tabId}`
-    );
-
-  if (!content) return;
-
-  const state =
-    getVideoState();
-
-  if (!state.subscriptions.length) {
-
-    content.innerHTML = `
-      <div class="cv-empty">
-        No subscriptions yet.
-      </div>
-    `;
-
-    return;
-  }
-
-  content.innerHTML = `
-
-    <div class="cv-heading">
-
-      <h1>
-        Subscriptions
-      </h1>
-
-    </div>
-
-    <div class="cv-video-grid">
-
-      ${state.subscriptions
-        .map(subscription => `
-          <div class="cv-card">
-            <div class="cv-card-info">
-              <div class="cv-card-title">
-                ${escapeHtml(
-                  subscription.name
-                )}
-              </div>
-            </div>
-          </div>
-        `)
-        .join("")
-      }
-
-    </div>
-
-  `;
-}
-
-
-/* =========================================================
-   BACK / FORWARD
-========================================================= */
-
-function goBack() {
-
-  const tab =
-    getActiveTab();
-
-  if (!tab) return;
-
-  if (
-    tab.historyIndex <= 0
-  ) {
-    return;
-  }
-
-  tab.historyIndex--;
-
-  const url =
-    tab.history[
-      tab.historyIndex
-    ];
-
-  if (url) {
-    loadHistoryURL(
-      tab,
-      url
-    );
-  }
-}
-
-
-function goForward() {
-
-  const tab =
-    getActiveTab();
-
-  if (!tab) return;
-
-  if (
-    tab.historyIndex >=
-    tab.history.length - 1
-  ) {
-    return;
-  }
-
-  tab.historyIndex++;
-
-  const url =
-    tab.history[
-      tab.historyIndex
-    ];
-
-  if (url) {
-    loadHistoryURL(
-      tab,
-      url
-    );
-  }
-}
-
-
-function loadHistoryURL(
-  tab,
-  url
+function openWebsite(
+    tabId,
+    url
 ) {
 
-  if (
-    url === "chox://video"
-  ) {
+    const tab =
+        tabs.find(
+            item => item.id === tabId
+        );
 
-    openChoxVideoPage(
-      tab.id
-    );
 
-    return;
-  }
+    if (!tab) {
+        return;
+    }
 
-  const page =
-    document.getElementById(
-      `tab-page-${tab.id}`
-    );
 
-  page.innerHTML = `
-    <iframe
-      class="page-frame"
-      src="${escapeAttribute(url)}"
-    ></iframe>
-  `;
+    tab.url =
+        url;
 
-  tab.url = url;
+    tab.type =
+        "website";
 
-  updateTabButton(tab);
-  updateAddressBar();
+    tab.title =
+        url;
+
+
+    const page =
+        document.getElementById(
+            tab.id + "-page"
+        );
+
+
+    page.innerHTML = `
+
+        <iframe
+            class="browser-frame"
+            src="${escapeHtml(url)}"
+            sandbox="allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-presentation allow-same-origin allow-scripts allow-top-navigation-by-user-activation"
+        ></iframe>
+
+    `;
+
+
+    updateTabButton(tab);
+
+    updateAddressBar();
+
+}
+
+
+/* =========================================================
+   HOME
+========================================================= */
+
+function goHome() {
+
+    const tab =
+        tabs.find(
+            item =>
+                item.id === activeTabId
+        );
+
+
+    if (!tab) {
+        return;
+    }
+
+
+    tab.url =
+        "chox://home";
+
+    tab.type =
+        "home";
+
+    tab.title =
+        "New Tab";
+
+
+    renderHome(tab);
+
+    updateTabButton(tab);
+
+    updateAddressBar();
+
 }
 
 
@@ -2231,104 +2279,335 @@ function loadHistoryURL(
 
 function reloadPage() {
 
-  const tab =
-    getActiveTab();
+    const tab =
+        tabs.find(
+            item =>
+                item.id === activeTabId
+        );
 
-  if (!tab) return;
 
-  if (
-    tab.type ===
-    "chox-video"
-  ) {
+    if (!tab) {
+        return;
+    }
 
-    openChoxVideoPage(
-      tab.id
-    );
 
-    return;
-  }
+    if (
+        tab.type === "home"
+    ) {
 
-  if (
-    tab.type ===
-    "home"
-  ) {
+        renderHome(tab);
 
-    renderHome(tab);
-    return;
-  }
+        return;
 
-  if (tab.url) {
+    }
+
+
+    if (
+        tab.type === "chox-video"
+    ) {
+
+        openChoxVideoPage(
+            tab.id
+        );
+
+        return;
+
+    }
+
 
     const page =
-      document.getElementById(
-        `tab-page-${tab.id}`
-      );
+        document.getElementById(
+            tab.id + "-page"
+        );
 
-    page.innerHTML = `
-      <iframe
-        class="page-frame"
-        src="${escapeAttribute(tab.url)}"
-      ></iframe>
-    `;
 
-  }
+    const iframe =
+        page?.querySelector(
+            "iframe"
+        );
+
+
+    if (iframe) {
+
+        iframe.src =
+            iframe.src;
+
+    }
+
 }
 
 
 /* =========================================================
-   UTILITY
+   BACK
+========================================================= */
+
+function goBack() {
+
+    const tab =
+        tabs.find(
+            item =>
+                item.id === activeTabId
+        );
+
+
+    if (!tab) {
+        return;
+    }
+
+
+    const page =
+        document.getElementById(
+            tab.id + "-page"
+        );
+
+
+    const iframe =
+        page?.querySelector(
+            "iframe"
+        );
+
+
+    if (iframe) {
+
+        try {
+
+            iframe.contentWindow.history.back();
+
+        } catch (error) {
+
+            console.log(
+                "Unable to navigate iframe history."
+            );
+
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   FORWARD
+========================================================= */
+
+function goForward() {
+
+    const tab =
+        tabs.find(
+            item =>
+                item.id === activeTabId
+        );
+
+
+    if (!tab) {
+        return;
+    }
+
+
+    const page =
+        document.getElementById(
+            tab.id + "-page"
+        );
+
+
+    const iframe =
+        page?.querySelector(
+            "iframe"
+        );
+
+
+    if (iframe) {
+
+        try {
+
+            iframe.contentWindow.history.forward();
+
+        } catch (error) {
+
+            console.log(
+                "Unable to navigate iframe history."
+            );
+
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   ADDRESS BAR FOCUS
+========================================================= */
+
+function focusAddressBar() {
+
+    const addressBar =
+        document.getElementById(
+            "addressBar"
+        );
+
+
+    addressBar.focus();
+
+    addressBar.select();
+
+}
+
+
+/* =========================================================
+   VIDEO SEARCH FOCUS
+========================================================= */
+
+function focusVideoSearch(tabId) {
+
+    const input =
+        document.getElementById(
+            "video-search-" + tabId
+        );
+
+
+    if (input) {
+
+        input.focus();
+
+    }
+
+}
+
+
+/* =========================================================
+   VIDEO MESSAGE
+========================================================= */
+
+function showVideoMessage(
+    tabId,
+    name
+) {
+
+    const results =
+        document.getElementById(
+            "video-results-" + tabId
+        );
+
+
+    if (!results) {
+        return;
+    }
+
+
+    results.innerHTML = `
+
+        <div class="empty-state">
+
+            <h2>
+                ${escapeHtml(name)}
+            </h2>
+
+            <p>
+                This section is ready for local Chox Video data.
+            </p>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =========================================================
+   ESCAPE HTML
 ========================================================= */
 
 function escapeHtml(value) {
 
-  return String(value)
-    .replace(
-      /&/g,
-      "&amp;"
-    )
-    .replace(
-      /</g,
-      "&lt;"
-    )
-    .replace(
-      />/g,
-      "&gt;"
-    )
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-    .replace(
-      /'/g,
-      "&#039;"
-    );
-}
+    return String(value)
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
 
-
-function escapeAttribute(value) {
-
-  return escapeHtml(value);
-}
-
-
-function stripHtml(value) {
-
-  const div =
-    document.createElement(
-      "div"
-    );
-
-  div.innerHTML = value;
-
-  return div.textContent || "";
 }
 
 
 /* =========================================================
-   START CHOX
+   KEYBOARD SHORTCUTS
 ========================================================= */
 
-createNewTab();
+document.addEventListener(
+    "keydown",
+    event => {
+
+        /*
+           Ctrl + T
+        */
+
+        if (
+            event.ctrlKey &&
+            event.key.toLowerCase() === "t"
+        ) {
+
+            event.preventDefault();
+
+            createNewTab();
+
+        }
+
+
+        /*
+           Ctrl + W
+        */
+
+        if (
+            event.ctrlKey &&
+            event.key.toLowerCase() === "w"
+        ) {
+
+            event.preventDefault();
+
+            if (activeTabId) {
+
+                closeTab(
+                    activeTabId
+                );
+
+            }
+
+        }
+
+
+        /*
+           Ctrl + L
+        */
+
+        if (
+            event.ctrlKey &&
+            event.key.toLowerCase() === "l"
+        ) {
+
+            event.preventDefault();
+
+            focusAddressBar();
+
+        }
+
+    }
+);
 
 </script>
 
