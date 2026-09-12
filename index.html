@@ -1,1274 +1,975 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>Chox Browser</title>
-
-    <meta
-        name="description"
-        content="Chox - Fast, private and customizable browser"
-    >
-
-    <style>
-        :root {
-            --bg: #050505;
-            --bg2: #0a0a0a;
-            --panel: #101010;
-            --panel2: #151515;
-            --panel3: #1b1b1b;
-
-            --red: #e00000;
-            --red2: #ff2020;
-            --red3: #8b0000;
-
-            --text: #f5f5f5;
-            --muted: #8d8d8d;
-            --border: #292929;
-
-            --shadow:
-                0 0 20px rgba(220, 0, 0, 0.10);
-
-            --glow:
-                0 0 18px rgba(255, 0, 0, 0.20);
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        html,
-        body {
-            width: 100%;
-            height: 100%;
-            margin: 0;
-        }
-
-        body {
-            overflow: hidden;
-            background:
-                radial-gradient(
-                    circle at 50% 0%,
-                    rgba(120, 0, 0, 0.14),
-                    transparent 35%
-                ),
-                linear-gradient(
-                    180deg,
-                    #080808 0%,
-                    #030303 100%
-                );
-
-            color: var(--text);
-            font-family:
-                Inter,
-                system-ui,
-                -apple-system,
-                BlinkMacSystemFont,
-                "Segoe UI",
-                sans-serif;
-        }
-
-        button,
-        input {
-            font: inherit;
-        }
-
-        button {
-            color: inherit;
-        }
-
-        /* =========================
-           APP
-        ========================= */
-
-        #app {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* =========================
-           TAB BAR
-        ========================= */
-
-        #tabBar {
-            height: 48px;
-            min-height: 48px;
-
-            display: flex;
-            align-items: flex-end;
-
-            gap: 4px;
-            padding: 7px 8px 0;
-
-            background:
-                linear-gradient(
-                    180deg,
-                    #161616,
-                    #090909
-                );
-
-            border-bottom: 1px solid #242424;
-        }
-
-        .tab {
-            height: 40px;
-            min-width: 145px;
-            max-width: 240px;
-
-            display: flex;
-            align-items: center;
-            gap: 9px;
-
-            padding: 0 10px;
-
-            border: 1px solid #272727;
-            border-bottom: none;
-
-            border-radius: 10px 10px 0 0;
-
-            background:
-                linear-gradient(
-                    180deg,
-                    #161616,
-                    #0b0b0b
-                );
-
-            color: #a8a8a8;
-
-            cursor: pointer;
-
-            transition:
-                background .18s ease,
-                color .18s ease,
-                transform .18s ease;
-        }
-
-        .tab:hover {
-            color: white;
-            background: #181818;
-        }
-
-        .tab.active {
-            color: white;
-
-            background:
-                linear-gradient(
-                    180deg,
-                    #1d1d1d,
-                    #0d0d0d
-                );
-
-            box-shadow:
-                inset 0 2px 0 rgba(255, 0, 0, .7);
-        }
-
-        .tab-icon {
-            width: 23px;
-            height: 23px;
-
-            display: grid;
-            place-items: center;
-
-            border-radius: 7px;
-
-            background:
-                linear-gradient(
-                    145deg,
-                    #ff2222,
-                    #760000
-                );
-
-            box-shadow:
-                0 0 12px rgba(255, 0, 0, .25);
-
-            font-weight: 900;
-            font-size: 12px;
-        }
-
-        .tab-title {
-            flex: 1;
-
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-
-            font-size: 13px;
-        }
-
-        .tab-close {
-            width: 24px;
-            height: 24px;
-
-            border: none;
-            background: transparent;
-
-            border-radius: 6px;
-
-            color: #777;
-
-            cursor: pointer;
-        }
-
-        .tab-close:hover {
-            background: #2b1111;
-            color: white;
-        }
-
-        #newTabButton {
-            width: 40px;
-            height: 40px;
-
-            border: none;
-            background: transparent;
-
-            color: #aaa;
-
-            font-size: 22px;
-
-            cursor: pointer;
-
-            border-radius: 8px;
-        }
-
-        #newTabButton:hover {
-            color: white;
-            background: #171717;
-        }
-
-        /* =========================
-           TOOLBAR
-        ========================= */
-
-        #toolbar {
-            height: 56px;
-            min-height: 56px;
-
-            display: flex;
-            align-items: center;
-
-            gap: 7px;
-
-            padding: 8px 12px;
-
-            background:
-                linear-gradient(
-                    180deg,
-                    #0d0d0d,
-                    #070707
-                );
-
-            border-bottom: 1px solid #1d1d1d;
-        }
-
-        .toolbar-button {
-            width: 35px;
-            height: 35px;
-
-            display: grid;
-            place-items: center;
-
-            border: 1px solid transparent;
-
-            background: transparent;
-
-            border-radius: 9px;
-
-            color: #a0a0a0;
-
-            cursor: pointer;
-
-            font-size: 17px;
-
-            transition: .15s ease;
-        }
-
-        .toolbar-button:hover {
-            color: white;
-
-            background: #151515;
-
-            border-color: #292929;
-        }
-
-        .toolbar-button:active {
-            transform: scale(.94);
-        }
-
-        #addressArea {
-            flex: 1;
-
-            height: 38px;
-
-            display: flex;
-            align-items: center;
-
-            padding: 0 13px;
-
-            border-radius: 12px;
-
-            border: 1px solid #3a1616;
-
-            background:
-                linear-gradient(
-                    180deg,
-                    #111111,
-                    #090909
-                );
-
-            box-shadow:
-                inset 0 1px 0 rgba(255,255,255,.03);
-        }
-
-        #addressIcon {
-            margin-right: 9px;
-            color: #777;
-        }
-
-        #addressBar {
-            width: 100%;
-
-            border: none;
-            outline: none;
-
-            background: transparent;
-
-            color: white;
-
-            font-size: 14px;
-        }
-
-        #addressBar::placeholder {
-            color: #666;
-        }
-
-        #addressArea:focus-within {
-            border-color: #8d1717;
-
-            box-shadow:
-                0 0 14px rgba(255, 0, 0, .12);
-        }
-
-        /* =========================
-           CONTENT
-        ========================= */
-
-        #pageContainer {
-            position: relative;
-
-            flex: 1;
-
-            min-height: 0;
-
-            background: #050505;
-        }
-
-        .page {
-            position: absolute;
-
-            inset: 0;
-
-            display: none;
-
-            overflow: auto;
-
-            background:
-                radial-gradient(
-                    circle at 50% 0%,
-                    rgba(130, 0, 0, .10),
-                    transparent 42%
-                ),
-                #050505;
-        }
-
-        .page.active {
-            display: block;
-        }
-
-        /* =========================
-           HOME
-        ========================= */
-
-        .home {
-            min-height: 100%;
-
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-
-            padding: 70px 25px 50px;
-        }
-
-        .logo {
-            width: 82px;
-            height: 82px;
-
-            display: grid;
-            place-items: center;
-
-            border-radius: 24px;
-
-            background:
-                linear-gradient(
-                    145deg,
-                    #ff2626,
-                    #9c0000 48%,
-                    #3b0000
-                );
-
-            border: 1px solid #ff3434;
-
-            box-shadow:
-                0 0 30px rgba(255, 0, 0, .20),
-                inset 0 1px 0 rgba(255,255,255,.15);
-
-            font-size: 31px;
-            font-weight: 950;
-
-            letter-spacing: -2px;
-
-            margin-bottom: 22px;
-        }
-
-        .brand {
-            font-size: 46px;
-            font-weight: 900;
-
-            letter-spacing: -2px;
-
-            background:
-                linear-gradient(
-                    180deg,
-                    #ffffff,
-                    #a5a5a5
-                );
-
-            -webkit-background-clip: text;
-            background-clip: text;
-
-            color: transparent;
-        }
-
-        .subtitle {
-            color: #777;
-
-            margin-top: 8px;
-
-            font-size: 14px;
-        }
-
-        #homeSearch {
-            width: min(760px, 100%);
-
-            height: 56px;
-
-            display: flex;
-
-            margin-top: 34px;
-
-            padding: 5px;
-
-            border-radius: 17px;
-
-            border: 1px solid #481616;
-
-            background:
-                linear-gradient(
-                    180deg,
-                    #121212,
-                    #080808
-                );
-
-            box-shadow:
-                0 0 30px rgba(255,0,0,.08);
-        }
-
-        #homeSearch input {
-            flex: 1;
-
-            min-width: 0;
-
-            border: none;
-            outline: none;
-
-            background: transparent;
-
-            color: white;
-
-            padding: 0 16px;
-
-            font-size: 16px;
-        }
-
-        #homeSearch button {
-            width: 100px;
-
-            border: none;
-
-            border-radius: 12px;
-
-            background:
-                linear-gradient(
-                    145deg,
-                    #ff2222,
-                    #8d0000
-                );
-
-            color: white;
-
-            font-weight: 800;
-
-            cursor: pointer;
-
-            box-shadow:
-                0 0 15px rgba(255,0,0,.18);
-        }
-
-        #homeSearch button:hover {
-            filter: brightness(1.15);
-        }
-
-        .quick-links {
-            width: min(760px, 100%);
-
-            display: grid;
-
-            grid-template-columns:
-                repeat(4, 1fr);
-
-            gap: 10px;
-
-            margin-top: 22px;
-        }
-
-        .quick-link {
-            min-height: 76px;
-
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-
-            gap: 7px;
-
-            border: 1px solid #242424;
-
-            border-radius: 13px;
-
-            background:
-                linear-gradient(
-                    180deg,
-                    #141414,
-                    #0a0a0a
-                );
-
-            color: #aaa;
-
-            cursor: pointer;
-
-            transition: .18s ease;
-        }
-
-        .quick-link:hover {
-            color: white;
-
-            border-color: #651818;
-
-            transform: translateY(-2px);
-
-            box-shadow:
-                0 8px 25px rgba(0,0,0,.35);
-        }
-
-        .quick-icon {
-            font-size: 20px;
-        }
-
-        .quick-text {
-            font-size: 12px;
-        }
-
-        .home-grid {
-            width: min(900px, 100%);
-
-            display: grid;
-
-            grid-template-columns:
-                repeat(3, 1fr);
-
-            gap: 14px;
-
-            margin-top: 30px;
-        }
-
-        .home-card {
-            min-height: 150px;
-
-            padding: 20px;
-
-            border: 1px solid #252525;
-
-            border-radius: 16px;
-
-            background:
-                linear-gradient(
-                    145deg,
-                    #151515,
-                    #090909
-                );
-
-            box-shadow:
-                var(--shadow);
-        }
-
-        .home-card h3 {
-            margin: 0 0 9px;
-
-            font-size: 15px;
-        }
-
-        .home-card p {
-            margin: 0;
-
-            color: #777;
-
-            line-height: 1.5;
-
-            font-size: 13px;
-        }
-
-        /* =========================
-           SEARCH RESULTS
-        ========================= */
-
-        .results-page {
-            padding: 28px 25px 60px;
-        }
-
-        .results-header {
-            width: min(900px, 100%);
-
-            margin: 0 auto 25px;
-        }
-
-        .results-title {
-            font-size: 24px;
-            font-weight: 800;
-
-            margin-bottom: 7px;
-        }
-
-        .results-query {
-            color: #777;
-
-            font-size: 13px;
-        }
-
-        .result-list {
-            width: min(900px, 100%);
-
-            margin: 0 auto;
-        }
-
-        .result {
-            padding: 19px 20px;
-
-            margin-bottom: 12px;
-
-            border-radius: 14px;
-
-            border: 1px solid #252525;
-
-            background:
-                linear-gradient(
-                    145deg,
-                    #111111,
-                    #080808
-                );
-
-            transition: .18s ease;
-        }
-
-        .result:hover {
-            border-color: #611717;
-
-            box-shadow:
-                0 8px 25px rgba(0,0,0,.25);
-        }
-
-        .result-title {
-            display: block;
-
-            color: #ff4a4a;
-
-            font-size: 17px;
-            font-weight: 750;
-
-            text-decoration: none;
-
-            margin-bottom: 7px;
-        }
-
-        .result-title:hover {
-            color: #ff7a7a;
-        }
-
-        .result-url {
-            color: #777;
-
-            font-size: 12px;
-
-            margin-bottom: 9px;
-
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-        }
-
-        .result-snippet {
-            color: #aaa;
-
-            font-size: 13px;
-
-            line-height: 1.5;
-        }
-
-        .search-message {
-            width: min(700px, 100%);
-
-            margin: 60px auto;
-
-            text-align: center;
-
-            color: #777;
-        }
-
-        .search-message strong {
-            display: block;
-
-            color: white;
-
-            font-size: 20px;
-
-            margin-bottom: 10px;
-        }
-
-        .search-message button {
-            margin-top: 18px;
-
-            border: 1px solid #651818;
-
-            border-radius: 10px;
-
-            padding: 10px 17px;
-
-            background:
-                linear-gradient(
-                    145deg,
-                    #a60000,
-                    #5b0000
-                );
-
-            color: white;
-
-            cursor: pointer;
-        }
-
-        /* =========================
-           EMBEDDED WEBSITE
-        ========================= */
-
-        .browser-page {
-            width: 100%;
-            height: 100%;
-            background: #080808;
-        }
-
-        .browser-frame {
-            width: 100%;
-            height: 100%;
-
-            border: none;
-
-            background: white;
-        }
-
-        /* =========================
-           EMPTY PAGES
-        ========================= */
-
-        .empty-page {
-            min-height: 100%;
-
-            display: flex;
-
-            align-items: center;
-            justify-content: center;
-
-            padding: 30px;
-        }
-
-        .empty-box {
-            width: min(500px, 100%);
-
-            padding: 35px;
-
-            text-align: center;
-
-            border-radius: 18px;
-
-            border: 1px solid #292929;
-
-            background:
-                linear-gradient(
-                    145deg,
-                    #151515,
-                    #080808
-                );
-        }
-
-        .empty-box h2 {
-            margin-top: 0;
-        }
-
-        .empty-box p {
-            color: #777;
-
-            line-height: 1.5;
-        }
-
-        /* =========================
-           SETTINGS
-        ========================= */
-
-        #settingsOverlay {
-            position: fixed;
-
-            inset: 0;
-
-            display: none;
-
-            align-items: center;
-            justify-content: center;
-
-            padding: 20px;
-
-            background:
-                rgba(0,0,0,.72);
-
-            z-index: 1000;
-        }
-
-        #settingsOverlay.open {
-            display: flex;
-        }
-
-        .settings {
-            width: min(550px, 100%);
-
-            max-height: 85vh;
-
-            overflow: auto;
-
-            padding: 25px;
-
-            border: 1px solid #551616;
-
-            border-radius: 20px;
-
-            background:
-                linear-gradient(
-                    145deg,
-                    #171717,
-                    #080808
-                );
-
-            box-shadow:
-                0 20px 80px rgba(0,0,0,.65),
-                0 0 35px rgba(255,0,0,.08);
-        }
-
-        .settings-head {
-            display: flex;
-
-            align-items: center;
-            justify-content: space-between;
-
-            margin-bottom: 22px;
-        }
-
-        .settings-head h2 {
-            margin: 0;
-        }
-
-        .settings-close {
-            width: 34px;
-            height: 34px;
-
-            border: none;
-
-            border-radius: 9px;
-
-            background: #171717;
-
-            color: #aaa;
-
-            cursor: pointer;
-        }
-
-        .settings-row {
-            padding: 16px 0;
-
-            border-top: 1px solid #252525;
-        }
-
-        .settings-row label {
-            display: block;
-
-            margin-bottom: 8px;
-
-            color: #ddd;
-
-            font-weight: 700;
-        }
-
-        .settings-row select {
-            width: 100%;
-
-            padding: 11px;
-
-            border-radius: 9px;
-
-            border: 1px solid #333;
-
-            background: #0c0c0c;
-
-            color: white;
-
-            outline: none;
-        }
-
-        .danger-button {
-            border: 1px solid #691818;
-
-            border-radius: 9px;
-
-            padding: 10px 14px;
-
-            background: #280909;
-
-            color: #ff7777;
-
-            cursor: pointer;
-        }
-
-        /* =========================
-           RESPONSIVE
-        ========================= */
-
-        @media (max-width: 750px) {
-            .quick-links {
-                grid-template-columns:
-                    repeat(2, 1fr);
-            }
-
-            .home-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .brand {
-                font-size: 38px;
-            }
-
-            .tab {
-                min-width: 120px;
-            }
-        }
-
-        @media (max-width: 520px) {
-            #toolbar {
-                gap: 3px;
-                padding: 7px;
-            }
-
-            .toolbar-button {
-                width: 31px;
-                height: 31px;
-            }
-
-            #homeSearch {
-                height: 52px;
-            }
-
-            #homeSearch button {
-                width: 80px;
-            }
-
-            .tab {
-                min-width: 105px;
-            }
-
-            .tab-title {
-                font-size: 11px;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#050505">
+<title>Chox Browser</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #050505;
+    color: #f5f5f5;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+button,
+input {
+    font: inherit;
+}
+
+button {
+    color: inherit;
+}
+
+#app {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background:
+        radial-gradient(circle at top center, rgba(100, 0, 0, .12), transparent 40%),
+        #050505;
+}
+
+/* =========================
+   TABS
+========================= */
+
+#tabs {
+    height: 48px;
+    display: flex;
+    align-items: flex-end;
+    gap: 5px;
+    padding: 7px 8px 0;
+    background: #080808;
+    border-bottom: 1px solid #241010;
+}
+
+.tab {
+    height: 41px;
+    min-width: 155px;
+    max-width: 260px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 0 11px;
+    border: 1px solid #241414;
+    border-bottom: none;
+    border-radius: 9px 9px 0 0;
+    background: #101010;
+    color: #9b9b9b;
+    cursor: pointer;
+    user-select: none;
+    transition: .15s ease;
+}
+
+.tab:hover {
+    background: #171717;
+    color: #fff;
+}
+
+.tab.active {
+    background: #151515;
+    color: #fff;
+    border-color: #4a1515;
+    box-shadow: 0 -2px 12px rgba(100, 0, 0, .12);
+}
+
+.tab-title {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: 13px;
+}
+
+.tab-close {
+    width: 22px;
+    height: 22px;
+    border: 0;
+    border-radius: 5px;
+    background: transparent;
+    color: #777;
+    cursor: pointer;
+}
+
+.tab-close:hover {
+    background: #2b1111;
+    color: #fff;
+}
+
+#newTabButton {
+    width: 38px;
+    height: 38px;
+    margin-bottom: 2px;
+    border: 1px solid #351313;
+    border-radius: 8px;
+    background: #111;
+    color: #ddd;
+    font-size: 21px;
+    cursor: pointer;
+}
+
+#newTabButton:hover {
+    background: #291010;
+    border-color: #6e2020;
+}
+
+/* =========================
+   TOOLBAR
+========================= */
+
+#toolbar {
+    height: 54px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 10px;
+    background: #0b0b0b;
+    border-bottom: 1px solid #211010;
+}
+
+.tool {
+    width: 36px;
+    height: 36px;
+    border: 1px solid #211212;
+    border-radius: 8px;
+    background: #111;
+    color: #bdbdbd;
+    cursor: pointer;
+    font-size: 17px;
+    transition: .15s ease;
+}
+
+.tool:hover {
+    background: #281010;
+    border-color: #5b1919;
+    color: #fff;
+}
+
+.tool:disabled {
+    opacity: .35;
+    cursor: default;
+}
+
+#addressArea {
+    flex: 1;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 11px;
+    border: 1px solid #291414;
+    border-radius: 9px;
+    background: #101010;
+}
+
+#securityIcon {
+    color: #777;
+    font-size: 14px;
+}
+
+#addressBar {
+    width: 100%;
+    height: 32px;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: #eee;
+    font-size: 14px;
+}
+
+#addressBar::placeholder {
+    color: #626262;
+}
+
+/* =========================
+   CONTENT
+========================= */
+
+#content {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    background: #050505;
+}
+
+.page {
+    width: 100%;
+    height: 100%;
+    display: none;
+    overflow: auto;
+}
+
+.page.active {
+    display: block;
+}
+
+/* =========================
+   HOME
+========================= */
+
+#homePage {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    overflow: auto;
+}
+
+#homePage.active {
+    display: flex;
+}
+
+.home {
+    width: min(850px, 92%);
+    text-align: center;
+    padding: 50px 20px;
+}
+
+.logo {
+    width: 78px;
+    height: 78px;
+    margin: 0 auto 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #8b2020;
+    border-radius: 50%;
+    background:
+        radial-gradient(circle, #421010, #160808 65%, #080808);
+    box-shadow:
+        0 0 25px rgba(130, 0, 0, .28),
+        inset 0 0 20px rgba(150, 0, 0, .12);
+    color: #fff;
+    font-size: 29px;
+    font-weight: 900;
+    letter-spacing: -4px;
+}
+
+.brand {
+    font-size: 47px;
+    font-weight: 900;
+    letter-spacing: 7px;
+    margin-left: 7px;
+}
+
+.subtitle {
+    margin-top: 7px;
+    color: #777;
+    font-size: 14px;
+}
+
+.searchBox {
+    width: min(700px, 100%);
+    height: 55px;
+    margin: 31px auto 0;
+    display: flex;
+    align-items: center;
+    padding: 0 8px 0 18px;
+    border: 1px solid #431515;
+    border-radius: 13px;
+    background: #0e0e0e;
+    box-shadow:
+        0 0 25px rgba(100, 0, 0, .10),
+        inset 0 0 10px rgba(255, 255, 255, .015);
+}
+
+.searchBox:focus-within {
+    border-color: #7d2020;
+    box-shadow: 0 0 25px rgba(130, 0, 0, .18);
+}
+
+#homeSearch {
+    flex: 1;
+    height: 45px;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: #fff;
+    font-size: 16px;
+}
+
+#homeSearch::placeholder {
+    color: #666;
+}
+
+.searchButton {
+    height: 41px;
+    padding: 0 21px;
+    border: 1px solid #762020;
+    border-radius: 9px;
+    background: linear-gradient(#671b1b, #320d0d);
+    color: white;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.searchButton:hover {
+    background: linear-gradient(#822323, #481111);
+}
+
+.quickLinks {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 28px;
+}
+
+.quick {
+    padding: 10px 15px;
+    border: 1px solid #271313;
+    border-radius: 8px;
+    background: #0d0d0d;
+    color: #999;
+    cursor: pointer;
+}
+
+.quick:hover {
+    color: #fff;
+    background: #1b0b0b;
+    border-color: #571919;
+}
+
+/* =========================
+   SEARCH PAGE
+========================= */
+
+.searchPage {
+    padding: 35px;
+}
+
+.searchHeader {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.searchHeader h1 {
+    margin: 0 0 8px;
+    font-size: 26px;
+}
+
+.searchHeader p {
+    color: #777;
+    margin: 0 0 25px;
+}
+
+.searchAction {
+    padding: 18px;
+    border: 1px solid #391414;
+    border-radius: 12px;
+    background: #0d0d0d;
+}
+
+.searchAction strong {
+    display: block;
+    margin-bottom: 8px;
+}
+
+.searchAction span {
+    display: block;
+    color: #777;
+    font-size: 13px;
+    margin-bottom: 15px;
+}
+
+.redButton {
+    padding: 11px 17px;
+    border: 1px solid #762020;
+    border-radius: 8px;
+    background: linear-gradient(#651b1b, #330d0d);
+    color: #fff;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.redButton:hover {
+    background: linear-gradient(#822323, #481111);
+}
+
+/* =========================
+   VIDEO
+========================= */
+
+.videoPage {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.videoTop {
+    padding: 20px;
+    border-bottom: 1px solid #211010;
+    background: #090909;
+}
+
+.videoTop h2 {
+    margin: 0 0 13px;
+}
+
+.videoSearch {
+    width: min(650px, 100%);
+    height: 42px;
+    padding: 0 14px;
+    border: 1px solid #351414;
+    border-radius: 8px;
+    background: #111;
+    color: white;
+    outline: none;
+}
+
+.videoBody {
+    flex: 1;
+    overflow: auto;
+    padding: 25px;
+}
+
+.videoWelcome {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 30px;
+    border: 1px solid #321414;
+    border-radius: 12px;
+    background: #0b0b0b;
+}
+
+.videoWelcome h3 {
+    margin-top: 0;
+}
+
+.videoWelcome p {
+    color: #777;
+    line-height: 1.6;
+}
+
+/* =========================
+   AI
+========================= */
+
+.aiPage {
+    padding: 35px;
+}
+
+.aiCard {
+    max-width: 850px;
+    margin: 0 auto;
+    padding: 30px;
+    border: 1px solid #3a1515;
+    border-radius: 14px;
+    background: #0c0c0c;
+}
+
+.aiCard h2 {
+    margin-top: 0;
+}
+
+.aiCard p {
+    color: #888;
+    line-height: 1.6;
+}
+
+.aiNotice {
+    padding: 15px;
+    border-left: 3px solid #7d2020;
+    background: #160909;
+    color: #aaa;
+}
+
+/* =========================
+   WEBSITE FRAME
+========================= */
+
+#browserFrame {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: #fff;
+    display: none;
+}
+
+#browserFrame.visible {
+    display: block;
+}
+
+/* =========================
+   SETTINGS
+========================= */
+
+#settingsOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, .78);
+    backdrop-filter: blur(5px);
+}
+
+#settingsOverlay.visible {
+    display: flex;
+}
+
+.settings {
+    width: min(650px, 92%);
+    max-height: 85vh;
+    overflow: auto;
+    padding: 26px;
+    border: 1px solid #4a1717;
+    border-radius: 14px;
+    background: #0d0d0d;
+    box-shadow: 0 20px 80px rgba(0,0,0,.7);
+}
+
+.settingsHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.settingsHeader h2 {
+    margin: 0;
+}
+
+.closeSettings {
+    width: 35px;
+    height: 35px;
+    border: 0;
+    border-radius: 7px;
+    background: #171717;
+    color: #aaa;
+    cursor: pointer;
+}
+
+.setting {
+    margin-top: 22px;
+    padding: 16px;
+    border: 1px solid #211212;
+    border-radius: 10px;
+    background: #101010;
+}
+
+.setting strong {
+    display: block;
+    margin-bottom: 6px;
+}
+
+.setting p {
+    margin: 0 0 12px;
+    color: #777;
+    font-size: 13px;
+}
+
+.setting button {
+    padding: 9px 13px;
+    border: 1px solid #351414;
+    border-radius: 7px;
+    background: #161616;
+    cursor: pointer;
+}
+
+.setting button:hover {
+    background: #291010;
+}
+
+/* =========================
+   MENU
+========================= */
+
+#menu {
+    position: fixed;
+    z-index: 900;
+    top: 104px;
+    right: 12px;
+    width: 190px;
+    display: none;
+    padding: 6px;
+    border: 1px solid #421515;
+    border-radius: 10px;
+    background: #101010;
+    box-shadow: 0 15px 40px rgba(0,0,0,.6);
+}
+
+#menu.visible {
+    display: block;
+}
+
+.menuItem {
+    width: 100%;
+    padding: 11px;
+    border: 0;
+    border-radius: 7px;
+    background: transparent;
+    color: #bbb;
+    text-align: left;
+    cursor: pointer;
+}
+
+.menuItem:hover {
+    background: #241010;
+    color: #fff;
+}
+
+/* =========================
+   TOAST
+========================= */
+
+#toast {
+    position: fixed;
+    left: 50%;
+    bottom: 25px;
+    z-index: 2000;
+    transform: translateX(-50%) translateY(20px);
+    padding: 11px 16px;
+    border: 1px solid #531919;
+    border-radius: 8px;
+    background: #151515;
+    color: #eee;
+    opacity: 0;
+    pointer-events: none;
+    transition: .2s ease;
+}
+
+#toast.visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 700px) {
+    #tabs {
+        overflow-x: auto;
+    }
+
+    .tab {
+        min-width: 135px;
+    }
+
+    #toolbar {
+        gap: 4px;
+    }
+
+    .tool {
+        width: 32px;
+        height: 32px;
+    }
+
+    .brand {
+        font-size: 35px;
+    }
+
+    .home {
+        padding-top: 25px;
+    }
+
+    .searchBox {
+        height: auto;
+        padding: 8px;
+        flex-wrap: wrap;
+    }
+
+    #homeSearch {
+        width: 100%;
+        flex-basis: 100%;
+    }
+
+    .searchButton {
+        width: 100%;
+    }
+}
+</style>
 </head>
 
 <body>
 
 <div id="app">
 
-    <!-- =========================
-         TAB BAR
-    ========================== -->
+    <!-- TABS -->
+    <div id="tabs"></div>
 
-    <div id="tabBar">
-
-        <div
-            class="tab active"
-            data-tab-id="1"
-            onclick="switchTab(1)"
-        >
-            <div class="tab-icon">C</div>
-
-            <div class="tab-title">
-                New Tab
-            </div>
-
-            <button
-                class="tab-close"
-                onclick="event.stopPropagation(); closeTab(1)"
-                title="Close tab"
-            >
-                ×
-            </button>
-        </div>
-
-        <button
-            id="newTabButton"
-            onclick="createNewTab()"
-            title="New tab"
-        >
-            +
-        </button>
-
-    </div>
-
-
-    <!-- =========================
-         TOOLBAR
-    ========================== -->
-
+    <!-- TOOLBAR -->
     <div id="toolbar">
 
-        <button
-            class="toolbar-button"
-            onclick="goBack()"
-            title="Back"
-        >
-            ←
-        </button>
-
-        <button
-            class="toolbar-button"
-            onclick="goForward()"
-            title="Forward"
-        >
-            →
-        </button>
-
-        <button
-            class="toolbar-button"
-            onclick="reloadPage()"
-            title="Reload"
-        >
-            ↻
-        </button>
-
-        <button
-            class="toolbar-button"
-            onclick="goHome()"
-            title="Home"
-        >
-            ⌂
-        </button>
-
+        <button class="tool" id="backButton" title="Back">←</button>
+        <button class="tool" id="forwardButton" title="Forward">→</button>
+        <button class="tool" id="reloadButton" title="Reload">↻</button>
+        <button class="tool" id="homeButton" title="Home">⌂</button>
 
         <div id="addressArea">
-
-            <span id="addressIcon">
-                ◉
-            </span>
-
+            <span id="securityIcon">◉</span>
             <input
                 id="addressBar"
                 type="text"
-                placeholder="Search or enter a website"
+                placeholder="Search Chox or enter a website"
                 autocomplete="off"
                 spellcheck="false"
-                onkeydown="addressKeyDown(event)"
             >
-
         </div>
 
-
-        <button
-            class="toolbar-button"
-            onclick="toggleBookmark()"
-            title="Bookmark"
-        >
-            ☆
-        </button>
-
-        <button
-            class="toolbar-button"
-            onclick="openSettings()"
-            title="Settings"
-        >
-            ⚙
-        </button>
-
-        <button
-            class="toolbar-button"
-            onclick="openHistory()"
-            title="History"
-        >
-            ⋮
-        </button>
+        <button class="tool" id="bookmarkButton" title="Bookmark">☆</button>
+        <button class="tool" id="settingsButton" title="Settings">⚙</button>
+        <button class="tool" id="menuButton" title="Menu">⋮</button>
 
     </div>
 
+    <!-- CONTENT -->
+    <main id="content">
 
-    <!-- =========================
-         PAGES
-    ========================== -->
+        <!-- HOME -->
+        <section class="page active" id="homePage">
 
-    <div id="pageContainer">
+            <div class="home">
 
-        <div
-            id="page-1"
-            class="page active"
-        ></div>
+                <div class="logo">CH</div>
 
-    </div>
+                <div class="brand">CHOX</div>
+
+                <div class="subtitle">
+                    A simple, fast and private web experience
+                </div>
+
+                <form class="searchBox" id="homeSearchForm">
+
+                    <input
+                        id="homeSearch"
+                        type="text"
+                        placeholder="Search the web..."
+                        autocomplete="off"
+                        spellcheck="false"
+                    >
+
+                    <button class="searchButton" type="submit">
+                        Search
+                    </button>
+
+                </form>
+
+                <div class="quickLinks">
+
+                    <button class="quick" data-url="https://www.google.com">
+                        Google
+                    </button>
+
+                    <button class="quick" data-url="https://www.wikipedia.org">
+                        Wikipedia
+                    </button>
+
+                    <button class="quick" data-url="https://www.youtube.com">
+                        YouTube
+                    </button>
+
+                    <button class="quick" data-url="https://www.github.com">
+                        GitHub
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- SEARCH -->
+        <section class="page" id="searchPage">
+
+            <div class="searchPage">
+
+                <div class="searchHeader">
+
+                    <h1 id="searchTitle">
+                        Chox Search
+                    </h1>
+
+                    <p id="searchDescription">
+                        Search the web with SearXNG.
+                    </p>
+
+                    <div class="searchAction">
+
+                        <strong>
+                            Your search is ready.
+                        </strong>
+
+                        <span id="searchQueryText">
+                            Search query
+                        </span>
+
+                        <button class="redButton" id="openSearchButton">
+                            Open Search Results
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- VIDEO -->
+        <section class="page" id="videoPage">
+
+            <div class="videoPage">
+
+                <div class="videoTop">
+
+                    <h2>🎬 Chox Video</h2>
+
+                    <form id="videoSearchForm">
+
+                        <input
+                            class="videoSearch"
+                            id="videoSearch"
+                            type="text"
+                            placeholder="Search YouTube..."
+                            autocomplete="off"
+                        >
+
+                    </form>
+
+                </div>
+
+                <div class="videoBody">
+
+                    <div class="videoWelcome">
+
+                        <h3>Welcome to Chox Video</h3>
+
+                        <p>
+                            Search for videos using Chox. Searches open
+                            YouTube results in a normal browser page so
+                            Chox doesn't depend on a fragile API or proxy.
+                        </p>
+
+                        <button class="redButton" id="youtubeButton">
+                            Open YouTube
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- AI -->
+        <section class="page" id="aiPage">
+
+            <div class="aiPage">
+
+                <div class="aiCard">
+
+                    <h2>🤖 Chox AI</h2>
+
+                    <p>
+                        Chox AI can be connected to your AI backend later.
+                    </p>
+
+                    <div class="aiNotice">
+                        Your AI backend should be hosted separately from
+                        GitHub Pages. Never put a private API key directly
+                        inside this HTML file.
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- EXTERNAL WEBSITE FRAME -->
+        <iframe
+            id="browserFrame"
+            title="Chox Web View"
+            sandbox="allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-presentation allow-same-origin allow-scripts"
+        ></iframe>
+
+    </main>
 
 </div>
 
-
-<!-- =========================
-     SETTINGS
-========================== -->
-
-<div
-    id="settingsOverlay"
-    onclick="settingsBackgroundClick(event)"
->
+<!-- SETTINGS -->
+<div id="settingsOverlay">
 
     <div class="settings">
 
-        <div class="settings-head">
+        <div class="settingsHeader">
 
-            <h2>
-                Chox Settings
-            </h2>
+            <h2>Chox Settings</h2>
 
-            <button
-                class="settings-close"
-                onclick="closeSettings()"
-            >
+            <button class="closeSettings" id="closeSettings">
                 ×
             </button>
 
         </div>
 
+        <div class="setting">
 
-        <div class="settings-row">
+            <strong>Home page</strong>
 
-            <label>
-                Search provider
-            </label>
+            <p>
+                Return to the Chox homepage.
+            </p>
 
-            <select id="searchProvider">
-
-                <option value="searx">
-                    SearXNG
-                </option>
-
-            </select>
-
-        </div>
-
-
-        <div class="settings-row">
-
-            <label>
-                SearXNG instance
-            </label>
-
-            <select
-                id="searxInstance"
-                onchange="saveSettings()"
-            >
-
-                <option value="https://searx.tiekoetter.com">
-                    searx.tiekoetter.com
-                </option>
-
-                <option value="https://search.catboy.house">
-                    search.catboy.house
-                </option>
-
-                <option value="https://search.ctq.ro">
-                    search.ctq.ro
-                </option>
-
-                <option value="https://search.lumy.live">
-                    search.lumy.live
-                </option>
-
-            </select>
-
-        </div>
-
-
-        <div class="settings-row">
-
-            <label>
-                Quick links
-            </label>
-
-            <select
-                id="quickLinksSetting"
-                onchange="saveSettings()"
-            >
-
-                <option value="show">
-                    Show
-                </option>
-
-                <option value="hide">
-                    Hide
-                </option>
-
-            </select>
-
-        </div>
-
-
-        <div class="settings-row">
-
-            <button
-                class="danger-button"
-                onclick="clearHistory()"
-            >
-                Clear browsing history
+            <button id="settingHome">
+                Go Home
             </button>
+
+        </div>
+
+        <div class="setting">
+
+            <strong>Bookmarks</strong>
+
+            <p id="bookmarkCount">
+                0 bookmarks
+            </p>
+
+            <button id="clearBookmarks">
+                Clear Bookmarks
+            </button>
+
+        </div>
+
+        <div class="setting">
+
+            <strong>History</strong>
+
+            <p id="historyCount">
+                0 history items
+            </p>
+
+            <button id="clearHistory">
+                Clear History
+            </button>
+
+        </div>
+
+        <div class="setting">
+
+            <strong>About Chox</strong>
+
+            <p>
+                Chox is a browser-style web interface designed
+                for a lightweight browsing experience.
+            </p>
 
         </div>
 
@@ -1276,2108 +977,1090 @@
 
 </div>
 
+<!-- MENU -->
+<div id="menu">
+
+    <button class="menuItem" id="menuNewTab">
+        New Tab
+    </button>
+
+    <button class="menuItem" id="menuBookmark">
+        Bookmark Page
+    </button>
+
+    <button class="menuItem" id="menuSettings">
+        Settings
+    </button>
+
+    <button class="menuItem" id="menuHome">
+        Home
+    </button>
+
+</div>
+
+<div id="toast"></div>
 
 <script>
-/* =========================================================
-   CHOX BROWSER CORE
-   Everything is contained in this file.
-========================================================= */
+/*
+    CHOX BROWSER
+    Self-contained GitHub Pages version.
 
-"use strict";
+    IMPORTANT:
+    This file intentionally does not load script.js.
+*/
 
+const SEARXNG = "https://searx.tiekoetter.com/search";
 
-/* =========================================================
-   STATE
-========================================================= */
+const HOME_URL = "chox-home://home";
 
-const tabs = new Map();
+let tabs = [];
+let activeTabId = null;
 
-let activeTabId = 1;
+let bookmarks = JSON.parse(
+    localStorage.getItem("choxBookmarks") || "[]"
+);
 
-let nextTabId = 2;
+let historyItems = JSON.parse(
+    localStorage.getItem("choxHistory") || "[]"
+);
 
-let searchHistory = [];
+let tabCounter = 0;
 
-let bookmarks = [];
+const tabsElement = document.getElementById("tabs");
+const contentElement = document.getElementById("content");
 
-let settings = {
-    searchProvider: "searx",
-    searxInstance: "https://searx.tiekoetter.com",
-    quickLinks: "show"
-};
+const homePage = document.getElementById("homePage");
+const searchPage = document.getElementById("searchPage");
+const videoPage = document.getElementById("videoPage");
+const aiPage = document.getElementById("aiPage");
 
+const browserFrame = document.getElementById("browserFrame");
 
-/* =========================================================
-   LOAD SAVED DATA
-========================================================= */
+const addressBar = document.getElementById("addressBar");
 
-function loadSavedData() {
+const backButton = document.getElementById("backButton");
+const forwardButton = document.getElementById("forwardButton");
+const reloadButton = document.getElementById("reloadButton");
+const homeButton = document.getElementById("homeButton");
+const bookmarkButton = document.getElementById("bookmarkButton");
+const settingsButton = document.getElementById("settingsButton");
+const menuButton = document.getElementById("menuButton");
 
-    try {
+const settingsOverlay =
+    document.getElementById("settingsOverlay");
 
-        searchHistory =
-            JSON.parse(
-                localStorage.getItem("choxHistory") || "[]"
-            );
+const menu =
+    document.getElementById("menu");
 
-    } catch {
+const toast =
+    document.getElementById("toast");
 
-        searchHistory = [];
-
-    }
-
-
-    try {
-
-        bookmarks =
-            JSON.parse(
-                localStorage.getItem("choxBookmarks") || "[]"
-            );
-
-    } catch {
-
-        bookmarks = [];
-
-    }
-
-
-    try {
-
-        const saved =
-            JSON.parse(
-                localStorage.getItem("choxSettings") || "{}"
-            );
-
-        settings = {
-            ...settings,
-            ...saved
-        };
-
-    } catch {}
-
+function makeId() {
+    tabCounter++;
+    return Date.now().toString(36) + "-" + tabCounter;
 }
 
+function createTab(url = HOME_URL, title = "New Tab") {
 
-/* =========================================================
-   SAVE DATA
-========================================================= */
+    const tab = {
+        id: makeId(),
+        title,
+        url,
+        history: [url],
+        historyIndex: 0
+    };
 
-function saveData() {
+    tabs.push(tab);
+    activeTabId = tab.id;
+
+    renderTabs();
+    renderActiveTab();
+
+    return tab;
+}
+
+function getActiveTab() {
+    return tabs.find(tab => tab.id === activeTabId);
+}
+
+function renderTabs() {
+
+    tabsElement.innerHTML = "";
+
+    tabs.forEach(tab => {
+
+        const element = document.createElement("div");
+
+        element.className =
+            "tab" +
+            (tab.id === activeTabId ? " active" : "");
+
+        element.dataset.id = tab.id;
+
+        const title = document.createElement("div");
+
+        title.className = "tab-title";
+        title.textContent = tab.title;
+
+        const close = document.createElement("button");
+
+        close.className = "tab-close";
+        close.textContent = "×";
+        close.title = "Close tab";
+
+        close.addEventListener("click", event => {
+
+            event.stopPropagation();
+
+            closeTab(tab.id);
+
+        });
+
+        element.appendChild(title);
+        element.appendChild(close);
+
+        element.addEventListener("click", () => {
+
+            activeTabId = tab.id;
+
+            renderTabs();
+            renderActiveTab();
+
+        });
+
+        tabsElement.appendChild(element);
+
+    });
+
+    const newButton =
+        document.createElement("button");
+
+    newButton.id = "newTabButton";
+    newButton.textContent = "+";
+    newButton.title = "New tab";
+
+    newButton.addEventListener("click", () => {
+        createTab();
+    });
+
+    tabsElement.appendChild(newButton);
+}
+
+function closeTab(id) {
+
+    if (tabs.length === 1) {
+
+        tabs[0].title = "New Tab";
+        tabs[0].url = HOME_URL;
+        tabs[0].history = [HOME_URL];
+        tabs[0].historyIndex = 0;
+
+        activeTabId = tabs[0].id;
+
+    } else {
+
+        const index =
+            tabs.findIndex(tab => tab.id === id);
+
+        tabs =
+            tabs.filter(tab => tab.id !== id);
+
+        if (activeTabId === id) {
+
+            const newIndex =
+                Math.max(0, index - 1);
+
+            activeTabId =
+                tabs[newIndex].id;
+
+        }
+
+    }
+
+    renderTabs();
+    renderActiveTab();
+}
+
+function hideAllPages() {
+
+    homePage.classList.remove("active");
+    searchPage.classList.remove("active");
+    videoPage.classList.remove("active");
+    aiPage.classList.remove("active");
+
+    browserFrame.classList.remove("visible");
+}
+
+function renderActiveTab() {
+
+    const tab = getActiveTab();
+
+    if (!tab) return;
+
+    hideAllPages();
+
+    addressBar.value =
+        tab.url === HOME_URL ? "" : tab.url;
+
+    updateNavigationButtons();
+
+    if (tab.url === HOME_URL) {
+
+        tab.title = "New Tab";
+
+        homePage.classList.add("active");
+
+        return;
+    }
+
+    if (tab.url.startsWith("chox-search://")) {
+
+        searchPage.classList.add("active");
+
+        const query =
+            decodeURIComponent(
+                tab.url.replace("chox-search://", "")
+            );
+
+        document.getElementById(
+            "searchQueryText"
+        ).textContent = query;
+
+        document.getElementById(
+            "searchTitle"
+        ).textContent = "Search: " + query;
+
+        tab.title =
+            "Search: " + query;
+
+        renderTabs();
+
+        return;
+    }
+
+    if (tab.url === "chox-video://home") {
+
+        videoPage.classList.add("active");
+
+        tab.title = "Chox Video";
+
+        renderTabs();
+
+        return;
+    }
+
+    if (tab.url === "chox-ai://home") {
+
+        aiPage.classList.add("active");
+
+        tab.title = "Chox AI";
+
+        renderTabs();
+
+        return;
+    }
+
+    /*
+        External website.
+
+        We use an iframe for sites that permit embedding.
+        If a website blocks iframes, use the address bar/menu
+        to open the site normally.
+    */
+
+    browserFrame.src = tab.url;
+    browserFrame.classList.add("visible");
+
+    tab.title = getTitleFromUrl(tab.url);
+
+    renderTabs();
+}
+
+function getTitleFromUrl(url) {
+
+    try {
+
+        const parsed =
+            new URL(url);
+
+        return parsed.hostname
+            .replace("www.", "");
+
+    } catch {
+
+        return "Web Page";
+
+    }
+}
+
+function addHistory(url) {
+
+    if (
+        !url ||
+        url === HOME_URL ||
+        url.startsWith("chox-")
+    ) {
+        return;
+    }
+
+    historyItems =
+        historyItems.filter(item => item !== url);
+
+    historyItems.unshift(url);
+
+    historyItems =
+        historyItems.slice(0, 100);
 
     localStorage.setItem(
         "choxHistory",
-        JSON.stringify(searchHistory)
+        JSON.stringify(historyItems)
     );
+}
+
+function navigate(url, title = null, addToHistory = true) {
+
+    const tab = getActiveTab();
+
+    if (!tab) return;
+
+    if (!url) return;
+
+    if (url === "home") {
+
+        url = HOME_URL;
+
+    }
+
+    if (url.startsWith("search:")) {
+
+        const query =
+            url.replace("search:", "").trim();
+
+        openSearch(query);
+
+        return;
+
+    }
+
+    if (
+        !url.startsWith("http://") &&
+        !url.startsWith("https://") &&
+        !url.startsWith("chox-")
+    ) {
+
+        /*
+            Treat normal text as a search.
+        */
+
+        openSearch(url);
+
+        return;
+    }
+
+    tab.url = url;
+
+    if (addToHistory) {
+
+        tab.history =
+            tab.history.slice(
+                0,
+                tab.historyIndex + 1
+            );
+
+        tab.history.push(url);
+
+        tab.historyIndex =
+            tab.history.length - 1;
+
+        addHistory(url);
+    }
+
+    if (title) {
+        tab.title = title;
+    }
+
+    renderTabs();
+    renderActiveTab();
+}
+
+function openSearch(query) {
+
+    query = String(query || "").trim();
+
+    if (!query) {
+
+        showToast("Type something to search.");
+
+        return;
+    }
+
+    const tab = getActiveTab();
+
+    if (!tab) return;
+
+    tab.url =
+        "chox-search://" +
+        encodeURIComponent(query);
+
+    tab.title =
+        "Search: " + query;
+
+    tab.history =
+        tab.history.slice(
+            0,
+            tab.historyIndex + 1
+        );
+
+    tab.history.push(tab.url);
+
+    tab.historyIndex =
+        tab.history.length - 1;
+
+    addHistory(
+        SEARXNG +
+        "?q=" +
+        encodeURIComponent(query)
+    );
+
+    renderTabs();
+    renderActiveTab();
+}
+
+function openSearchResults() {
+
+    const tab = getActiveTab();
+
+    if (!tab) return;
+
+    if (!tab.url.startsWith("chox-search://")) {
+        return;
+    }
+
+    const query =
+        decodeURIComponent(
+            tab.url.replace("chox-search://", "")
+        );
+
+    const url =
+        SEARXNG +
+        "?q=" +
+        encodeURIComponent(query);
+
+    /*
+        Use the current Chox tab's frame.
+
+        If the SearXNG instance allows embedding,
+        the results appear inside Chox.
+
+        If it doesn't, the user can open the result
+        page normally using the button below.
+    */
+
+    tab.url = url;
+    tab.title = "Search: " + query;
+
+    tab.history =
+        tab.history.slice(
+            0,
+            tab.historyIndex + 1
+        );
+
+    tab.history.push(url);
+
+    tab.historyIndex =
+        tab.history.length - 1;
+
+    addHistory(url);
+
+    renderTabs();
+    renderActiveTab();
+
+    setTimeout(() => {
+
+        showToast(
+            "Loading search results..."
+        );
+
+    }, 100);
+}
+
+function goHome() {
+
+    const tab = getActiveTab();
+
+    if (!tab) return;
+
+    tab.url = HOME_URL;
+    tab.title = "New Tab";
+
+    tab.history =
+        tab.history.slice(
+            0,
+            tab.historyIndex + 1
+        );
+
+    tab.history.push(HOME_URL);
+
+    tab.historyIndex =
+        tab.history.length - 1;
+
+    renderTabs();
+    renderActiveTab();
+}
+
+function goBack() {
+
+    const tab = getActiveTab();
+
+    if (!tab) return;
+
+    if (tab.historyIndex <= 0) {
+
+        showToast("Nothing to go back to.");
+
+        return;
+    }
+
+    tab.historyIndex--;
+
+    tab.url =
+        tab.history[tab.historyIndex];
+
+    renderTabs();
+    renderActiveTab();
+}
+
+function goForward() {
+
+    const tab = getActiveTab();
+
+    if (!tab) return;
+
+    if (
+        tab.historyIndex >=
+        tab.history.length - 1
+    ) {
+
+        showToast("Nothing to go forward to.");
+
+        return;
+    }
+
+    tab.historyIndex++;
+
+    tab.url =
+        tab.history[tab.historyIndex];
+
+    renderTabs();
+    renderActiveTab();
+}
+
+function reloadPage() {
+
+    const tab = getActiveTab();
+
+    if (!tab) return;
+
+    if (
+        tab.url === HOME_URL ||
+        tab.url.startsWith("chox-search://") ||
+        tab.url.startsWith("chox-video://") ||
+        tab.url.startsWith("chox-ai://")
+    ) {
+
+        renderActiveTab();
+
+        return;
+    }
+
+    const oldSrc =
+        browserFrame.src;
+
+    browserFrame.src = "about:blank";
+
+    setTimeout(() => {
+
+        browserFrame.src = oldSrc;
+
+    }, 50);
+}
+
+function updateNavigationButtons() {
+
+    const tab = getActiveTab();
+
+    if (!tab) return;
+
+    backButton.disabled =
+        tab.historyIndex <= 0;
+
+    forwardButton.disabled =
+        tab.historyIndex >=
+        tab.history.length - 1;
+}
+
+function addBookmark() {
+
+    const tab = getActiveTab();
+
+    if (!tab || tab.url === HOME_URL) {
+
+        showToast("Nothing to bookmark.");
+
+        return;
+    }
+
+    if (bookmarks.includes(tab.url)) {
+
+        showToast("Already bookmarked.");
+
+        return;
+    }
+
+    bookmarks.push(tab.url);
 
     localStorage.setItem(
         "choxBookmarks",
         JSON.stringify(bookmarks)
     );
 
-    localStorage.setItem(
-        "choxSettings",
-        JSON.stringify(settings)
-    );
+    bookmarkButton.textContent = "★";
 
+    showToast("Bookmark saved.");
+
+    updateSettingsInfo();
 }
 
+function clearBookmarks() {
 
-/* =========================================================
-   TAB CREATION
-========================================================= */
+    bookmarks = [];
 
-function createTabElement(tab) {
-
-    const tabBar =
-        document.getElementById("tabBar");
-
-    const newButton =
-        document.getElementById("newTabButton");
-
-
-    const element =
-        document.createElement("div");
-
-    element.className = "tab";
-
-    element.dataset.tabId = tab.id;
-
-    element.innerHTML = `
-        <div class="tab-icon">C</div>
-
-        <div class="tab-title">
-            ${escapeHtml(tab.title)}
-        </div>
-
-        <button
-            class="tab-close"
-            title="Close tab"
-        >
-            ×
-        </button>
-    `;
-
-
-    element.addEventListener(
-        "click",
-        () => switchTab(tab.id)
+    localStorage.setItem(
+        "choxBookmarks",
+        JSON.stringify(bookmarks)
     );
 
+    bookmarkButton.textContent = "☆";
 
-    element
-        .querySelector(".tab-close")
-        .addEventListener(
+    updateSettingsInfo();
+
+    showToast("Bookmarks cleared.");
+}
+
+function clearHistory() {
+
+    historyItems = [];
+
+    localStorage.setItem(
+        "choxHistory",
+        JSON.stringify(historyItems)
+    );
+
+    updateSettingsInfo();
+
+    showToast("History cleared.");
+}
+
+function updateBookmarkButton() {
+
+    const tab = getActiveTab();
+
+    if (!tab) return;
+
+    bookmarkButton.textContent =
+        bookmarks.includes(tab.url)
+            ? "★"
+            : "☆";
+}
+
+function updateSettingsInfo() {
+
+    document.getElementById(
+        "bookmarkCount"
+    ).textContent =
+        bookmarks.length +
+        (
+            bookmarks.length === 1
+                ? " bookmark"
+                : " bookmarks"
+        );
+
+    document.getElementById(
+        "historyCount"
+    ).textContent =
+        historyItems.length +
+        (
+            historyItems.length === 1
+                ? " history item"
+                : " history items"
+        );
+}
+
+function showToast(message) {
+
+    toast.textContent = message;
+
+    toast.classList.add("visible");
+
+    clearTimeout(showToast.timer);
+
+    showToast.timer =
+        setTimeout(() => {
+
+            toast.classList.remove("visible");
+
+        }, 2200);
+}
+
+/* =========================
+   HOME SEARCH
+========================= */
+
+document
+    .getElementById("homeSearchForm")
+    .addEventListener("submit", event => {
+
+        event.preventDefault();
+
+        const input =
+            document.getElementById("homeSearch");
+
+        openSearch(input.value);
+
+        input.value = "";
+
+    });
+
+/* =========================
+   ADDRESS BAR
+========================= */
+
+addressBar.addEventListener(
+    "keydown",
+    event => {
+
+        if (event.key !== "Enter") {
+            return;
+        }
+
+        event.preventDefault();
+
+        let value =
+            addressBar.value.trim();
+
+        if (!value) {
+            return;
+        }
+
+        /*
+            If it looks like a URL,
+            load it directly.
+
+            Otherwise search.
+        */
+
+        if (
+            value.startsWith("https://") ||
+            value.startsWith("http://")
+        ) {
+
+            navigate(value);
+
+        } else if (
+            value.includes(".") &&
+            !value.includes(" ")
+        ) {
+
+            navigate("https://" + value);
+
+        } else {
+
+            openSearch(value);
+
+        }
+
+    }
+);
+
+/* =========================
+   TOOLBAR
+========================= */
+
+backButton.addEventListener(
+    "click",
+    goBack
+);
+
+forwardButton.addEventListener(
+    "click",
+    goForward
+);
+
+reloadButton.addEventListener(
+    "click",
+    reloadPage
+);
+
+homeButton.addEventListener(
+    "click",
+    goHome
+);
+
+bookmarkButton.addEventListener(
+    "click",
+    addBookmark
+);
+
+settingsButton.addEventListener(
+    "click",
+    () => {
+
+        menu.classList.remove("visible");
+
+        settingsOverlay.classList.add("visible");
+
+        updateSettingsInfo();
+
+    }
+);
+
+menuButton.addEventListener(
+    "click",
+    event => {
+
+        event.stopPropagation();
+
+        menu.classList.toggle("visible");
+
+    }
+);
+
+/* =========================
+   MENU
+========================= */
+
+document
+    .getElementById("menuNewTab")
+    .addEventListener("click", () => {
+
+        menu.classList.remove("visible");
+
+        createTab();
+
+    });
+
+document
+    .getElementById("menuBookmark")
+    .addEventListener("click", () => {
+
+        menu.classList.remove("visible");
+
+        addBookmark();
+
+    });
+
+document
+    .getElementById("menuSettings")
+    .addEventListener("click", () => {
+
+        menu.classList.remove("visible");
+
+        settingsOverlay.classList.add("visible");
+
+        updateSettingsInfo();
+
+    });
+
+document
+    .getElementById("menuHome")
+    .addEventListener("click", () => {
+
+        menu.classList.remove("visible");
+
+        goHome();
+
+    });
+
+document.addEventListener(
+    "click",
+    event => {
+
+        if (
+            !menu.contains(event.target) &&
+            event.target !== menuButton
+        ) {
+
+            menu.classList.remove("visible");
+
+        }
+
+    }
+);
+
+/* =========================
+   SETTINGS
+========================= */
+
+document
+    .getElementById("closeSettings")
+    .addEventListener("click", () => {
+
+        settingsOverlay.classList.remove("visible");
+
+    });
+
+settingsOverlay.addEventListener(
+    "click",
+    event => {
+
+        if (event.target === settingsOverlay) {
+
+            settingsOverlay.classList.remove(
+                "visible"
+            );
+
+        }
+
+    }
+);
+
+document
+    .getElementById("settingHome")
+    .addEventListener("click", () => {
+
+        settingsOverlay.classList.remove(
+            "visible"
+        );
+
+        goHome();
+
+    });
+
+document
+    .getElementById("clearBookmarks")
+    .addEventListener(
+        "click",
+        clearBookmarks
+    );
+
+document
+    .getElementById("clearHistory")
+    .addEventListener(
+        "click",
+        clearHistory
+    );
+
+/* =========================
+   QUICK LINKS
+========================= */
+
+document
+    .querySelectorAll(".quick")
+    .forEach(button => {
+
+        button.addEventListener(
             "click",
-            event => {
+            () => {
 
-                event.stopPropagation();
-
-                closeTab(tab.id);
+                navigate(
+                    button.dataset.url
+                );
 
             }
         );
 
-
-    tabBar.insertBefore(
-        element,
-        newButton
-    );
-
-}
-
-
-function createPageElement(tab) {
-
-    const container =
-        document.getElementById("pageContainer");
-
-
-    const page =
-        document.createElement("div");
-
-    page.id =
-        "page-" + tab.id;
-
-    page.className =
-        "page";
-
-
-    container.appendChild(page);
-
-}
-
-
-/* =========================================================
-   CREATE NEW TAB
-========================================================= */
-
-function createNewTab(url = "") {
-
-    const id = nextTabId++;
-
-    const tab = {
-
-        id,
-
-        title: "New Tab",
-
-        url: "",
-
-        type: "home",
-
-        history: [],
-
-        historyIndex: -1
-
-    };
-
-
-    tabs.set(id, tab);
-
-    createTabElement(tab);
-
-    createPageElement(tab);
-
-    switchTab(id);
-
-    if (url) {
-
-        navigate(url);
-
-    } else {
-
-        renderHome(tab);
-
-    }
-
-}
-
-
-/* =========================================================
-   CLOSE TAB
-========================================================= */
-
-function closeTab(id) {
-
-    if (!tabs.has(id)) {
-        return;
-    }
-
-
-    const tabElement =
-        document.querySelector(
-            `.tab[data-tab-id="${id}"]`
-        );
-
-    const pageElement =
-        document.getElementById(
-            "page-" + id
-        );
-
-
-    if (tabElement) {
-        tabElement.remove();
-    }
-
-    if (pageElement) {
-        pageElement.remove();
-    }
-
-
-    tabs.delete(id);
-
-
-    if (tabs.size === 0) {
-
-        createNewTab();
-
-        return;
-
-    }
-
-
-    if (activeTabId === id) {
-
-        const remaining =
-            Array.from(tabs.keys());
-
-        switchTab(
-            remaining[remaining.length - 1]
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   SWITCH TAB
-========================================================= */
-
-function switchTab(id) {
-
-    if (!tabs.has(id)) {
-        return;
-    }
-
-
-    activeTabId = id;
-
-
-    document
-        .querySelectorAll(".tab")
-        .forEach(tab => {
-
-            tab.classList.toggle(
-                "active",
-                Number(tab.dataset.tabId) === id
-            );
-
-        });
-
-
-    document
-        .querySelectorAll(".page")
-        .forEach(page => {
-
-            page.classList.remove("active");
-
-        });
-
-
-    const page =
-        document.getElementById(
-            "page-" + id
-        );
-
-
-    if (page) {
-        page.classList.add("active");
-    }
-
-
-    updateAddressBar();
-
-}
-
-
-/* =========================================================
-   UPDATE TAB
-========================================================= */
-
-function updateTab(tab) {
-
-    const element =
-        document.querySelector(
-            `.tab[data-tab-id="${tab.id}"]`
-        );
-
-    if (!element) {
-        return;
-    }
-
-
-    const title =
-        element.querySelector(".tab-title");
-
-
-    if (title) {
-
-        title.textContent =
-            tab.title || "New Tab";
-
-    }
-
-}
-
-
-/* =========================================================
-   ADDRESS BAR
-========================================================= */
-
-function updateAddressBar() {
-
-    const tab = tabs.get(activeTabId);
-
-    const address =
-        document.getElementById("addressBar");
-
-
-    if (!tab) {
-        return;
-    }
-
-
-    if (tab.type === "home") {
-
-        address.value = "";
-
-    } else {
-
-        address.value =
-            tab.url || "";
-
-    }
-
-}
-
-
-function addressKeyDown(event) {
-
-    if (event.key !== "Enter") {
-        return;
-    }
-
-    openAddress();
-
-}
-
-
-function openAddress() {
-
-    const address =
-        document
-            .getElementById("addressBar")
-            .value
-            .trim();
-
-
-    if (!address) {
-        return;
-    }
-
-
-    navigate(address);
-
-}
-
-
-/* =========================================================
-   NAVIGATION
-========================================================= */
-
-function navigate(input) {
-
-    const tab = tabs.get(activeTabId);
-
-    if (!tab) {
-        return;
-    }
-
-
-    let value = input.trim();
-
-
-    if (!value) {
-        return;
-    }
-
-
-    /*
-       If it looks like a normal website URL,
-       load it as a website.
-    */
-
-    if (
-        /^https?:\/\//i.test(value)
-    ) {
-
-        openWebsite(value);
-
-        return;
-
-    }
-
-
-    /*
-       Local Chox pages.
-    */
-
-    if (
-        value === "chox://home" ||
-        value === "chox://"
-    ) {
-
-        goHome();
-
-        return;
-
-    }
-
-
-    if (
-        value === "chox://history"
-    ) {
-
-        openHistory();
-
-        return;
-
-    }
-
-
-    if (
-        value === "chox://bookmarks"
-    ) {
-
-        openBookmarks();
-
-        return;
-
-    }
-
-
-    if (
-        value === "chox://settings"
-    ) {
-
-        openSettings();
-
-        return;
-
-    }
-
-
-    /*
-       If it looks like a domain,
-       add HTTPS.
-    */
-
-    if (
-        /^[a-z0-9.-]+\.[a-z]{2,}$/i.test(value)
-    ) {
-
-        openWebsite(
-            "https://" + value
-        );
-
-        return;
-
-    }
-
-
-    /*
-       Otherwise treat it as a search.
-    */
-
-    performSearch(value);
-
-}
-
-
-/* =========================================================
-   HOME
-========================================================= */
-
-function goHome() {
-
-    const tab = tabs.get(activeTabId);
-
-    if (!tab) {
-        return;
-    }
-
-
-    tab.type = "home";
-
-    tab.url = "";
-
-    tab.title = "New Tab";
-
-
-    updateTab(tab);
-
-    updateAddressBar();
-
-    renderHome(tab);
-
-}
-
-
-function renderHome(tab) {
-
-    const page =
-        document.getElementById(
-            "page-" + tab.id
-        );
-
-    if (!page) {
-        return;
-    }
-
-
-    page.innerHTML = `
-
-        <div class="home">
-
-            <div class="logo">
-                CH
-            </div>
-
-            <div class="brand">
-                CHOX
-            </div>
-
-            <div class="subtitle">
-                Fast. Simple. Yours.
-            </div>
-
-
-            <form
-                id="homeSearch"
-                onsubmit="homeSearchSubmit(event)"
-            >
-
-                <input
-                    id="homeSearchInput"
-                    type="text"
-                    placeholder="Search the web..."
-                    autocomplete="off"
-                >
-
-                <button type="submit">
-                    Search
-                </button>
-
-            </form>
-
-
-            <div
-                class="quick-links"
-                style="
-                    display:
-                    ${settings.quickLinks === "hide"
-                        ? "none"
-                        : "grid"};
-                "
-            >
-
-                <button
-                    class="quick-link"
-                    onclick="openChoxVideo()"
-                >
-
-                    <span class="quick-icon">
-                        ▶
-                    </span>
-
-                    <span class="quick-text">
-                        Chox Video
-                    </span>
-
-                </button>
-
-
-                <button
-                    class="quick-link"
-                    onclick="openBookmarks()"
-                >
-
-                    <span class="quick-icon">
-                        ☆
-                    </span>
-
-                    <span class="quick-text">
-                        Bookmarks
-                    </span>
-
-                </button>
-
-
-                <button
-                    class="quick-link"
-                    onclick="openHistory()"
-                >
-
-                    <span class="quick-icon">
-                        ◷
-                    </span>
-
-                    <span class="quick-text">
-                        History
-                    </span>
-
-                </button>
-
-
-                <button
-                    class="quick-link"
-                    onclick="openSettings()"
-                >
-
-                    <span class="quick-icon">
-                        ⚙
-                    </span>
-
-                    <span class="quick-text">
-                        Settings
-                    </span>
-
-                </button>
-
-            </div>
-
-
-            <div class="home-grid">
-
-                <div class="home-card">
-
-                    <h3>
-                        Search
-                    </h3>
-
-                    <p>
-                        Search the web through
-                        SearXNG from the Chox interface.
-                    </p>
-
-                </div>
-
-
-                <div class="home-card">
-
-                    <h3>
-                        Private by design
-                    </h3>
-
-                    <p>
-                        Chox keeps your local history
-                        and bookmarks on your device.
-                    </p>
-
-                </div>
-
-
-                <div class="home-card">
-
-                    <h3>
-                        Chox AI
-                    </h3>
-
-                    <p>
-                        Your AI tools can be connected
-                        to Chox later.
-                    </p>
-
-                </div>
-
-            </div>
-
-        </div>
-    `;
-
-}
-
-
-function homeSearchSubmit(event) {
-
-    event.preventDefault();
-
-
-    const input =
-        document.getElementById(
-            "homeSearchInput"
-        );
-
-
-    if (!input) {
-        return;
-    }
-
-
-    const query =
-        input.value.trim();
-
-
-    if (!query) {
-
-        input.focus();
-
-        return;
-
-    }
-
-
-    performSearch(query);
-
-}
-
-
-/* =========================================================
-   SEARCH
-========================================================= */
-
-async function performSearch(query) {
-
-    const tab = tabs.get(activeTabId);
-
-    if (!tab) {
-        return;
-    }
-
-
-    query = query.trim();
-
-    if (!query) {
-        return;
-    }
-
-
-    tab.type = "search";
-
-    tab.url =
-        "chox://search?q=" +
-        encodeURIComponent(query);
-
-    tab.title =
-        "Search: " + query;
-
-
-    updateTab(tab);
-
-    updateAddressBar();
-
-
-    addHistory({
-        type: "search",
-        query,
-        url: tab.url
     });
 
-
-    renderSearchLoading(
-        tab,
-        query
-    );
-
-
-    try {
-
-        const base =
-            settings.searxInstance
-                .replace(/\/+$/, "");
-
-
-        const url =
-            base +
-            "/search?q=" +
-            encodeURIComponent(query) +
-            "&format=json" +
-            "&language=en" +
-            "&safesearch=1" +
-            "&pageno=1";
-
-
-        const response =
-            await fetch(
-                url,
-                {
-                    method: "GET",
-                    headers: {
-                        "Accept":
-                            "application/json"
-                    }
-                }
-            );
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                "SearXNG returned HTTP " +
-                response.status
-            );
-
-        }
-
-
-        const data =
-            await response.json();
-
-
-        const results =
-            Array.isArray(data.results)
-                ? data.results
-                : [];
-
-
-        renderSearchResults(
-            tab,
-            query,
-            results
-        );
-
-
-    } catch (error) {
-
-        console.error(
-            "Chox SearXNG error:",
-            error
-        );
-
-
-        renderSearchError(
-            tab,
-            query,
-            error
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   SEARCH LOADING
-========================================================= */
-
-function renderSearchLoading(
-    tab,
-    query
-) {
-
-    const page =
-        document.getElementById(
-            "page-" + tab.id
-        );
-
-
-    if (!page) {
-        return;
-    }
-
-
-    page.innerHTML = `
-
-        <div class="results-page">
-
-            <div class="results-header">
-
-                <div class="results-title">
-                    Searching...
-                </div>
-
-                <div class="results-query">
-                    ${escapeHtml(query)}
-                </div>
-
-            </div>
-
-
-            <div class="search-message">
-
-                <strong>
-                    Searching the web
-                </strong>
-
-                <div>
-                    Chox is asking SearXNG
-                    for results.
-                </div>
-
-            </div>
-
-        </div>
-    `;
-
-}
-
-
-/* =========================================================
+/* =========================
    SEARCH RESULTS
-========================================================= */
-
-function renderSearchResults(
-    tab,
-    query,
-    results
-) {
-
-    const page =
-        document.getElementById(
-            "page-" + tab.id
-        );
-
-
-    if (!page) {
-        return;
-    }
-
-
-    if (!results.length) {
-
-        page.innerHTML = `
-
-            <div class="results-page">
-
-                <div class="results-header">
-
-                    <div class="results-title">
-                        Search
-                    </div>
-
-                    <div class="results-query">
-                        ${escapeHtml(query)}
-                    </div>
-
-                </div>
-
-
-                <div class="search-message">
-
-                    <strong>
-                        No results found
-                    </strong>
-
-                    <div>
-                        SearXNG did not return
-                        any results for this search.
-                    </div>
-
-                </div>
-
-            </div>
-        `;
-
-        return;
-
-    }
-
-
-    const resultHtml =
-        results
-            .map(
-                (result) => {
-
-                    const title =
-                        result.title ||
-                        "Untitled result";
-
-
-                    const url =
-                        result.url ||
-                        "#";
-
-
-                    const snippet =
-                        result.content ||
-                        result.description ||
-                        "No description available.";
-
-
-                    let domain = "";
-
-                    try {
-
-                        domain =
-                            new URL(url).hostname;
-
-                    } catch {
-
-                        domain = url;
-
-                    }
-
-
-                    return `
-
-                        <div class="result">
-
-                            <a
-                                class="result-title"
-                                href="${escapeAttribute(url)}"
-                                onclick="openResult(event, '${escapeAttribute(url)}')"
-                            >
-                                ${escapeHtml(title)}
-                            </a>
-
-
-                            <div class="result-url">
-                                ${escapeHtml(domain)}
-                            </div>
-
-
-                            <div class="result-snippet">
-                                ${escapeHtml(snippet)}
-                            </div>
-
-                        </div>
-                    `;
-
-                }
-            )
-            .join("");
-
-
-    page.innerHTML = `
-
-        <div class="results-page">
-
-            <div class="results-header">
-
-                <div class="results-title">
-                    Search results
-                </div>
-
-                <div class="results-query">
-                    Results for
-                    <strong>
-                        ${escapeHtml(query)}
-                    </strong>
-                </div>
-
-            </div>
-
-
-            <div class="result-list">
-
-                ${resultHtml}
-
-            </div>
-
-        </div>
-    `;
-
-}
-
-
-/* =========================================================
-   SEARCH ERROR
-========================================================= */
-
-function renderSearchError(
-    tab,
-    query,
-    error
-) {
-
-    const page =
-        document.getElementById(
-            "page-" + tab.id
-        );
-
-
-    if (!page) {
-        return;
-    }
-
-
-    const fallback =
-        settings.searxInstance +
-        "/search?q=" +
-        encodeURIComponent(query);
-
-
-    page.innerHTML = `
-
-        <div class="results-page">
-
-            <div class="results-header">
-
-                <div class="results-title">
-                    Search
-                </div>
-
-                <div class="results-query">
-                    ${escapeHtml(query)}
-                </div>
-
-            </div>
-
-
-            <div class="search-message">
-
-                <strong>
-                    SearXNG couldn't return JSON results
-                </strong>
-
-                <div>
-                    This can happen because a public
-                    SearXNG instance may have its JSON
-                    format disabled or may block browser
-                    requests.
-                </div>
-
-
-                <button
-                    onclick="openExternalSearch('${escapeAttribute(fallback)}')"
-                >
-                    Open SearXNG results
-                </button>
-
-            </div>
-
-        </div>
-    `;
-
-}
-
-
-/* =========================================================
-   OPEN RESULT
-========================================================= */
-
-function openResult(
-    event,
-    url
-) {
-
-    event.preventDefault();
-
-    openWebsite(url);
-
-}
-
-
-function openExternalSearch(url) {
-
-    const tab = tabs.get(activeTabId);
-
-    if (!tab) {
-        return;
-    }
-
-
-    tab.type = "website";
-
-    tab.url = url;
-
-    tab.title = "SearXNG";
-
-
-    updateTab(tab);
-
-    updateAddressBar();
-
-    renderWebsite(tab, url);
-
-}
-
-
-/* =========================================================
-   WEBSITE
-========================================================= */
-
-function openWebsite(url) {
-
-    const tab = tabs.get(activeTabId);
-
-    if (!tab) {
-        return;
-    }
-
-
-    tab.type = "website";
-
-    tab.url = url;
-
-
-    try {
-
-        tab.title =
-            new URL(url).hostname;
-
-    } catch {
-
-        tab.title = url;
-
-    }
-
-
-    updateTab(tab);
-
-    updateAddressBar();
-
-    renderWebsite(tab, url);
-
-}
-
-
-function renderWebsite(tab, url) {
-
-    const page =
-        document.getElementById(
-            "page-" + tab.id
-        );
-
-
-    if (!page) {
-        return;
-    }
-
-
-    page.innerHTML = `
-
-        <div class="browser-page">
-
-            <iframe
-                class="browser-frame"
-                src="${escapeAttribute(url)}"
-                title="Website"
-                loading="eager"
-                referrerpolicy="no-referrer-when-downgrade"
-            ></iframe>
-
-        </div>
-    `;
-
-}
-
-
-/* =========================================================
-   HISTORY
-========================================================= */
-
-function addHistory(item) {
-
-    searchHistory.unshift({
-        ...item,
-        time: Date.now()
-    });
-
-
-    searchHistory =
-        searchHistory.slice(0, 100);
-
-
-    saveData();
-
-}
-
-
-function openHistory() {
-
-    const tab = tabs.get(activeTabId);
-
-    if (!tab) {
-        return;
-    }
-
-
-    tab.type = "history";
-
-    tab.url = "chox://history";
-
-    tab.title = "History";
-
-
-    updateTab(tab);
-
-    updateAddressBar();
-
-
-    const page =
-        document.getElementById(
-            "page-" + tab.id
-        );
-
-
-    const items =
-        searchHistory
-            .slice(0, 50)
-            .map(
-                item => `
-
-                    <div class="result">
-
-                        <div
-                            class="result-title"
-                            style="cursor:pointer"
-                            onclick="navigate('${escapeAttribute(
-                                item.url || ""
-                            )}')"
-                        >
-                            ${escapeHtml(
-                                item.query ||
-                                item.url ||
-                                "History item"
-                            )}
-                        </div>
-
-                        <div class="result-url">
-                            ${escapeHtml(
-                                item.url || ""
-                            )}
-                        </div>
-
-                    </div>
-                `
-            )
-            .join("");
-
-
-    page.innerHTML = `
-
-        <div class="results-page">
-
-            <div class="results-header">
-
-                <div class="results-title">
-                    History
-                </div>
-
-                <div class="results-query">
-                    Your recent Chox searches
-                </div>
-
-            </div>
-
-
-            <div class="result-list">
-
-                ${
-                    items ||
-                    `
-                        <div class="search-message">
-
-                            <strong>
-                                No history yet
-                            </strong>
-
-                            <div>
-                                Searches you make in
-                                Chox will appear here.
-                            </div>
-
-                        </div>
-                    `
-                }
-
-            </div>
-
-        </div>
-    `;
-
-}
-
-
-/* =========================================================
-   BOOKMARKS
-========================================================= */
-
-function toggleBookmark() {
-
-    const tab = tabs.get(activeTabId);
-
-    if (!tab || !tab.url) {
-        return;
-    }
-
-
-    const existing =
-        bookmarks.find(
-            item => item.url === tab.url
-        );
-
-
-    if (existing) {
-
-        bookmarks =
-            bookmarks.filter(
-                item => item.url !== tab.url
-            );
-
-    } else {
-
-        bookmarks.unshift({
-            title:
-                tab.title || tab.url,
-            url: tab.url
-        });
-
-    }
-
-
-    saveData();
-
-}
-
-
-function openBookmarks() {
-
-    const tab = tabs.get(activeTabId);
-
-    if (!tab) {
-        return;
-    }
-
-
-    tab.type = "bookmarks";
-
-    tab.url = "chox://bookmarks";
-
-    tab.title = "Bookmarks";
-
-
-    updateTab(tab);
-
-    updateAddressBar();
-
-
-    const page =
-        document.getElementById(
-            "page-" + tab.id
-        );
-
-
-    const items =
-        bookmarks
-            .map(
-                item => `
-
-                    <div class="result">
-
-                        <a
-                            class="result-title"
-                            href="${escapeAttribute(item.url)}"
-                            onclick="openResult(event, '${escapeAttribute(item.url)}')"
-                        >
-                            ${escapeHtml(item.title)}
-                        </a>
-
-                        <div class="result-url">
-                            ${escapeHtml(item.url)}
-                        </div>
-
-                    </div>
-                `
-            )
-            .join("");
-
-
-    page.innerHTML = `
-
-        <div class="results-page">
-
-            <div class="results-header">
-
-                <div class="results-title">
-                    Bookmarks
-                </div>
-
-                <div class="results-query">
-                    Your saved websites
-                </div>
-
-            </div>
-
-
-            <div class="result-list">
-
-                ${
-                    items ||
-                    `
-                        <div class="search-message">
-
-                            <strong>
-                                No bookmarks yet
-                            </strong>
-
-                            <div>
-                                Press ☆ while visiting
-                                a page to bookmark it.
-                            </div>
-
-                        </div>
-                    `
-                }
-
-            </div>
-
-        </div>
-    `;
-
-}
-
-
-/* =========================================================
-   CHOX VIDEO
-========================================================= */
-
-function openChoxVideo() {
-
-    const tab = tabs.get(activeTabId);
-
-    if (!tab) {
-        return;
-    }
-
-
-    tab.type = "chox-video";
-
-    tab.url = "chox://video";
-
-    tab.title = "Chox Video";
-
-
-    updateTab(tab);
-
-    updateAddressBar();
-
-
-    const page =
-        document.getElementById(
-            "page-" + tab.id
-        );
-
-
-    page.innerHTML = `
-
-        <div class="home">
-
-            <div class="logo">
-                ▶
-            </div>
-
-            <div class="brand">
-                CHOX VIDEO
-            </div>
-
-            <div class="subtitle">
-                Video search and viewing
-            </div>
-
-
-            <form
-                id="homeSearch"
-                onsubmit="videoSearch(event)"
-            >
-
-                <input
-                    id="videoSearchInput"
-                    type="text"
-                    placeholder="Search for videos..."
-                >
-
-                <button type="submit">
-                    Search
-                </button>
-
-            </form>
-
-
-            <div class="home-grid">
-
-                <div class="home-card">
-
-                    <h3>
-                        Chox Video
-                    </h3>
-
-                    <p>
-                        Search the web for video
-                        pages using Chox search.
-                    </p>
-
-                </div>
-
-                <div class="home-card">
-
-                    <h3>
-                        Favorites
-                    </h3>
-
-                    <p>
-                        Save useful video pages
-                        with the bookmark button.
-                    </p>
-
-                </div>
-
-                <div class="home-card">
-
-                    <h3>
-                        Note
-                    </h3>
-
-                    <p>
-                        Some websites prevent
-                        themselves from being displayed
-                        inside browser frames.
-                    </p>
-
-                </div>
-
-            </div>
-
-        </div>
-    `;
-
-}
-
-
-function videoSearch(event) {
-
-    event.preventDefault();
-
-
-    const input =
-        document.getElementById(
-            "videoSearchInput"
-        );
-
-
-    if (!input) {
-        return;
-    }
-
-
-    const query =
-        input.value.trim();
-
-
-    if (!query) {
-        return;
-    }
-
-
-    performSearch(
-        query + " video"
+========================= */
+
+document
+    .getElementById("openSearchButton")
+    .addEventListener(
+        "click",
+        openSearchResults
     );
 
-}
+/* =========================
+   CHOX VIDEO
+========================= */
 
+document
+    .getElementById("videoSearchForm")
+    .addEventListener(
+        "submit",
+        event => {
 
-/* =========================================================
-   BACK / FORWARD
-========================================================= */
+            event.preventDefault();
 
-function goBack() {
+            const query =
+                document.getElementById(
+                    "videoSearch"
+                ).value.trim();
 
-    const tab = tabs.get(activeTabId);
+            if (!query) return;
 
-    if (!tab) {
-        return;
-    }
-
-
-    if (
-        tab.historyIndex > 0
-    ) {
-
-        tab.historyIndex--;
-
-        const item =
-            tab.history[
-                tab.historyIndex
-            ];
-
-
-        if (item) {
-
-            restoreHistoryItem(
-                tab,
-                item
+            navigate(
+                "https://www.youtube.com/results?search_query=" +
+                encodeURIComponent(query)
             );
 
         }
+    );
 
-        return;
+document
+    .getElementById("youtubeButton")
+    .addEventListener(
+        "click",
+        () => {
 
-    }
-
-
-    window.history.back();
-
-}
-
-
-function goForward() {
-
-    const tab = tabs.get(activeTabId);
-
-    if (!tab) {
-        return;
-    }
-
-
-    if (
-        tab.historyIndex <
-        tab.history.length - 1
-    ) {
-
-        tab.historyIndex++;
-
-        const item =
-            tab.history[
-                tab.historyIndex
-            ];
-
-
-        if (item) {
-
-            restoreHistoryItem(
-                tab,
-                item
+            navigate(
+                "https://www.youtube.com"
             );
 
         }
+    );
 
-        return;
+/* =========================
+   INITIALIZATION
+========================= */
 
-    }
+createTab();
 
-
-    window.history.forward();
-
-}
-
-
-function restoreHistoryItem(
-    tab,
-    item
-) {
-
-    if (item.type === "home") {
-
-        renderHome(tab);
-
-    } else if (item.type === "search") {
-
-        performSearch(item.query);
-
-    } else if (item.type === "website") {
-
-        renderWebsite(
-            tab,
-            item.url
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   RELOAD
-========================================================= */
-
-function reloadPage() {
-
-    const tab = tabs.get(activeTabId);
-
-    if (!tab) {
-        return;
-    }
-
-
-    if (tab.type === "home") {
-
-        renderHome(tab);
-
-        return;
-
-    }
-
-
-    if (tab.type === "search") {
-
-        const match =
-            tab.url.match(
-                /[?&]q=([^&]+)/
-            );
-
-
-        if (match) {
-
-            performSearch(
-                decodeURIComponent(
-                    match[1]
-                )
-            );
-
-        }
-
-        return;
-
-    }
-
-
-    if (
-        tab.type === "website" &&
-        tab.url
-    ) {
-
-        renderWebsite(
-            tab,
-            tab.url
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   SETTINGS
-========================================================= */
-
-function openSettings() {
-
-    document
-        .getElementById(
-            "settingsOverlay"
-        )
-        .classList.add("open");
-
-
-    document
-        .getElementById(
-            "searxInstance"
-        )
-        .value =
-            settings.searxInstance;
-
-
-    document
-        .getElementById(
-            "quickLinksSetting"
-        )
-        .value =
-            settings.quickLinks;
-
-}
-
-
-function closeSettings() {
-
-    document
-        .getElementById(
-            "settingsOverlay"
-        )
-        .classList.remove("open");
-
-}
-
-
-function settingsBackgroundClick(event) {
-
-    if (
-        event.target.id ===
-        "settingsOverlay"
-    ) {
-
-        closeSettings();
-
-    }
-
-}
-
-
-function saveSettings() {
-
-    settings.searxInstance =
-        document
-            .getElementById(
-                "searxInstance"
-            )
-            .value;
-
-
-    settings.quickLinks =
-        document
-            .getElementById(
-                "quickLinksSetting"
-            )
-            .value;
-
-
-    saveData();
-
-
-    const tab =
-        tabs.get(activeTabId);
-
-
-    if (
-        tab &&
-        tab.type === "home"
-    ) {
-
-        renderHome(tab);
-
-    }
-
-}
-
-
-/* =========================================================
-   CLEAR HISTORY
-========================================================= */
-
-function clearHistory() {
-
-    searchHistory = [];
-
-    saveData();
-
-    openHistory();
-
-}
-
-
-/* =========================================================
-   HTML SAFETY
-========================================================= */
-
-function escapeHtml(value) {
-
-    return String(value)
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
-        );
-
-}
-
-
-function escapeAttribute(value) {
-
-    return String(value)
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        );
-
-}
-
-
-/* =========================================================
-   KEYBOARD SHORTCUTS
-========================================================= */
+/*
+    Keyboard shortcuts
+*/
 
 document.addEventListener(
     "keydown",
     event => {
 
         if (
-            (event.ctrlKey ||
-                event.metaKey) &&
+            (event.ctrlKey || event.metaKey) &&
             event.key.toLowerCase() === "l"
         ) {
 
             event.preventDefault();
 
-            const address =
-                document.getElementById(
-                    "addressBar"
-                );
-
-            address.focus();
-
-            address.select();
+            addressBar.focus();
+            addressBar.select();
 
         }
 
-
         if (
-            (event.ctrlKey ||
-                event.metaKey) &&
+            (event.ctrlKey || event.metaKey) &&
             event.key.toLowerCase() === "t"
         ) {
 
             event.preventDefault();
 
-            createNewTab();
+            createTab();
 
         }
 
-
         if (
-            (event.ctrlKey ||
-                event.metaKey) &&
+            (event.ctrlKey || event.metaKey) &&
             event.key.toLowerCase() === "w"
         ) {
 
@@ -3387,52 +2070,10 @@ document.addEventListener(
 
         }
 
-
-        if (
-            event.key === "Escape"
-        ) {
-
-            closeSettings();
-
-        }
-
     }
 );
 
-
-/* =========================================================
-   INITIALIZE
-========================================================= */
-
-loadSavedData();
-
-
-const firstTab = {
-
-    id: 1,
-
-    title: "New Tab",
-
-    url: "",
-
-    type: "home",
-
-    history: [],
-
-    historyIndex: -1
-
-};
-
-
-tabs.set(
-    1,
-    firstTab
-);
-
-
-renderHome(firstTab);
-
-updateAddressBar();
+updateSettingsInfo();
 
 </script>
 
