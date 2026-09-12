@@ -1,666 +1,1125 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chox</title>
-
-<link rel="stylesheet" href="style.css">
-
-<style>
-/* =========================================================
-   CHOX SETTINGS + HOMEPAGE
-   ========================================================= */
-
-.home {
-    min-height:100%;
-    padding:65px 7vw 80px;
-    background:
-        radial-gradient(circle at 50% -10%,rgba(190,20,30,.18),transparent 36%),
-        radial-gradient(circle at 0% 100%,rgba(130,10,18,.08),transparent 30%),
-        linear-gradient(180deg,#080808,#030303);
-}
-
-.home-brand {
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:14px;
-    margin-top:15px;
-}
-
-.brand-mark {
-    width:58px;
-    height:58px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    border-radius:16px;
-    font-size:19px;
-    font-weight:900;
-    color:white;
-    background:linear-gradient(145deg,#d21d28,#790b12);
-    border:1px solid rgba(255,255,255,.13);
-    box-shadow:
-        0 10px 35px rgba(0,0,0,.5),
-        0 0 35px rgba(180,18,28,.18),
-        inset 0 1px 0 rgba(255,255,255,.18);
-}
-
-.brand-name {
-    font-size:48px;
-    font-weight:950;
-    letter-spacing:-4px;
-    color:#fff;
-    text-shadow:0 0 35px rgba(180,18,28,.15);
-}
-
-.brand-name span {
-    color:#c81923;
-}
-
-.home-subtitle {
-    text-align:center;
-    color:#777;
-    font-size:14px;
-    margin:14px 0 0;
-}
-
-/* SEARCH */
-
-.home-search {
-    width:min(780px,100%);
-    margin:35px auto 0;
-}
-
-.search-box {
-    min-height:62px;
-    display:flex;
-    align-items:center;
-    padding:6px;
-    border-radius:18px;
-    background:linear-gradient(180deg,#181818,#0c0c0c);
-    border:1px solid rgba(255,255,255,.10);
-    box-shadow:
-        0 20px 60px rgba(0,0,0,.55),
-        0 0 45px rgba(170,15,25,.08),
-        inset 0 1px 0 rgba(255,255,255,.055);
-}
-
-.search-symbol {
-    width:38px;
-    text-align:center;
-    color:#777;
-    font-size:23px;
-}
-
-.search-input {
-    flex:1;
-    height:48px;
-    border:0;
-    outline:none;
-    background:transparent;
-    color:white;
-    font-size:16px;
-}
-
-.search-input::placeholder {
-    color:#666;
-}
-
-.search-button {
-    height:48px;
-    padding:0 24px;
-    border:0;
-    border-radius:13px;
-    color:white;
-    font-weight:750;
-    cursor:pointer;
-    background:linear-gradient(180deg,#ce1c27,#850c13);
-    box-shadow:
-        0 7px 20px rgba(0,0,0,.35),
-        inset 0 1px 0 rgba(255,255,255,.16);
-    transition:.18s ease;
-}
-
-.search-button:hover {
-    transform:translateY(-1px);
-    background:linear-gradient(180deg,#e1242e,#9a1018);
-}
-
-/* QUICK LINKS */
-
-.quick-links {
-    width:min(850px,100%);
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:12px;
-    margin:35px auto;
-}
-
-.quick-link {
-    min-height:108px;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    gap:10px;
-    border-radius:15px;
-    border:1px solid rgba(255,255,255,.07);
-    background:linear-gradient(145deg,#151515,#090909);
-    color:#ddd;
-    font-family:inherit;
-    cursor:pointer;
-    box-shadow:
-        0 10px 30px rgba(0,0,0,.35),
-        inset 0 1px 0 rgba(255,255,255,.035);
-    transition:.2s ease;
-}
-
-.quick-link:hover {
-    transform:translateY(-4px);
-    border-color:rgba(190,20,30,.42);
-    background:linear-gradient(145deg,#191112,#0b0808);
-    box-shadow:
-        0 18px 40px rgba(0,0,0,.5),
-        0 0 25px rgba(180,18,28,.10);
-}
-
-.quick-icon {
-    width:42px;
-    height:42px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    border-radius:12px;
-    color:white;
-    background:linear-gradient(145deg,#d01b26,#750a11);
-    box-shadow:0 6px 20px rgba(170,15,25,.20);
-}
-
-/* FEATURE */
-
-.featured-panel {
-    width:min(1050px,100%);
-    min-height:250px;
-    margin:55px auto 0;
-    position:relative;
-    overflow:hidden;
-    border-radius:20px;
-    border:1px solid rgba(190,20,30,.30);
-    background:
-        radial-gradient(circle at 80% 20%,rgba(190,20,30,.20),transparent 40%),
-        linear-gradient(135deg,#181010,#090909 60%,#050505);
-    box-shadow:
-        0 25px 70px rgba(0,0,0,.6),
-        0 0 45px rgba(170,15,25,.07);
-}
-
-.featured-content {
-    position:relative;
-    z-index:2;
-    padding:45px 50px;
-}
-
-.featured-label {
-    display:inline-block;
-    padding:7px 13px;
-    border-radius:999px;
-    color:#e9aeb1;
-    background:rgba(180,18,28,.13);
-    border:1px solid rgba(190,20,30,.28);
-    font-size:11px;
-    font-weight:800;
-    letter-spacing:1.5px;
-}
-
-.featured-content h2 {
-    margin:20px 0 10px;
-    font-size:clamp(34px,5vw,58px);
-    line-height:.98;
-    letter-spacing:-3px;
-    color:white;
-}
-
-.featured-content p {
-    max-width:480px;
-    margin:0 0 25px;
-    color:#999;
-    font-size:15px;
-    line-height:1.6;
-}
-
-.featured-button {
-    padding:12px 20px;
-    border:1px solid rgba(255,255,255,.10);
-    border-radius:10px;
-    background:linear-gradient(180deg,#c91b26,#810c13);
-    color:white;
-    font-family:inherit;
-    font-weight:700;
-    cursor:pointer;
-}
-
-/* LOWER CARDS */
-
-.home-sections {
-    width:min(1050px,100%);
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:15px;
-    margin:35px auto 0;
-}
-
-.section-title {
-    margin-bottom:10px;
-    padding-left:13px;
-    position:relative;
-    color:white;
-    font-size:15px;
-    font-weight:750;
-}
-
-.section-title::before {
-    content:"";
-    position:absolute;
-    left:0;
-    top:50%;
-    width:3px;
-    height:17px;
-    transform:translateY(-50%);
-    border-radius:5px;
-    background:linear-gradient(180deg,#df222c,#790a11);
-}
-
-.section-card {
-    min-height:78px;
-    display:flex;
-    align-items:center;
-    gap:13px;
-    padding:15px;
-    border-radius:13px;
-    border:1px solid rgba(255,255,255,.07);
-    background:linear-gradient(145deg,#131313,#080808);
-    cursor:pointer;
-    transition:.18s ease;
-}
-
-.section-card:hover {
-    transform:translateY(-2px);
-    border-color:rgba(180,18,28,.35);
-}
-
-.section-card-icon {
-    width:40px;
-    height:40px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    border-radius:10px;
-    background:linear-gradient(145deg,#bd1721,#700910);
-    color:white;
-}
-
-.section-card strong {
-    display:block;
-    color:#eee;
-    font-size:13px;
-}
-
-.section-card small {
-    display:block;
-    margin-top:4px;
-    color:#707070;
-    font-size:11px;
-}
-
-.home-footer {
-    display:flex;
-    justify-content:center;
-    gap:10px;
-    margin-top:60px;
-    color:#4f4f4f;
-    font-size:11px;
-}
-
-.home-footer span:first-child {
-    color:#9d151e;
-    font-weight:800;
-}
-
-
-/* =========================================================
-   SETTINGS
-   ========================================================= */
-
-.settings-overlay {
-    position:fixed;
-    inset:0;
-    z-index:99999;
-    display:none;
-    align-items:center;
-    justify-content:center;
-    padding:20px;
-    background:rgba(0,0,0,.75);
-    backdrop-filter:blur(12px);
-}
-
-.settings-overlay.open {
-    display:flex;
-}
-
-.settings-window {
-    width:min(650px,100%);
-    max-height:85vh;
-    overflow:hidden;
-    display:flex;
-    flex-direction:column;
-    border-radius:20px;
-    border:1px solid rgba(190,20,30,.35);
-    background:
-        radial-gradient(circle at 100% 0%,rgba(180,18,28,.14),transparent 35%),
-        linear-gradient(145deg,#171717,#080808);
-    box-shadow:
-        0 30px 100px rgba(0,0,0,.8),
-        0 0 50px rgba(180,18,28,.10);
-    animation:settingsOpen .2s ease;
-}
-
-@keyframes settingsOpen {
-    from {
-        opacity:0;
-        transform:scale(.96) translateY(10px);
-    }
-    to {
-        opacity:1;
-        transform:scale(1) translateY(0);
-    }
-}
-
-.settings-header {
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:24px 26px;
-    border-bottom:1px solid rgba(255,255,255,.07);
-}
-
-.settings-title {
-    font-size:21px;
-    font-weight:800;
-    color:white;
-}
-
-.settings-subtitle {
-    margin-top:5px;
-    color:#777;
-    font-size:12px;
-}
-
-.settings-close {
-    width:34px;
-    height:34px;
-    border:0;
-    border-radius:9px;
-    background:rgba(255,255,255,.05);
-    color:#999;
-    font-size:21px;
-    cursor:pointer;
-}
-
-.settings-close:hover {
-    background:rgba(180,18,28,.2);
-    color:white;
-}
-
-.settings-body {
-    overflow-y:auto;
-    padding:8px 26px 20px;
-}
-
-.settings-section {
-    padding:18px 0;
-    border-bottom:1px solid rgba(255,255,255,.06);
-}
-
-.settings-section-title {
-    margin-bottom:12px;
-    color:#c91a24;
-    font-size:11px;
-    font-weight:800;
-    letter-spacing:1.2px;
-    text-transform:uppercase;
-}
-
-.setting-row {
-    min-height:58px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:20px;
-    padding:11px 12px;
-    border-radius:11px;
-}
-
-.setting-row:hover {
-    background:rgba(255,255,255,.035);
-}
-
-.setting-row strong {
-    display:block;
-    color:#eee;
-    font-size:13px;
-}
-
-.setting-row small {
-    display:block;
-    margin-top:4px;
-    color:#707070;
-    font-size:11px;
-}
-
-.setting-row select {
-    min-width:130px;
-    padding:9px 12px;
-    border-radius:9px;
-    background:#0d0d0d;
-    border:1px solid rgba(255,255,255,.10);
-    color:#ddd;
-    outline:none;
-}
-
-.settings-danger {
-    padding:8px 15px;
-    border-radius:8px;
-    border:1px solid rgba(190,20,30,.35);
-    background:rgba(180,18,28,.10);
-    color:#e05259;
-    cursor:pointer;
-}
-
-.settings-danger:hover {
-    background:rgba(180,18,28,.22);
-    color:white;
-}
-
-.settings-footer {
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:16px 26px;
-    border-top:1px solid rgba(255,255,255,.07);
-    color:#555;
-    font-size:11px;
-}
-
-.settings-done {
-    padding:9px 18px;
-    border:0;
-    border-radius:9px;
-    background:linear-gradient(180deg,#c91b26,#810c13);
-    color:white;
-    font-weight:700;
-    cursor:pointer;
-}
-
-.settings-done:hover {
-    background:linear-gradient(180deg,#df222c,#9a1018);
-}
-
-
-/* =========================================================
-   MOBILE
-   ========================================================= */
-
-@media(max-width:800px) {
-
-    .home {
-        padding:45px 20px 70px;
-    }
-
-    .brand-name {
-        font-size:40px;
-    }
-
-    .quick-links {
-        grid-template-columns:repeat(2,1fr);
-    }
-
-    .home-sections {
-        grid-template-columns:1fr;
-    }
-
-    .featured-content {
-        padding:35px 30px;
-    }
-}
-
-@media(max-width:500px) {
-
-    .brand-name {
-        font-size:34px;
-    }
-
-    .brand-mark {
-        width:45px;
-        height:45px;
-    }
-
-    .quick-links {
-        grid-template-columns:1fr 1fr;
-    }
-
-    .search-button {
-        padding:0 15px;
-    }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Chox Browser</title>
+
+    <meta
+        name="description"
+        content="Chox - Fast, private and customizable browser"
+    >
+
+    <style>
+        :root {
+            --bg: #050505;
+            --bg2: #0a0a0a;
+            --panel: #101010;
+            --panel2: #151515;
+            --panel3: #1b1b1b;
+
+            --red: #e00000;
+            --red2: #ff2020;
+            --red3: #8b0000;
+
+            --text: #f5f5f5;
+            --muted: #8d8d8d;
+            --border: #292929;
+
+            --shadow:
+                0 0 20px rgba(220, 0, 0, 0.10);
+
+            --glow:
+                0 0 18px rgba(255, 0, 0, 0.20);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+        }
+
+        body {
+            overflow: hidden;
+            background:
+                radial-gradient(
+                    circle at 50% 0%,
+                    rgba(120, 0, 0, 0.14),
+                    transparent 35%
+                ),
+                linear-gradient(
+                    180deg,
+                    #080808 0%,
+                    #030303 100%
+                );
+
+            color: var(--text);
+            font-family:
+                Inter,
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+        }
+
+        button,
+        input {
+            font: inherit;
+        }
+
+        button {
+            color: inherit;
+        }
+
+        /* =========================
+           APP
+        ========================= */
+
+        #app {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* =========================
+           TAB BAR
+        ========================= */
+
+        #tabBar {
+            height: 48px;
+            min-height: 48px;
+
+            display: flex;
+            align-items: flex-end;
+
+            gap: 4px;
+            padding: 7px 8px 0;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    #161616,
+                    #090909
+                );
+
+            border-bottom: 1px solid #242424;
+        }
+
+        .tab {
+            height: 40px;
+            min-width: 145px;
+            max-width: 240px;
+
+            display: flex;
+            align-items: center;
+            gap: 9px;
+
+            padding: 0 10px;
+
+            border: 1px solid #272727;
+            border-bottom: none;
+
+            border-radius: 10px 10px 0 0;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    #161616,
+                    #0b0b0b
+                );
+
+            color: #a8a8a8;
+
+            cursor: pointer;
+
+            transition:
+                background .18s ease,
+                color .18s ease,
+                transform .18s ease;
+        }
+
+        .tab:hover {
+            color: white;
+            background: #181818;
+        }
+
+        .tab.active {
+            color: white;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    #1d1d1d,
+                    #0d0d0d
+                );
+
+            box-shadow:
+                inset 0 2px 0 rgba(255, 0, 0, .7);
+        }
+
+        .tab-icon {
+            width: 23px;
+            height: 23px;
+
+            display: grid;
+            place-items: center;
+
+            border-radius: 7px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #ff2222,
+                    #760000
+                );
+
+            box-shadow:
+                0 0 12px rgba(255, 0, 0, .25);
+
+            font-weight: 900;
+            font-size: 12px;
+        }
+
+        .tab-title {
+            flex: 1;
+
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+
+            font-size: 13px;
+        }
+
+        .tab-close {
+            width: 24px;
+            height: 24px;
+
+            border: none;
+            background: transparent;
+
+            border-radius: 6px;
+
+            color: #777;
+
+            cursor: pointer;
+        }
+
+        .tab-close:hover {
+            background: #2b1111;
+            color: white;
+        }
+
+        #newTabButton {
+            width: 40px;
+            height: 40px;
+
+            border: none;
+            background: transparent;
+
+            color: #aaa;
+
+            font-size: 22px;
+
+            cursor: pointer;
+
+            border-radius: 8px;
+        }
+
+        #newTabButton:hover {
+            color: white;
+            background: #171717;
+        }
+
+        /* =========================
+           TOOLBAR
+        ========================= */
+
+        #toolbar {
+            height: 56px;
+            min-height: 56px;
+
+            display: flex;
+            align-items: center;
+
+            gap: 7px;
+
+            padding: 8px 12px;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    #0d0d0d,
+                    #070707
+                );
+
+            border-bottom: 1px solid #1d1d1d;
+        }
+
+        .toolbar-button {
+            width: 35px;
+            height: 35px;
+
+            display: grid;
+            place-items: center;
+
+            border: 1px solid transparent;
+
+            background: transparent;
+
+            border-radius: 9px;
+
+            color: #a0a0a0;
+
+            cursor: pointer;
+
+            font-size: 17px;
+
+            transition: .15s ease;
+        }
+
+        .toolbar-button:hover {
+            color: white;
+
+            background: #151515;
+
+            border-color: #292929;
+        }
+
+        .toolbar-button:active {
+            transform: scale(.94);
+        }
+
+        #addressArea {
+            flex: 1;
+
+            height: 38px;
+
+            display: flex;
+            align-items: center;
+
+            padding: 0 13px;
+
+            border-radius: 12px;
+
+            border: 1px solid #3a1616;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    #111111,
+                    #090909
+                );
+
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,.03);
+        }
+
+        #addressIcon {
+            margin-right: 9px;
+            color: #777;
+        }
+
+        #addressBar {
+            width: 100%;
+
+            border: none;
+            outline: none;
+
+            background: transparent;
+
+            color: white;
+
+            font-size: 14px;
+        }
+
+        #addressBar::placeholder {
+            color: #666;
+        }
+
+        #addressArea:focus-within {
+            border-color: #8d1717;
+
+            box-shadow:
+                0 0 14px rgba(255, 0, 0, .12);
+        }
+
+        /* =========================
+           CONTENT
+        ========================= */
+
+        #pageContainer {
+            position: relative;
+
+            flex: 1;
+
+            min-height: 0;
+
+            background: #050505;
+        }
+
+        .page {
+            position: absolute;
+
+            inset: 0;
+
+            display: none;
+
+            overflow: auto;
+
+            background:
+                radial-gradient(
+                    circle at 50% 0%,
+                    rgba(130, 0, 0, .10),
+                    transparent 42%
+                ),
+                #050505;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* =========================
+           HOME
+        ========================= */
+
+        .home {
+            min-height: 100%;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            padding: 70px 25px 50px;
+        }
+
+        .logo {
+            width: 82px;
+            height: 82px;
+
+            display: grid;
+            place-items: center;
+
+            border-radius: 24px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #ff2626,
+                    #9c0000 48%,
+                    #3b0000
+                );
+
+            border: 1px solid #ff3434;
+
+            box-shadow:
+                0 0 30px rgba(255, 0, 0, .20),
+                inset 0 1px 0 rgba(255,255,255,.15);
+
+            font-size: 31px;
+            font-weight: 950;
+
+            letter-spacing: -2px;
+
+            margin-bottom: 22px;
+        }
+
+        .brand {
+            font-size: 46px;
+            font-weight: 900;
+
+            letter-spacing: -2px;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    #ffffff,
+                    #a5a5a5
+                );
+
+            -webkit-background-clip: text;
+            background-clip: text;
+
+            color: transparent;
+        }
+
+        .subtitle {
+            color: #777;
+
+            margin-top: 8px;
+
+            font-size: 14px;
+        }
+
+        #homeSearch {
+            width: min(760px, 100%);
+
+            height: 56px;
+
+            display: flex;
+
+            margin-top: 34px;
+
+            padding: 5px;
+
+            border-radius: 17px;
+
+            border: 1px solid #481616;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    #121212,
+                    #080808
+                );
+
+            box-shadow:
+                0 0 30px rgba(255,0,0,.08);
+        }
+
+        #homeSearch input {
+            flex: 1;
+
+            min-width: 0;
+
+            border: none;
+            outline: none;
+
+            background: transparent;
+
+            color: white;
+
+            padding: 0 16px;
+
+            font-size: 16px;
+        }
+
+        #homeSearch button {
+            width: 100px;
+
+            border: none;
+
+            border-radius: 12px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #ff2222,
+                    #8d0000
+                );
+
+            color: white;
+
+            font-weight: 800;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 0 15px rgba(255,0,0,.18);
+        }
+
+        #homeSearch button:hover {
+            filter: brightness(1.15);
+        }
+
+        .quick-links {
+            width: min(760px, 100%);
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 10px;
+
+            margin-top: 22px;
+        }
+
+        .quick-link {
+            min-height: 76px;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            gap: 7px;
+
+            border: 1px solid #242424;
+
+            border-radius: 13px;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    #141414,
+                    #0a0a0a
+                );
+
+            color: #aaa;
+
+            cursor: pointer;
+
+            transition: .18s ease;
+        }
+
+        .quick-link:hover {
+            color: white;
+
+            border-color: #651818;
+
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 8px 25px rgba(0,0,0,.35);
+        }
+
+        .quick-icon {
+            font-size: 20px;
+        }
+
+        .quick-text {
+            font-size: 12px;
+        }
+
+        .home-grid {
+            width: min(900px, 100%);
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 14px;
+
+            margin-top: 30px;
+        }
+
+        .home-card {
+            min-height: 150px;
+
+            padding: 20px;
+
+            border: 1px solid #252525;
+
+            border-radius: 16px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #151515,
+                    #090909
+                );
+
+            box-shadow:
+                var(--shadow);
+        }
+
+        .home-card h3 {
+            margin: 0 0 9px;
+
+            font-size: 15px;
+        }
+
+        .home-card p {
+            margin: 0;
+
+            color: #777;
+
+            line-height: 1.5;
+
+            font-size: 13px;
+        }
+
+        /* =========================
+           SEARCH RESULTS
+        ========================= */
+
+        .results-page {
+            padding: 28px 25px 60px;
+        }
+
+        .results-header {
+            width: min(900px, 100%);
+
+            margin: 0 auto 25px;
+        }
+
+        .results-title {
+            font-size: 24px;
+            font-weight: 800;
+
+            margin-bottom: 7px;
+        }
+
+        .results-query {
+            color: #777;
+
+            font-size: 13px;
+        }
+
+        .result-list {
+            width: min(900px, 100%);
+
+            margin: 0 auto;
+        }
+
+        .result {
+            padding: 19px 20px;
+
+            margin-bottom: 12px;
+
+            border-radius: 14px;
+
+            border: 1px solid #252525;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #111111,
+                    #080808
+                );
+
+            transition: .18s ease;
+        }
+
+        .result:hover {
+            border-color: #611717;
+
+            box-shadow:
+                0 8px 25px rgba(0,0,0,.25);
+        }
+
+        .result-title {
+            display: block;
+
+            color: #ff4a4a;
+
+            font-size: 17px;
+            font-weight: 750;
+
+            text-decoration: none;
+
+            margin-bottom: 7px;
+        }
+
+        .result-title:hover {
+            color: #ff7a7a;
+        }
+
+        .result-url {
+            color: #777;
+
+            font-size: 12px;
+
+            margin-bottom: 9px;
+
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .result-snippet {
+            color: #aaa;
+
+            font-size: 13px;
+
+            line-height: 1.5;
+        }
+
+        .search-message {
+            width: min(700px, 100%);
+
+            margin: 60px auto;
+
+            text-align: center;
+
+            color: #777;
+        }
+
+        .search-message strong {
+            display: block;
+
+            color: white;
+
+            font-size: 20px;
+
+            margin-bottom: 10px;
+        }
+
+        .search-message button {
+            margin-top: 18px;
+
+            border: 1px solid #651818;
+
+            border-radius: 10px;
+
+            padding: 10px 17px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #a60000,
+                    #5b0000
+                );
+
+            color: white;
+
+            cursor: pointer;
+        }
+
+        /* =========================
+           EMBEDDED WEBSITE
+        ========================= */
+
+        .browser-page {
+            width: 100%;
+            height: 100%;
+            background: #080808;
+        }
+
+        .browser-frame {
+            width: 100%;
+            height: 100%;
+
+            border: none;
+
+            background: white;
+        }
+
+        /* =========================
+           EMPTY PAGES
+        ========================= */
+
+        .empty-page {
+            min-height: 100%;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            padding: 30px;
+        }
+
+        .empty-box {
+            width: min(500px, 100%);
+
+            padding: 35px;
+
+            text-align: center;
+
+            border-radius: 18px;
+
+            border: 1px solid #292929;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #151515,
+                    #080808
+                );
+        }
+
+        .empty-box h2 {
+            margin-top: 0;
+        }
+
+        .empty-box p {
+            color: #777;
+
+            line-height: 1.5;
+        }
+
+        /* =========================
+           SETTINGS
+        ========================= */
+
+        #settingsOverlay {
+            position: fixed;
+
+            inset: 0;
+
+            display: none;
+
+            align-items: center;
+            justify-content: center;
+
+            padding: 20px;
+
+            background:
+                rgba(0,0,0,.72);
+
+            z-index: 1000;
+        }
+
+        #settingsOverlay.open {
+            display: flex;
+        }
+
+        .settings {
+            width: min(550px, 100%);
+
+            max-height: 85vh;
+
+            overflow: auto;
+
+            padding: 25px;
+
+            border: 1px solid #551616;
+
+            border-radius: 20px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #171717,
+                    #080808
+                );
+
+            box-shadow:
+                0 20px 80px rgba(0,0,0,.65),
+                0 0 35px rgba(255,0,0,.08);
+        }
+
+        .settings-head {
+            display: flex;
+
+            align-items: center;
+            justify-content: space-between;
+
+            margin-bottom: 22px;
+        }
+
+        .settings-head h2 {
+            margin: 0;
+        }
+
+        .settings-close {
+            width: 34px;
+            height: 34px;
+
+            border: none;
+
+            border-radius: 9px;
+
+            background: #171717;
+
+            color: #aaa;
+
+            cursor: pointer;
+        }
+
+        .settings-row {
+            padding: 16px 0;
+
+            border-top: 1px solid #252525;
+        }
+
+        .settings-row label {
+            display: block;
+
+            margin-bottom: 8px;
+
+            color: #ddd;
+
+            font-weight: 700;
+        }
+
+        .settings-row select {
+            width: 100%;
+
+            padding: 11px;
+
+            border-radius: 9px;
+
+            border: 1px solid #333;
+
+            background: #0c0c0c;
+
+            color: white;
+
+            outline: none;
+        }
+
+        .danger-button {
+            border: 1px solid #691818;
+
+            border-radius: 9px;
+
+            padding: 10px 14px;
+
+            background: #280909;
+
+            color: #ff7777;
+
+            cursor: pointer;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 750px) {
+            .quick-links {
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+            .home-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .brand {
+                font-size: 38px;
+            }
+
+            .tab {
+                min-width: 120px;
+            }
+        }
+
+        @media (max-width: 520px) {
+            #toolbar {
+                gap: 3px;
+                padding: 7px;
+            }
+
+            .toolbar-button {
+                width: 31px;
+                height: 31px;
+            }
+
+            #homeSearch {
+                height: 52px;
+            }
+
+            #homeSearch button {
+                width: 80px;
+            }
+
+            .tab {
+                min-width: 105px;
+            }
+
+            .tab-title {
+                font-size: 11px;
+            }
+        }
+    </style>
 </head>
-
 
 <body>
 
-<div class="app">
+<div id="app">
 
-<!-- =====================================================
-     TABS
-     ===================================================== -->
+    <!-- =========================
+         TAB BAR
+    ========================== -->
 
-<header class="tab-bar" id="tabBar">
+    <div id="tabBar">
 
-    <div
-        class="tab active"
-        id="tab-1"
-        data-tab-id="1"
-        onclick="switchTab('1')"
-    >
+        <div
+            class="tab active"
+            data-tab-id="1"
+            onclick="switchTab(1)"
+        >
+            <div class="tab-icon">C</div>
 
-        <span class="tab-icon">C</span>
+            <div class="tab-title">
+                New Tab
+            </div>
 
-        <span class="tab-title">
-            New Tab
-        </span>
+            <button
+                class="tab-close"
+                onclick="event.stopPropagation(); closeTab(1)"
+                title="Close tab"
+            >
+                ×
+            </button>
+        </div>
 
         <button
-            class="tab-close"
-            onclick="event.stopPropagation();closeTab('1')"
+            id="newTabButton"
+            onclick="createNewTab()"
+            title="New tab"
         >
-            ×
+            +
         </button>
 
     </div>
 
-    <button
-        class="new-tab"
-        onclick="createNewTab()"
-    >
-        +
-    </button>
 
-</header>
+    <!-- =========================
+         TOOLBAR
+    ========================== -->
 
-
-<!-- =====================================================
-     TOOLBAR
-     ===================================================== -->
-
-<div class="toolbar">
-
-    <div class="nav-buttons">
+    <div id="toolbar">
 
         <button
-            class="nav-button"
+            class="toolbar-button"
             onclick="goBack()"
+            title="Back"
         >
             ←
         </button>
 
         <button
-            class="nav-button"
+            class="toolbar-button"
             onclick="goForward()"
+            title="Forward"
         >
             →
         </button>
 
         <button
-            class="nav-button"
+            class="toolbar-button"
             onclick="reloadPage()"
+            title="Reload"
         >
             ↻
         </button>
 
         <button
-            class="nav-button"
+            class="toolbar-button"
             onclick="goHome()"
+            title="Home"
         >
             ⌂
         </button>
 
-    </div>
 
+        <div id="addressArea">
 
-    <div class="address-container">
+            <span id="addressIcon">
+                ◉
+            </span>
 
-        <span class="address-icon">
-            ◉
-        </span>
+            <input
+                id="addressBar"
+                type="text"
+                placeholder="Search or enter a website"
+                autocomplete="off"
+                spellcheck="false"
+                onkeydown="addressKeyDown(event)"
+            >
 
-        <input
-            id="addressBar"
-            class="address-bar"
-            type="text"
-            placeholder="Search Chox or enter a website..."
-            autocomplete="off"
-            onkeydown="if(event.key==='Enter')openAddress()"
-        >
+        </div>
 
-    </div>
-
-
-    <div class="toolbar-actions">
 
         <button
-            class="nav-button"
+            class="toolbar-button"
             onclick="toggleBookmark()"
             title="Bookmark"
         >
@@ -668,7 +1127,7 @@
         </button>
 
         <button
-            class="nav-button"
+            class="toolbar-button"
             onclick="openSettings()"
             title="Settings"
         >
@@ -676,322 +1135,48 @@
         </button>
 
         <button
-            class="nav-button"
-            onclick="openMenu()"
-            title="Menu"
+            class="toolbar-button"
+            onclick="openHistory()"
+            title="History"
         >
             ⋮
         </button>
 
     </div>
 
-</div>
 
+    <!-- =========================
+         PAGES
+    ========================== -->
 
-<!-- =====================================================
-     PAGES
-     ===================================================== -->
+    <div id="pageContainer">
 
-<main
-    class="page-container"
-    id="pageContainer"
->
-
-    <div
-        class="tab-page active"
-        id="page-1"
-        data-tab-id="1"
-    >
-
-        <section class="home">
-
-
-            <!-- BRAND -->
-
-            <div class="home-brand">
-
-                <div class="brand-mark">
-                    CH
-                </div>
-
-                <div class="brand-name">
-                    CH<span>OX</span>
-                </div>
-
-            </div>
-
-            <p class="home-subtitle">
-                Search. Browse. Explore.
-            </p>
-
-
-            <!-- SEARCH -->
-
-            <div class="home-search">
-
-                <div class="search-box">
-
-                    <span class="search-symbol">
-                        ⌕
-                    </span>
-
-                    <input
-                        id="homeSearch"
-                        class="search-input"
-                        type="text"
-                        placeholder="Search the web..."
-                        autocomplete="off"
-                        onkeydown="if(event.key==='Enter')performSearch()"
-                    >
-
-                    <button
-                        class="search-button"
-                        onclick="performSearch()"
-                    >
-                        Search
-                    </button>
-
-                </div>
-
-            </div>
-
-
-            <!-- QUICK LINKS -->
-
-            <div class="quick-links">
-
-                <button
-                    class="quick-link"
-                    onclick="openChoxVideoPage('1')"
-                >
-                    <span class="quick-icon">
-                        ▶
-                    </span>
-
-                    <span>
-                        Chox Video
-                    </span>
-                </button>
-
-
-                <button
-                    class="quick-link"
-                    onclick="openBookmarks()"
-                >
-                    <span class="quick-icon">
-                        ☆
-                    </span>
-
-                    <span>
-                        Bookmarks
-                    </span>
-                </button>
-
-
-                <button
-                    class="quick-link"
-                    onclick="openHistory()"
-                >
-                    <span class="quick-icon">
-                        ◷
-                    </span>
-
-                    <span>
-                        History
-                    </span>
-                </button>
-
-
-                <button
-                    class="quick-link"
-                    onclick="openSettings()"
-                >
-                    <span class="quick-icon">
-                        ⚙
-                    </span>
-
-                    <span>
-                        Settings
-                    </span>
-                </button>
-
-            </div>
-
-
-            <!-- FEATURED -->
-
-            <section class="featured-panel">
-
-                <div class="featured-content">
-
-                    <span class="featured-label">
-                        CHOX
-                    </span>
-
-                    <h2>
-                        Your web.<br>
-                        Your way.
-                    </h2>
-
-                    <p>
-                        A fast, clean and customizable
-                        browsing experience.
-                    </p>
-
-                    <button
-                        class="featured-button"
-                        onclick="document.getElementById('homeSearch').focus()"
-                    >
-                        Start Searching
-                    </button>
-
-                </div>
-
-            </section>
-
-
-            <!-- LOWER CARDS -->
-
-            <div class="home-sections">
-
-                <section>
-
-                    <div class="section-title">
-                        Recent
-                    </div>
-
-                    <div
-                        class="section-card"
-                        onclick="openHistory()"
-                    >
-
-                        <div class="section-card-icon">
-                            ◷
-                        </div>
-
-                        <div>
-                            <strong>
-                                Your recent pages
-                            </strong>
-
-                            <small>
-                                View your browsing history
-                            </small>
-                        </div>
-
-                    </div>
-
-                </section>
-
-
-                <section>
-
-                    <div class="section-title">
-                        Favorites
-                    </div>
-
-                    <div
-                        class="section-card"
-                        onclick="openBookmarks()"
-                    >
-
-                        <div class="section-card-icon">
-                            ★
-                        </div>
-
-                        <div>
-                            <strong>
-                                Saved pages
-                            </strong>
-
-                            <small>
-                                Access your bookmarks
-                            </small>
-                        </div>
-
-                    </div>
-
-                </section>
-
-
-                <section>
-
-                    <div class="section-title">
-                        Chox AI
-                    </div>
-
-                    <div
-                        class="section-card"
-                        onclick="openChoxAI()"
-                    >
-
-                        <div class="section-card-icon">
-                            ✦
-                        </div>
-
-                        <div>
-                            <strong>
-                                Chox AI
-                            </strong>
-
-                            <small>
-                                Your built-in AI assistant
-                            </small>
-                        </div>
-
-                    </div>
-
-                </section>
-
-            </div>
-
-
-            <footer class="home-footer">
-
-                <span>CHOX</span>
-
-                <span>•</span>
-
-                <span>
-                    Fast. Simple. Yours.
-                </span>
-
-            </footer>
-
-        </section>
+        <div
+            id="page-1"
+            class="page active"
+        ></div>
 
     </div>
 
-</main>
-
 </div>
 
 
-<!-- =====================================================
+<!-- =========================
      SETTINGS
-     ===================================================== -->
+========================== -->
 
 <div
     id="settingsOverlay"
-    class="settings-overlay"
+    onclick="settingsBackgroundClick(event)"
 >
 
-    <div class="settings-window">
+    <div class="settings">
 
+        <div class="settings-head">
 
-        <div class="settings-header">
-
-            <div>
-
-                <div class="settings-title">
-                    Chox Settings
-                </div>
-
-                <div class="settings-subtitle">
-                    Customize your Chox experience
-                </div>
-
-            </div>
+            <h2>
+                Chox Settings
+            </h2>
 
             <button
                 class="settings-close"
@@ -1003,219 +1188,86 @@
         </div>
 
 
-        <div class="settings-body">
+        <div class="settings-row">
 
+            <label>
+                Search provider
+            </label>
 
-            <!-- APPEARANCE -->
+            <select id="searchProvider">
 
-            <div class="settings-section">
+                <option value="searx">
+                    SearXNG
+                </option>
 
-                <div class="settings-section-title">
-                    Appearance
-                </div>
-
-
-                <div class="setting-row">
-
-                    <div>
-                        <strong>
-                            Theme
-                        </strong>
-
-                        <small>
-                            Choose your Chox theme
-                        </small>
-                    </div>
-
-                    <select
-                        id="themeSetting"
-                        onchange="changeTheme(this.value)"
-                    >
-
-                        <option value="dark">
-                            Dark
-                        </option>
-
-                        <option value="light">
-                            Light
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-                <div class="setting-row">
-
-                    <div>
-                        <strong>
-                            Red accent
-                        </strong>
-
-                        <small>
-                            Choose the red intensity
-                        </small>
-                    </div>
-
-                    <select
-                        id="accentSetting"
-                        onchange="changeAccent(this.value)"
-                    >
-
-                        <option value="normal">
-                            Normal
-                        </option>
-
-                        <option value="bright">
-                            Bright
-                        </option>
-
-                        <option value="subtle">
-                            Subtle
-                        </option>
-
-                    </select>
-
-                </div>
-
-            </div>
-
-
-            <!-- SEARCH -->
-
-            <div class="settings-section">
-
-                <div class="settings-section-title">
-                    Search
-                </div>
-
-                <div class="setting-row">
-
-                    <div>
-
-                        <strong>
-                            Search engine
-                        </strong>
-
-                        <small>
-                            Default search provider
-                        </small>
-
-                    </div>
-
-                    <select
-                        id="searchEngineSetting"
-                        onchange="saveSetting('searchEngine',this.value)"
-                    >
-
-                        <option value="brave">
-                            Brave
-                        </option>
-
-                        <option value="google">
-                            Google
-                        </option>
-
-                        <option value="bing">
-                            Bing
-                        </option>
-
-                    </select>
-
-                </div>
-
-            </div>
-
-
-            <!-- HOMEPAGE -->
-
-            <div class="settings-section">
-
-                <div class="settings-section-title">
-                    Homepage
-                </div>
-
-                <div class="setting-row">
-
-                    <div>
-
-                        <strong>
-                            Quick links
-                        </strong>
-
-                        <small>
-                            Show shortcuts on the homepage
-                        </small>
-
-                    </div>
-
-                    <select
-                        id="quickLinksSetting"
-                        onchange="changeQuickLinks(this.value)"
-                    >
-
-                        <option value="show">
-                            Show
-                        </option>
-
-                        <option value="hide">
-                            Hide
-                        </option>
-
-                    </select>
-
-                </div>
-
-            </div>
-
-
-            <!-- DATA -->
-
-            <div class="settings-section">
-
-                <div class="settings-section-title">
-                    Data
-                </div>
-
-                <div class="setting-row">
-
-                    <div>
-
-                        <strong>
-                            Clear browsing history
-                        </strong>
-
-                        <small>
-                            Remove saved browsing history
-                        </small>
-
-                    </div>
-
-                    <button
-                        class="settings-danger"
-                        onclick="clearHistory()"
-                    >
-                        Clear
-                    </button>
-
-                </div>
-
-            </div>
+            </select>
 
         </div>
 
 
-        <div class="settings-footer">
+        <div class="settings-row">
 
-            <span>
-                Chox
-            </span>
+            <label>
+                SearXNG instance
+            </label>
+
+            <select
+                id="searxInstance"
+                onchange="saveSettings()"
+            >
+
+                <option value="https://searx.tiekoetter.com">
+                    searx.tiekoetter.com
+                </option>
+
+                <option value="https://search.catboy.house">
+                    search.catboy.house
+                </option>
+
+                <option value="https://search.ctq.ro">
+                    search.ctq.ro
+                </option>
+
+                <option value="https://search.lumy.live">
+                    search.lumy.live
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="settings-row">
+
+            <label>
+                Quick links
+            </label>
+
+            <select
+                id="quickLinksSetting"
+                onchange="saveSettings()"
+            >
+
+                <option value="show">
+                    Show
+                </option>
+
+                <option value="hide">
+                    Hide
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="settings-row">
 
             <button
-                class="settings-done"
-                onclick="closeSettings()"
+                class="danger-button"
+                onclick="clearHistory()"
             >
-                Done
+                Clear browsing history
             </button>
 
         </div>
@@ -1225,305 +1277,2123 @@
 </div>
 
 
-<!-- =====================================================
-     MENU
-     ===================================================== -->
-
-<div
-    id="contextMenu"
-    class="context-menu"
-    style="display:none"
->
-
-    <button onclick="createNewTab()">
-        New Tab
-    </button>
-
-    <button onclick="reloadPage()">
-        Reload
-    </button>
-
-    <button onclick="goHome()">
-        Home
-    </button>
-
-    <button onclick="openBookmarks()">
-        Bookmarks
-    </button>
-
-    <button onclick="openHistory()">
-        History
-    </button>
-
-    <div class="context-divider"></div>
-
-    <button onclick="openSettings()">
-        Settings
-    </button>
-
-</div>
-
-
 <script>
+/* =========================================================
+   CHOX BROWSER CORE
+   Everything is contained in this file.
+========================================================= */
+
+"use strict";
+
 
 /* =========================================================
-   SETTINGS SYSTEM
-   ========================================================= */
+   STATE
+========================================================= */
 
-const CHOX_SETTINGS_KEY = "choxSettings";
+const tabs = new Map();
 
-function getSettings() {
+let activeTabId = 1;
 
-    const defaults = {
-        theme:"dark",
-        accent:"normal",
-        searchEngine:"brave",
-        quickLinks:"show"
-    };
+let nextTabId = 2;
+
+let searchHistory = [];
+
+let bookmarks = [];
+
+let settings = {
+    searchProvider: "searx",
+    searxInstance: "https://searx.tiekoetter.com",
+    quickLinks: "show"
+};
+
+
+/* =========================================================
+   LOAD SAVED DATA
+========================================================= */
+
+function loadSavedData() {
+
+    try {
+
+        searchHistory =
+            JSON.parse(
+                localStorage.getItem("choxHistory") || "[]"
+            );
+
+    } catch {
+
+        searchHistory = [];
+
+    }
+
+
+    try {
+
+        bookmarks =
+            JSON.parse(
+                localStorage.getItem("choxBookmarks") || "[]"
+            );
+
+    } catch {
+
+        bookmarks = [];
+
+    }
+
 
     try {
 
         const saved =
-            localStorage.getItem(CHOX_SETTINGS_KEY);
+            JSON.parse(
+                localStorage.getItem("choxSettings") || "{}"
+            );
 
-        if (!saved) {
-            return defaults;
-        }
-
-        return {
-            ...defaults,
-            ...JSON.parse(saved)
+        settings = {
+            ...settings,
+            ...saved
         };
 
-    } catch {
+    } catch {}
 
-        return defaults;
-    }
-}
-
-
-function saveSetting(key,value) {
-
-    const settings = getSettings();
-
-    settings[key] = value;
-
-    localStorage.setItem(
-        CHOX_SETTINGS_KEY,
-        JSON.stringify(settings)
-    );
-
-    applySettings();
 }
 
 
 /* =========================================================
-   OPEN / CLOSE
-   ========================================================= */
+   SAVE DATA
+========================================================= */
+
+function saveData() {
+
+    localStorage.setItem(
+        "choxHistory",
+        JSON.stringify(searchHistory)
+    );
+
+    localStorage.setItem(
+        "choxBookmarks",
+        JSON.stringify(bookmarks)
+    );
+
+    localStorage.setItem(
+        "choxSettings",
+        JSON.stringify(settings)
+    );
+
+}
+
+
+/* =========================================================
+   TAB CREATION
+========================================================= */
+
+function createTabElement(tab) {
+
+    const tabBar =
+        document.getElementById("tabBar");
+
+    const newButton =
+        document.getElementById("newTabButton");
+
+
+    const element =
+        document.createElement("div");
+
+    element.className = "tab";
+
+    element.dataset.tabId = tab.id;
+
+    element.innerHTML = `
+        <div class="tab-icon">C</div>
+
+        <div class="tab-title">
+            ${escapeHtml(tab.title)}
+        </div>
+
+        <button
+            class="tab-close"
+            title="Close tab"
+        >
+            ×
+        </button>
+    `;
+
+
+    element.addEventListener(
+        "click",
+        () => switchTab(tab.id)
+    );
+
+
+    element
+        .querySelector(".tab-close")
+        .addEventListener(
+            "click",
+            event => {
+
+                event.stopPropagation();
+
+                closeTab(tab.id);
+
+            }
+        );
+
+
+    tabBar.insertBefore(
+        element,
+        newButton
+    );
+
+}
+
+
+function createPageElement(tab) {
+
+    const container =
+        document.getElementById("pageContainer");
+
+
+    const page =
+        document.createElement("div");
+
+    page.id =
+        "page-" + tab.id;
+
+    page.className =
+        "page";
+
+
+    container.appendChild(page);
+
+}
+
+
+/* =========================================================
+   CREATE NEW TAB
+========================================================= */
+
+function createNewTab(url = "") {
+
+    const id = nextTabId++;
+
+    const tab = {
+
+        id,
+
+        title: "New Tab",
+
+        url: "",
+
+        type: "home",
+
+        history: [],
+
+        historyIndex: -1
+
+    };
+
+
+    tabs.set(id, tab);
+
+    createTabElement(tab);
+
+    createPageElement(tab);
+
+    switchTab(id);
+
+    if (url) {
+
+        navigate(url);
+
+    } else {
+
+        renderHome(tab);
+
+    }
+
+}
+
+
+/* =========================================================
+   CLOSE TAB
+========================================================= */
+
+function closeTab(id) {
+
+    if (!tabs.has(id)) {
+        return;
+    }
+
+
+    const tabElement =
+        document.querySelector(
+            `.tab[data-tab-id="${id}"]`
+        );
+
+    const pageElement =
+        document.getElementById(
+            "page-" + id
+        );
+
+
+    if (tabElement) {
+        tabElement.remove();
+    }
+
+    if (pageElement) {
+        pageElement.remove();
+    }
+
+
+    tabs.delete(id);
+
+
+    if (tabs.size === 0) {
+
+        createNewTab();
+
+        return;
+
+    }
+
+
+    if (activeTabId === id) {
+
+        const remaining =
+            Array.from(tabs.keys());
+
+        switchTab(
+            remaining[remaining.length - 1]
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   SWITCH TAB
+========================================================= */
+
+function switchTab(id) {
+
+    if (!tabs.has(id)) {
+        return;
+    }
+
+
+    activeTabId = id;
+
+
+    document
+        .querySelectorAll(".tab")
+        .forEach(tab => {
+
+            tab.classList.toggle(
+                "active",
+                Number(tab.dataset.tabId) === id
+            );
+
+        });
+
+
+    document
+        .querySelectorAll(".page")
+        .forEach(page => {
+
+            page.classList.remove("active");
+
+        });
+
+
+    const page =
+        document.getElementById(
+            "page-" + id
+        );
+
+
+    if (page) {
+        page.classList.add("active");
+    }
+
+
+    updateAddressBar();
+
+}
+
+
+/* =========================================================
+   UPDATE TAB
+========================================================= */
+
+function updateTab(tab) {
+
+    const element =
+        document.querySelector(
+            `.tab[data-tab-id="${tab.id}"]`
+        );
+
+    if (!element) {
+        return;
+    }
+
+
+    const title =
+        element.querySelector(".tab-title");
+
+
+    if (title) {
+
+        title.textContent =
+            tab.title || "New Tab";
+
+    }
+
+}
+
+
+/* =========================================================
+   ADDRESS BAR
+========================================================= */
+
+function updateAddressBar() {
+
+    const tab = tabs.get(activeTabId);
+
+    const address =
+        document.getElementById("addressBar");
+
+
+    if (!tab) {
+        return;
+    }
+
+
+    if (tab.type === "home") {
+
+        address.value = "";
+
+    } else {
+
+        address.value =
+            tab.url || "";
+
+    }
+
+}
+
+
+function addressKeyDown(event) {
+
+    if (event.key !== "Enter") {
+        return;
+    }
+
+    openAddress();
+
+}
+
+
+function openAddress() {
+
+    const address =
+        document
+            .getElementById("addressBar")
+            .value
+            .trim();
+
+
+    if (!address) {
+        return;
+    }
+
+
+    navigate(address);
+
+}
+
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+function navigate(input) {
+
+    const tab = tabs.get(activeTabId);
+
+    if (!tab) {
+        return;
+    }
+
+
+    let value = input.trim();
+
+
+    if (!value) {
+        return;
+    }
+
+
+    /*
+       If it looks like a normal website URL,
+       load it as a website.
+    */
+
+    if (
+        /^https?:\/\//i.test(value)
+    ) {
+
+        openWebsite(value);
+
+        return;
+
+    }
+
+
+    /*
+       Local Chox pages.
+    */
+
+    if (
+        value === "chox://home" ||
+        value === "chox://"
+    ) {
+
+        goHome();
+
+        return;
+
+    }
+
+
+    if (
+        value === "chox://history"
+    ) {
+
+        openHistory();
+
+        return;
+
+    }
+
+
+    if (
+        value === "chox://bookmarks"
+    ) {
+
+        openBookmarks();
+
+        return;
+
+    }
+
+
+    if (
+        value === "chox://settings"
+    ) {
+
+        openSettings();
+
+        return;
+
+    }
+
+
+    /*
+       If it looks like a domain,
+       add HTTPS.
+    */
+
+    if (
+        /^[a-z0-9.-]+\.[a-z]{2,}$/i.test(value)
+    ) {
+
+        openWebsite(
+            "https://" + value
+        );
+
+        return;
+
+    }
+
+
+    /*
+       Otherwise treat it as a search.
+    */
+
+    performSearch(value);
+
+}
+
+
+/* =========================================================
+   HOME
+========================================================= */
+
+function goHome() {
+
+    const tab = tabs.get(activeTabId);
+
+    if (!tab) {
+        return;
+    }
+
+
+    tab.type = "home";
+
+    tab.url = "";
+
+    tab.title = "New Tab";
+
+
+    updateTab(tab);
+
+    updateAddressBar();
+
+    renderHome(tab);
+
+}
+
+
+function renderHome(tab) {
+
+    const page =
+        document.getElementById(
+            "page-" + tab.id
+        );
+
+    if (!page) {
+        return;
+    }
+
+
+    page.innerHTML = `
+
+        <div class="home">
+
+            <div class="logo">
+                CH
+            </div>
+
+            <div class="brand">
+                CHOX
+            </div>
+
+            <div class="subtitle">
+                Fast. Simple. Yours.
+            </div>
+
+
+            <form
+                id="homeSearch"
+                onsubmit="homeSearchSubmit(event)"
+            >
+
+                <input
+                    id="homeSearchInput"
+                    type="text"
+                    placeholder="Search the web..."
+                    autocomplete="off"
+                >
+
+                <button type="submit">
+                    Search
+                </button>
+
+            </form>
+
+
+            <div
+                class="quick-links"
+                style="
+                    display:
+                    ${settings.quickLinks === "hide"
+                        ? "none"
+                        : "grid"};
+                "
+            >
+
+                <button
+                    class="quick-link"
+                    onclick="openChoxVideo()"
+                >
+
+                    <span class="quick-icon">
+                        ▶
+                    </span>
+
+                    <span class="quick-text">
+                        Chox Video
+                    </span>
+
+                </button>
+
+
+                <button
+                    class="quick-link"
+                    onclick="openBookmarks()"
+                >
+
+                    <span class="quick-icon">
+                        ☆
+                    </span>
+
+                    <span class="quick-text">
+                        Bookmarks
+                    </span>
+
+                </button>
+
+
+                <button
+                    class="quick-link"
+                    onclick="openHistory()"
+                >
+
+                    <span class="quick-icon">
+                        ◷
+                    </span>
+
+                    <span class="quick-text">
+                        History
+                    </span>
+
+                </button>
+
+
+                <button
+                    class="quick-link"
+                    onclick="openSettings()"
+                >
+
+                    <span class="quick-icon">
+                        ⚙
+                    </span>
+
+                    <span class="quick-text">
+                        Settings
+                    </span>
+
+                </button>
+
+            </div>
+
+
+            <div class="home-grid">
+
+                <div class="home-card">
+
+                    <h3>
+                        Search
+                    </h3>
+
+                    <p>
+                        Search the web through
+                        SearXNG from the Chox interface.
+                    </p>
+
+                </div>
+
+
+                <div class="home-card">
+
+                    <h3>
+                        Private by design
+                    </h3>
+
+                    <p>
+                        Chox keeps your local history
+                        and bookmarks on your device.
+                    </p>
+
+                </div>
+
+
+                <div class="home-card">
+
+                    <h3>
+                        Chox AI
+                    </h3>
+
+                    <p>
+                        Your AI tools can be connected
+                        to Chox later.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+    `;
+
+}
+
+
+function homeSearchSubmit(event) {
+
+    event.preventDefault();
+
+
+    const input =
+        document.getElementById(
+            "homeSearchInput"
+        );
+
+
+    if (!input) {
+        return;
+    }
+
+
+    const query =
+        input.value.trim();
+
+
+    if (!query) {
+
+        input.focus();
+
+        return;
+
+    }
+
+
+    performSearch(query);
+
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+async function performSearch(query) {
+
+    const tab = tabs.get(activeTabId);
+
+    if (!tab) {
+        return;
+    }
+
+
+    query = query.trim();
+
+    if (!query) {
+        return;
+    }
+
+
+    tab.type = "search";
+
+    tab.url =
+        "chox://search?q=" +
+        encodeURIComponent(query);
+
+    tab.title =
+        "Search: " + query;
+
+
+    updateTab(tab);
+
+    updateAddressBar();
+
+
+    addHistory({
+        type: "search",
+        query,
+        url: tab.url
+    });
+
+
+    renderSearchLoading(
+        tab,
+        query
+    );
+
+
+    try {
+
+        const base =
+            settings.searxInstance
+                .replace(/\/+$/, "");
+
+
+        const url =
+            base +
+            "/search?q=" +
+            encodeURIComponent(query) +
+            "&format=json" +
+            "&language=en" +
+            "&safesearch=1" +
+            "&pageno=1";
+
+
+        const response =
+            await fetch(
+                url,
+                {
+                    method: "GET",
+                    headers: {
+                        "Accept":
+                            "application/json"
+                    }
+                }
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "SearXNG returned HTTP " +
+                response.status
+            );
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        const results =
+            Array.isArray(data.results)
+                ? data.results
+                : [];
+
+
+        renderSearchResults(
+            tab,
+            query,
+            results
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Chox SearXNG error:",
+            error
+        );
+
+
+        renderSearchError(
+            tab,
+            query,
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   SEARCH LOADING
+========================================================= */
+
+function renderSearchLoading(
+    tab,
+    query
+) {
+
+    const page =
+        document.getElementById(
+            "page-" + tab.id
+        );
+
+
+    if (!page) {
+        return;
+    }
+
+
+    page.innerHTML = `
+
+        <div class="results-page">
+
+            <div class="results-header">
+
+                <div class="results-title">
+                    Searching...
+                </div>
+
+                <div class="results-query">
+                    ${escapeHtml(query)}
+                </div>
+
+            </div>
+
+
+            <div class="search-message">
+
+                <strong>
+                    Searching the web
+                </strong>
+
+                <div>
+                    Chox is asking SearXNG
+                    for results.
+                </div>
+
+            </div>
+
+        </div>
+    `;
+
+}
+
+
+/* =========================================================
+   SEARCH RESULTS
+========================================================= */
+
+function renderSearchResults(
+    tab,
+    query,
+    results
+) {
+
+    const page =
+        document.getElementById(
+            "page-" + tab.id
+        );
+
+
+    if (!page) {
+        return;
+    }
+
+
+    if (!results.length) {
+
+        page.innerHTML = `
+
+            <div class="results-page">
+
+                <div class="results-header">
+
+                    <div class="results-title">
+                        Search
+                    </div>
+
+                    <div class="results-query">
+                        ${escapeHtml(query)}
+                    </div>
+
+                </div>
+
+
+                <div class="search-message">
+
+                    <strong>
+                        No results found
+                    </strong>
+
+                    <div>
+                        SearXNG did not return
+                        any results for this search.
+                    </div>
+
+                </div>
+
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    const resultHtml =
+        results
+            .map(
+                (result) => {
+
+                    const title =
+                        result.title ||
+                        "Untitled result";
+
+
+                    const url =
+                        result.url ||
+                        "#";
+
+
+                    const snippet =
+                        result.content ||
+                        result.description ||
+                        "No description available.";
+
+
+                    let domain = "";
+
+                    try {
+
+                        domain =
+                            new URL(url).hostname;
+
+                    } catch {
+
+                        domain = url;
+
+                    }
+
+
+                    return `
+
+                        <div class="result">
+
+                            <a
+                                class="result-title"
+                                href="${escapeAttribute(url)}"
+                                onclick="openResult(event, '${escapeAttribute(url)}')"
+                            >
+                                ${escapeHtml(title)}
+                            </a>
+
+
+                            <div class="result-url">
+                                ${escapeHtml(domain)}
+                            </div>
+
+
+                            <div class="result-snippet">
+                                ${escapeHtml(snippet)}
+                            </div>
+
+                        </div>
+                    `;
+
+                }
+            )
+            .join("");
+
+
+    page.innerHTML = `
+
+        <div class="results-page">
+
+            <div class="results-header">
+
+                <div class="results-title">
+                    Search results
+                </div>
+
+                <div class="results-query">
+                    Results for
+                    <strong>
+                        ${escapeHtml(query)}
+                    </strong>
+                </div>
+
+            </div>
+
+
+            <div class="result-list">
+
+                ${resultHtml}
+
+            </div>
+
+        </div>
+    `;
+
+}
+
+
+/* =========================================================
+   SEARCH ERROR
+========================================================= */
+
+function renderSearchError(
+    tab,
+    query,
+    error
+) {
+
+    const page =
+        document.getElementById(
+            "page-" + tab.id
+        );
+
+
+    if (!page) {
+        return;
+    }
+
+
+    const fallback =
+        settings.searxInstance +
+        "/search?q=" +
+        encodeURIComponent(query);
+
+
+    page.innerHTML = `
+
+        <div class="results-page">
+
+            <div class="results-header">
+
+                <div class="results-title">
+                    Search
+                </div>
+
+                <div class="results-query">
+                    ${escapeHtml(query)}
+                </div>
+
+            </div>
+
+
+            <div class="search-message">
+
+                <strong>
+                    SearXNG couldn't return JSON results
+                </strong>
+
+                <div>
+                    This can happen because a public
+                    SearXNG instance may have its JSON
+                    format disabled or may block browser
+                    requests.
+                </div>
+
+
+                <button
+                    onclick="openExternalSearch('${escapeAttribute(fallback)}')"
+                >
+                    Open SearXNG results
+                </button>
+
+            </div>
+
+        </div>
+    `;
+
+}
+
+
+/* =========================================================
+   OPEN RESULT
+========================================================= */
+
+function openResult(
+    event,
+    url
+) {
+
+    event.preventDefault();
+
+    openWebsite(url);
+
+}
+
+
+function openExternalSearch(url) {
+
+    const tab = tabs.get(activeTabId);
+
+    if (!tab) {
+        return;
+    }
+
+
+    tab.type = "website";
+
+    tab.url = url;
+
+    tab.title = "SearXNG";
+
+
+    updateTab(tab);
+
+    updateAddressBar();
+
+    renderWebsite(tab, url);
+
+}
+
+
+/* =========================================================
+   WEBSITE
+========================================================= */
+
+function openWebsite(url) {
+
+    const tab = tabs.get(activeTabId);
+
+    if (!tab) {
+        return;
+    }
+
+
+    tab.type = "website";
+
+    tab.url = url;
+
+
+    try {
+
+        tab.title =
+            new URL(url).hostname;
+
+    } catch {
+
+        tab.title = url;
+
+    }
+
+
+    updateTab(tab);
+
+    updateAddressBar();
+
+    renderWebsite(tab, url);
+
+}
+
+
+function renderWebsite(tab, url) {
+
+    const page =
+        document.getElementById(
+            "page-" + tab.id
+        );
+
+
+    if (!page) {
+        return;
+    }
+
+
+    page.innerHTML = `
+
+        <div class="browser-page">
+
+            <iframe
+                class="browser-frame"
+                src="${escapeAttribute(url)}"
+                title="Website"
+                loading="eager"
+                referrerpolicy="no-referrer-when-downgrade"
+            ></iframe>
+
+        </div>
+    `;
+
+}
+
+
+/* =========================================================
+   HISTORY
+========================================================= */
+
+function addHistory(item) {
+
+    searchHistory.unshift({
+        ...item,
+        time: Date.now()
+    });
+
+
+    searchHistory =
+        searchHistory.slice(0, 100);
+
+
+    saveData();
+
+}
+
+
+function openHistory() {
+
+    const tab = tabs.get(activeTabId);
+
+    if (!tab) {
+        return;
+    }
+
+
+    tab.type = "history";
+
+    tab.url = "chox://history";
+
+    tab.title = "History";
+
+
+    updateTab(tab);
+
+    updateAddressBar();
+
+
+    const page =
+        document.getElementById(
+            "page-" + tab.id
+        );
+
+
+    const items =
+        searchHistory
+            .slice(0, 50)
+            .map(
+                item => `
+
+                    <div class="result">
+
+                        <div
+                            class="result-title"
+                            style="cursor:pointer"
+                            onclick="navigate('${escapeAttribute(
+                                item.url || ""
+                            )}')"
+                        >
+                            ${escapeHtml(
+                                item.query ||
+                                item.url ||
+                                "History item"
+                            )}
+                        </div>
+
+                        <div class="result-url">
+                            ${escapeHtml(
+                                item.url || ""
+                            )}
+                        </div>
+
+                    </div>
+                `
+            )
+            .join("");
+
+
+    page.innerHTML = `
+
+        <div class="results-page">
+
+            <div class="results-header">
+
+                <div class="results-title">
+                    History
+                </div>
+
+                <div class="results-query">
+                    Your recent Chox searches
+                </div>
+
+            </div>
+
+
+            <div class="result-list">
+
+                ${
+                    items ||
+                    `
+                        <div class="search-message">
+
+                            <strong>
+                                No history yet
+                            </strong>
+
+                            <div>
+                                Searches you make in
+                                Chox will appear here.
+                            </div>
+
+                        </div>
+                    `
+                }
+
+            </div>
+
+        </div>
+    `;
+
+}
+
+
+/* =========================================================
+   BOOKMARKS
+========================================================= */
+
+function toggleBookmark() {
+
+    const tab = tabs.get(activeTabId);
+
+    if (!tab || !tab.url) {
+        return;
+    }
+
+
+    const existing =
+        bookmarks.find(
+            item => item.url === tab.url
+        );
+
+
+    if (existing) {
+
+        bookmarks =
+            bookmarks.filter(
+                item => item.url !== tab.url
+            );
+
+    } else {
+
+        bookmarks.unshift({
+            title:
+                tab.title || tab.url,
+            url: tab.url
+        });
+
+    }
+
+
+    saveData();
+
+}
+
+
+function openBookmarks() {
+
+    const tab = tabs.get(activeTabId);
+
+    if (!tab) {
+        return;
+    }
+
+
+    tab.type = "bookmarks";
+
+    tab.url = "chox://bookmarks";
+
+    tab.title = "Bookmarks";
+
+
+    updateTab(tab);
+
+    updateAddressBar();
+
+
+    const page =
+        document.getElementById(
+            "page-" + tab.id
+        );
+
+
+    const items =
+        bookmarks
+            .map(
+                item => `
+
+                    <div class="result">
+
+                        <a
+                            class="result-title"
+                            href="${escapeAttribute(item.url)}"
+                            onclick="openResult(event, '${escapeAttribute(item.url)}')"
+                        >
+                            ${escapeHtml(item.title)}
+                        </a>
+
+                        <div class="result-url">
+                            ${escapeHtml(item.url)}
+                        </div>
+
+                    </div>
+                `
+            )
+            .join("");
+
+
+    page.innerHTML = `
+
+        <div class="results-page">
+
+            <div class="results-header">
+
+                <div class="results-title">
+                    Bookmarks
+                </div>
+
+                <div class="results-query">
+                    Your saved websites
+                </div>
+
+            </div>
+
+
+            <div class="result-list">
+
+                ${
+                    items ||
+                    `
+                        <div class="search-message">
+
+                            <strong>
+                                No bookmarks yet
+                            </strong>
+
+                            <div>
+                                Press ☆ while visiting
+                                a page to bookmark it.
+                            </div>
+
+                        </div>
+                    `
+                }
+
+            </div>
+
+        </div>
+    `;
+
+}
+
+
+/* =========================================================
+   CHOX VIDEO
+========================================================= */
+
+function openChoxVideo() {
+
+    const tab = tabs.get(activeTabId);
+
+    if (!tab) {
+        return;
+    }
+
+
+    tab.type = "chox-video";
+
+    tab.url = "chox://video";
+
+    tab.title = "Chox Video";
+
+
+    updateTab(tab);
+
+    updateAddressBar();
+
+
+    const page =
+        document.getElementById(
+            "page-" + tab.id
+        );
+
+
+    page.innerHTML = `
+
+        <div class="home">
+
+            <div class="logo">
+                ▶
+            </div>
+
+            <div class="brand">
+                CHOX VIDEO
+            </div>
+
+            <div class="subtitle">
+                Video search and viewing
+            </div>
+
+
+            <form
+                id="homeSearch"
+                onsubmit="videoSearch(event)"
+            >
+
+                <input
+                    id="videoSearchInput"
+                    type="text"
+                    placeholder="Search for videos..."
+                >
+
+                <button type="submit">
+                    Search
+                </button>
+
+            </form>
+
+
+            <div class="home-grid">
+
+                <div class="home-card">
+
+                    <h3>
+                        Chox Video
+                    </h3>
+
+                    <p>
+                        Search the web for video
+                        pages using Chox search.
+                    </p>
+
+                </div>
+
+                <div class="home-card">
+
+                    <h3>
+                        Favorites
+                    </h3>
+
+                    <p>
+                        Save useful video pages
+                        with the bookmark button.
+                    </p>
+
+                </div>
+
+                <div class="home-card">
+
+                    <h3>
+                        Note
+                    </h3>
+
+                    <p>
+                        Some websites prevent
+                        themselves from being displayed
+                        inside browser frames.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+    `;
+
+}
+
+
+function videoSearch(event) {
+
+    event.preventDefault();
+
+
+    const input =
+        document.getElementById(
+            "videoSearchInput"
+        );
+
+
+    if (!input) {
+        return;
+    }
+
+
+    const query =
+        input.value.trim();
+
+
+    if (!query) {
+        return;
+    }
+
+
+    performSearch(
+        query + " video"
+    );
+
+}
+
+
+/* =========================================================
+   BACK / FORWARD
+========================================================= */
+
+function goBack() {
+
+    const tab = tabs.get(activeTabId);
+
+    if (!tab) {
+        return;
+    }
+
+
+    if (
+        tab.historyIndex > 0
+    ) {
+
+        tab.historyIndex--;
+
+        const item =
+            tab.history[
+                tab.historyIndex
+            ];
+
+
+        if (item) {
+
+            restoreHistoryItem(
+                tab,
+                item
+            );
+
+        }
+
+        return;
+
+    }
+
+
+    window.history.back();
+
+}
+
+
+function goForward() {
+
+    const tab = tabs.get(activeTabId);
+
+    if (!tab) {
+        return;
+    }
+
+
+    if (
+        tab.historyIndex <
+        tab.history.length - 1
+    ) {
+
+        tab.historyIndex++;
+
+        const item =
+            tab.history[
+                tab.historyIndex
+            ];
+
+
+        if (item) {
+
+            restoreHistoryItem(
+                tab,
+                item
+            );
+
+        }
+
+        return;
+
+    }
+
+
+    window.history.forward();
+
+}
+
+
+function restoreHistoryItem(
+    tab,
+    item
+) {
+
+    if (item.type === "home") {
+
+        renderHome(tab);
+
+    } else if (item.type === "search") {
+
+        performSearch(item.query);
+
+    } else if (item.type === "website") {
+
+        renderWebsite(
+            tab,
+            item.url
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   RELOAD
+========================================================= */
+
+function reloadPage() {
+
+    const tab = tabs.get(activeTabId);
+
+    if (!tab) {
+        return;
+    }
+
+
+    if (tab.type === "home") {
+
+        renderHome(tab);
+
+        return;
+
+    }
+
+
+    if (tab.type === "search") {
+
+        const match =
+            tab.url.match(
+                /[?&]q=([^&]+)/
+            );
+
+
+        if (match) {
+
+            performSearch(
+                decodeURIComponent(
+                    match[1]
+                )
+            );
+
+        }
+
+        return;
+
+    }
+
+
+    if (
+        tab.type === "website" &&
+        tab.url
+    ) {
+
+        renderWebsite(
+            tab,
+            tab.url
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   SETTINGS
+========================================================= */
 
 function openSettings() {
 
-    const overlay =
-        document.getElementById("settingsOverlay");
+    document
+        .getElementById(
+            "settingsOverlay"
+        )
+        .classList.add("open");
 
-    if (!overlay) return;
 
-    loadSettings();
+    document
+        .getElementById(
+            "searxInstance"
+        )
+        .value =
+            settings.searxInstance;
 
-    overlay.classList.add("open");
+
+    document
+        .getElementById(
+            "quickLinksSetting"
+        )
+        .value =
+            settings.quickLinks;
+
 }
 
 
 function closeSettings() {
 
-    const overlay =
-        document.getElementById("settingsOverlay");
+    document
+        .getElementById(
+            "settingsOverlay"
+        )
+        .classList.remove("open");
 
-    if (!overlay) return;
-
-    overlay.classList.remove("open");
 }
 
 
-/* =========================================================
-   LOAD
-   ========================================================= */
+function settingsBackgroundClick(event) {
 
-function loadSettings() {
+    if (
+        event.target.id ===
+        "settingsOverlay"
+    ) {
 
-    const settings = getSettings();
+        closeSettings();
 
-    const theme =
-        document.getElementById("themeSetting");
-
-    const accent =
-        document.getElementById("accentSetting");
-
-    const search =
-        document.getElementById("searchEngineSetting");
-
-    const quick =
-        document.getElementById("quickLinksSetting");
-
-
-    if (theme)
-        theme.value = settings.theme;
-
-    if (accent)
-        accent.value = settings.accent;
-
-    if (search)
-        search.value = settings.searchEngine;
-
-    if (quick)
-        quick.value = settings.quickLinks;
-
-    applySettings();
-}
-
-
-/* =========================================================
-   APPLY
-   ========================================================= */
-
-function applySettings() {
-
-    const settings = getSettings();
-
-    document.documentElement.dataset.theme =
-        settings.theme;
-
-    document.documentElement.dataset.accent =
-        settings.accent;
-
-
-    const links =
-        document.querySelector(".quick-links");
-
-    if (links) {
-
-        links.style.display =
-            settings.quickLinks === "hide"
-                ? "none"
-                : "grid";
     }
 
+}
 
-    /* Accent */
 
-    if (settings.accent === "bright") {
+function saveSettings() {
 
-        document.documentElement.style
-            .setProperty(
-                "--red",
-                "#e32630"
-            );
+    settings.searxInstance =
+        document
+            .getElementById(
+                "searxInstance"
+            )
+            .value;
 
-    } else if (settings.accent === "subtle") {
 
-        document.documentElement.style
-            .setProperty(
-                "--red",
-                "#7d0c13"
-            );
+    settings.quickLinks =
+        document
+            .getElementById(
+                "quickLinksSetting"
+            )
+            .value;
 
-    } else {
 
-        document.documentElement.style
-            .setProperty(
-                "--red",
-                "#a9141d"
-            );
+    saveData();
+
+
+    const tab =
+        tabs.get(activeTabId);
+
+
+    if (
+        tab &&
+        tab.type === "home"
+    ) {
+
+        renderHome(tab);
+
     }
 
-
-    /* Light mode */
-
-    if (settings.theme === "light") {
-
-        document.body.classList.add(
-            "chox-light"
-        );
-
-    } else {
-
-        document.body.classList.remove(
-            "chox-light"
-        );
-    }
-}
-
-
-function changeTheme(value) {
-    saveSetting("theme",value);
-}
-
-
-function changeAccent(value) {
-    saveSetting("accent",value);
-}
-
-
-function changeQuickLinks(value) {
-    saveSetting("quickLinks",value);
 }
 
 
 /* =========================================================
    CLEAR HISTORY
-   ========================================================= */
+========================================================= */
 
 function clearHistory() {
 
-    const confirmed =
-        confirm(
-            "Are you sure you want to clear your Chox history?"
-        );
+    searchHistory = [];
 
-    if (!confirmed) return;
+    saveData();
 
-    localStorage.removeItem("choxHistory");
-    localStorage.removeItem("history");
-    localStorage.removeItem("choxVideoState");
+    openHistory();
 
-    alert("Chox history cleared.");
 }
 
 
 /* =========================================================
-   SETTINGS CLICK OUTSIDE
-   ========================================================= */
+   HTML SAFETY
+========================================================= */
 
-document.addEventListener(
-    "click",
-    function(event) {
+function escapeHtml(value) {
 
-        const overlay =
-            document.getElementById(
-                "settingsOverlay"
-            );
+    return String(value)
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
 
-        if (
-            overlay &&
-            event.target === overlay
-        ) {
-            closeSettings();
-        }
+}
 
-    }
-);
+
+function escapeAttribute(value) {
+
+    return String(value)
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        );
+
+}
 
 
 /* =========================================================
-   ESCAPE
-   ========================================================= */
+   KEYBOARD SHORTCUTS
+========================================================= */
 
 document.addEventListener(
     "keydown",
-    function(event) {
+    event => {
 
-        if (event.key === "Escape") {
+        if (
+            (event.ctrlKey ||
+                event.metaKey) &&
+            event.key.toLowerCase() === "l"
+        ) {
+
+            event.preventDefault();
+
+            const address =
+                document.getElementById(
+                    "addressBar"
+                );
+
+            address.focus();
+
+            address.select();
+
+        }
+
+
+        if (
+            (event.ctrlKey ||
+                event.metaKey) &&
+            event.key.toLowerCase() === "t"
+        ) {
+
+            event.preventDefault();
+
+            createNewTab();
+
+        }
+
+
+        if (
+            (event.ctrlKey ||
+                event.metaKey) &&
+            event.key.toLowerCase() === "w"
+        ) {
+
+            event.preventDefault();
+
+            closeTab(activeTabId);
+
+        }
+
+
+        if (
+            event.key === "Escape"
+        ) {
+
             closeSettings();
+
         }
 
     }
@@ -1531,24 +3401,40 @@ document.addEventListener(
 
 
 /* =========================================================
-   STARTUP
-   ========================================================= */
+   INITIALIZE
+========================================================= */
 
-document.addEventListener(
-    "DOMContentLoaded",
-    function() {
+loadSavedData();
 
-        loadSettings();
 
-    }
+const firstTab = {
+
+    id: 1,
+
+    title: "New Tab",
+
+    url: "",
+
+    type: "home",
+
+    history: [],
+
+    historyIndex: -1
+
+};
+
+
+tabs.set(
+    1,
+    firstTab
 );
 
+
+renderHome(firstTab);
+
+updateAddressBar();
+
 </script>
-
-
-<!-- YOUR EXISTING CHOX JAVASCRIPT -->
-
-<script src="script.js"></script>
 
 </body>
 </html>
