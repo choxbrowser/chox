@@ -1,1 +1,15 @@
-
+{
+  "name": "chox",
+  "version": "1.0.0",
+  "description": "Chox browser with FreeTube integration",
+  "main": "main.js",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron .",
+    "search-server": "node chox-search-server.js"
+  },
+  "devDependencies": {
+    "electron": "^38.1.2"
+  }
+}
