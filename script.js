@@ -1,149 +1,237 @@
-/* =========================================================
-   CHOX BROWSER - script.js
-   Main browser/tab/navigation functionality
-   ========================================================= */
-
 "use strict";
 
-/* -----------------------------
-   STATE
------------------------------ */
+/* =========================================================
+   CHOX - MAIN JAVASCRIPT
+   ========================================================= */
 
 let tabs = [];
 let activeTabId = null;
-let tabCounter = 1;
+let nextTabId = 1;
 
-const HOME_URL = "chox://home";
+const CHOX_HOME = "chox://home";
 
-const $ = (selector) => document.querySelector(selector);
-
-function getTab(id) {
-    return tabs.find(tab => String(tab.id) === String(id));
-}
-
-function getActiveTab() {
-    return getTab(activeTabId);
-}
-
-/* -----------------------------
-   INITIALIZE
------------------------------ */
+/* =========================================================
+   STARTUP
+   ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
-    initializeChox();
+    setupChox();
 });
 
-function initializeChox() {
-    // Prevent duplicate initialization
-    if (tabs.length > 0) return;
-
-    createNewTab();
-
+function setupChox() {
     loadSettings();
 
-    // Address bar Enter
-    const addressBar = $("#addressBar");
+    // If the HTML already created a tab, use it.
+    const existingTab = document.querySelector(".browser-tab");
 
-    if (addressBar) {
-        addressBar.addEventListener("keydown", (event) => {
-            if (event.key === "Enter") {
-                openAddress();
-            }
+    if (existingTab) {
+        const id =
+            existingTab.dataset.tabId ||
+            existingTab.id?.replace("tab-", "") ||
+            String(nextTabId++);
+
+        activeTabId = String(id);
+
+        tabs.push({
+            id: String(id),
+            title: "New Tab",
+            url: CHOX_HOME,
+            type: "home",
+            history: [CHOX_HOME],
+            historyIndex: 0
         });
+
+        const page = document.querySelector(".tab-page");
+
+        if (page) {
+            page.dataset.tabId = String(id);
+            page.id = `tab-page-${id}`;
+        }
+
+        existingTab.classList.add("active");
+
+        if (page) {
+            page.classList.add("active");
+        }
+    } else {
+        createNewTab();
     }
 
-    // Search boxes
-    document.querySelectorAll(".search-box input, #searchInput").forEach(input => {
-        input.addEventListener("keydown", event => {
-            if (event.key === "Enter") {
-                performSearch();
-            }
-        });
+    setupSearchInputs();
+    setupKeyboardShortcuts();
+}
+
+/* =========================================================
+   SEARCH
+   ========================================================= */
+
+function setupSearchInputs() {
+    document.querySelectorAll("input").forEach(input => {
+        if (
+            input.id?.toLowerCase().includes("search") ||
+            input.classList.contains("search-input") ||
+            input.classList.contains("search-box")
+        ) {
+            input.addEventListener("keydown", event => {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    performSearch();
+                }
+            });
+        }
     });
 }
 
-/* -----------------------------
+function performSearch(tabId = activeTabId, suppliedQuery = null) {
+    let query = suppliedQuery;
+
+    if (!query) {
+        const tabInput =
+            document.querySelector(`#searchInput-${tabId}`);
+
+        const normalInput =
+            document.querySelector("#searchInput");
+
+        const formInput =
+            document.querySelector("#searchForm input");
+
+        query =
+            tabInput?.value?.trim() ||
+            normalInput?.value?.trim() ||
+            formInput?.value?.trim();
+    }
+
+    if (!query) {
+        const address = document.querySelector("#addressBar");
+
+        if (address && address.value.trim()) {
+            query = address.value.trim();
+        }
+    }
+
+    if (!query) return;
+
+    const tab = getTab(tabId);
+
+    const searchURL =
+        "results.html?q=" +
+        encodeURIComponent(query);
+
+    if (tab) {
+        tab.url = searchURL;
+        tab.title = `Search: ${query}`;
+        tab.type = "search";
+
+        addHistory(tab, searchURL);
+
+        renderSearchPage(tab, query);
+        updateEverything();
+    } else {
+        window.location.href = searchURL;
+    }
+}
+
+/* =========================================================
+   SEARCH FORM
+   ========================================================= */
+
+document.addEventListener("submit", event => {
+    const form = event.target;
+
+    if (
+        form.id === "searchForm" ||
+        form.querySelector('input[type="search"]') ||
+        form.querySelector("#searchInput")
+    ) {
+        event.preventDefault();
+
+        const input =
+            form.querySelector("#searchInput") ||
+            form.querySelector('input[type="search"]') ||
+            form.querySelector("input");
+
+        if (input?.value.trim()) {
+            performSearch(activeTabId, input.value.trim());
+        }
+    }
+});
+
+/* =========================================================
    TABS
------------------------------ */
+   ========================================================= */
 
 function createNewTab() {
-    const id = String(++tabCounter);
+    const id = String(nextTabId++);
 
     const tab = {
         id,
         title: "New Tab",
-        url: HOME_URL,
+        url: CHOX_HOME,
         type: "home",
-        history: [HOME_URL],
-        historyIndex: 0,
-        bookmarked: false
+        history: [CHOX_HOME],
+        historyIndex: 0
     };
 
     tabs.push(tab);
 
-    createTabButton(tab);
-    createTabPage(tab);
+    const tabBar =
+        document.querySelector("#tabBar") ||
+        document.querySelector(".tab-bar");
+
+    const pages =
+        document.querySelector("#tabPages") ||
+        document.querySelector(".tab-pages");
+
+    if (tabBar) {
+        const button = document.createElement("div");
+
+        button.className = "browser-tab";
+        button.dataset.tabId = id;
+
+        button.innerHTML = `
+            <span class="tab-title">New Tab</span>
+            <button class="tab-close">×</button>
+        `;
+
+        button.addEventListener("click", event => {
+            if (
+                !event.target.classList.contains("tab-close")
+            ) {
+                switchTab(id);
+            }
+        });
+
+        button
+            .querySelector(".tab-close")
+            .addEventListener("click", event => {
+                event.stopPropagation();
+                closeTab(id);
+            });
+
+        const newButton =
+            tabBar.querySelector(".new-tab");
+
+        if (newButton) {
+            tabBar.insertBefore(button, newButton);
+        } else {
+            tabBar.appendChild(button);
+        }
+    }
+
+    if (pages) {
+        const page = document.createElement("div");
+
+        page.className = "tab-page";
+        page.id = `tab-page-${id}`;
+        page.dataset.tabId = id;
+
+        pages.appendChild(page);
+    }
 
     switchTab(id);
-
-    return tab;
-}
-
-function createTabButton(tab) {
-    const tabBar = $("#tabBar");
-
-    if (!tabBar) return;
-
-    const button = document.createElement("div");
-
-    button.className = "browser-tab";
-    button.dataset.tabId = tab.id;
-
-    button.innerHTML = `
-        <span class="tab-title">${escapeHTML(tab.title)}</span>
-        <button class="tab-close" title="Close tab">×</button>
-    `;
-
-    button.addEventListener("click", event => {
-        if (event.target.classList.contains("tab-close")) {
-            return;
-        }
-
-        switchTab(tab.id);
-    });
-
-    button.querySelector(".tab-close").addEventListener("click", event => {
-        event.stopPropagation();
-        closeTab(tab.id);
-    });
-
-    // Put the tab before the + button
-    const newTabButton = tabBar.querySelector(".new-tab");
-
-    if (newTabButton) {
-        tabBar.insertBefore(button, newTabButton);
-    } else {
-        tabBar.appendChild(button);
-    }
-}
-
-function createTabPage(tab) {
-    const container =
-        $("#tabPages") ||
-        $(".tab-pages") ||
-        $("#browserPages");
-
-    if (!container) return;
-
-    const page = document.createElement("div");
-
-    page.className = "tab-page";
-    page.id = `tab-page-${tab.id}`;
-    page.dataset.tabId = tab.id;
-
-    container.appendChild(page);
-
     renderHome(tab);
+
+    return id;
 }
 
 function switchTab(id) {
@@ -153,10 +241,10 @@ function switchTab(id) {
 
     activeTabId = String(id);
 
-    document.querySelectorAll(".browser-tab").forEach(button => {
-        button.classList.toggle(
+    document.querySelectorAll(".browser-tab").forEach(tabButton => {
+        tabButton.classList.toggle(
             "active",
-            String(button.dataset.tabId) === String(id)
+            String(tabButton.dataset.tabId) === String(id)
         );
     });
 
@@ -167,8 +255,7 @@ function switchTab(id) {
         );
     });
 
-    updateAddressBar();
-    updateNavigationButtons();
+    updateEverything();
 }
 
 function closeTab(id) {
@@ -178,10 +265,10 @@ function closeTab(id) {
 
     if (index === -1) return;
 
-    const wasActive = String(activeTabId) === String(id);
-
     document
-        .querySelector(`.browser-tab[data-tab-id="${id}"]`)
+        .querySelector(
+            `.browser-tab[data-tab-id="${id}"]`
+        )
         ?.remove();
 
     document
@@ -190,84 +277,42 @@ function closeTab(id) {
 
     tabs.splice(index, 1);
 
-    // Always keep at least one tab
     if (tabs.length === 0) {
         createNewTab();
         return;
     }
 
-    if (wasActive) {
-        const nextTab =
+    if (String(activeTabId) === String(id)) {
+        const next =
             tabs[index] ||
             tabs[index - 1] ||
             tabs[0];
 
-        switchTab(nextTab.id);
+        switchTab(next.id);
     }
 }
 
-/* -----------------------------
-   TAB UPDATES
------------------------------ */
+/* =========================================================
+   HOME
+   ========================================================= */
 
-function updateTabButton(tab) {
-    const button = document.querySelector(
-        `.browser-tab[data-tab-id="${tab.id}"]`
-    );
-
-    if (!button) return;
-
-    const title = button.querySelector(".tab-title");
-
-    if (title) {
-        title.textContent = tab.title || "New Tab";
-    }
-}
-
-function updateAddressBar() {
+function goHome() {
     const tab = getActiveTab();
 
     if (!tab) return;
 
-    const addressBar =
-        $("#addressBar") ||
-        $("#urlBar") ||
-        $(".address-bar input");
+    tab.url = CHOX_HOME;
+    tab.type = "home";
+    tab.title = "New Tab";
 
-    if (addressBar) {
-        addressBar.value = tab.url || HOME_URL;
-    }
+    addHistory(tab, CHOX_HOME);
+
+    renderHome(tab);
+    updateEverything();
 }
-
-function updateNavigationButtons() {
-    const tab = getActiveTab();
-
-    if (!tab) return;
-
-    const back =
-        $("#backButton") ||
-        $('[data-action="back"]');
-
-    const forward =
-        $("#forwardButton") ||
-        $('[data-action="forward"]');
-
-    if (back) {
-        back.disabled = tab.historyIndex <= 0;
-    }
-
-    if (forward) {
-        forward.disabled =
-            tab.historyIndex >= tab.history.length - 1;
-    }
-}
-
-/* -----------------------------
-   HOME PAGE
------------------------------ */
 
 function renderHome(tab) {
-    const page = getTabPage(tab.id);
+    const page = getPage(tab.id);
 
     if (!page) return;
 
@@ -289,7 +334,7 @@ function renderHome(tab) {
                     type="text"
                     placeholder="Search the web..."
                     autocomplete="off"
-                />
+                >
 
                 <button
                     class="search-button"
@@ -374,10 +419,6 @@ function renderHome(tab) {
 
             </div>
 
-            <div class="home-footer">
-                Chox Browser
-            </div>
-
         </div>
     `;
 
@@ -394,46 +435,40 @@ function renderHome(tab) {
     }
 }
 
-/* -----------------------------
+/* =========================================================
    ADDRESS BAR
------------------------------ */
+   ========================================================= */
 
 function openAddress() {
-    const tab = getActiveTab();
+    const address =
+        document.querySelector("#addressBar") ||
+        document.querySelector("#urlBar");
 
-    if (!tab) return;
+    if (!address) return;
 
-    const addressBar =
-        $("#addressBar") ||
-        $("#urlBar") ||
-        $(".address-bar input");
-
-    if (!addressBar) return;
-
-    let value = addressBar.value.trim();
+    let value = address.value.trim();
 
     if (!value) return;
 
-    // Chox internal pages
     if (
-        value === "chox://home" ||
-        value === "chox://"
+        value === "chox://" ||
+        value === "chox://home"
     ) {
-        navigateTab(tab.id, HOME_URL, "home", "New Tab");
+        goHome();
+        return;
+    }
+
+    if (value === "chox://video") {
+        openChoxVideoPage(activeTabId);
         return;
     }
 
     if (
-        value === "chox://video" ||
-        value === "chox://video/"
+        !value.includes(".") &&
+        !value.startsWith("http://") &&
+        !value.startsWith("https://")
     ) {
-        openChoxVideoPage(tab.id);
-        return;
-    }
-
-    // Search if it doesn't look like a URL
-    if (!looksLikeURL(value)) {
-        performSearch(tab.id, value);
+        performSearch(activeTabId, value);
         return;
     }
 
@@ -441,74 +476,35 @@ function openAddress() {
         value = "https://" + value;
     }
 
-    navigateTab(
-        tab.id,
-        value,
-        "website",
-        value.replace(/^https?:\/\//i, "")
-    );
+    navigateTo(value);
 }
 
-/* -----------------------------
-   NAVIGATION
------------------------------ */
+/* =========================================================
+   WEBSITE NAVIGATION
+   ========================================================= */
 
-function navigateTab(
-    tabId,
-    url,
-    type = "website",
-    title = url
-) {
-    const tab = getTab(tabId);
+function navigateTo(url) {
+    const tab = getActiveTab();
 
     if (!tab) return;
 
-    // Remove forward history
-    tab.history = tab.history.slice(
-        0,
-        tab.historyIndex + 1
-    );
-
-    tab.history.push(url);
-    tab.historyIndex = tab.history.length - 1;
-
     tab.url = url;
-    tab.type = type;
-    tab.title = title || "Chox";
+    tab.type = "website";
 
-    renderTab(tab);
+    try {
+        tab.title = new URL(url).hostname;
+    } catch {
+        tab.title = url;
+    }
 
-    switchTab(tab.id);
+    addHistory(tab, url);
+
+    renderWebsite(tab);
+    updateEverything();
 }
-
-function renderTab(tab) {
-    const page = getTabPage(tab.id);
-
-    if (!page) return;
-
-    if (tab.type === "home") {
-        renderHome(tab);
-    }
-
-    else if (tab.type === "chox-video") {
-        renderChoxVideoFallback(tab);
-    }
-
-    else if (tab.type === "website") {
-        renderWebsite(tab);
-    }
-
-    updateTabButton(tab);
-    updateAddressBar();
-    updateNavigationButtons();
-}
-
-/* -----------------------------
-   WEBSITE VIEW
------------------------------ */
 
 function renderWebsite(tab) {
-    const page = getTabPage(tab.id);
+    const page = getPage(tab.id);
 
     if (!page) return;
 
@@ -516,20 +512,14 @@ function renderWebsite(tab) {
         <div class="website-page">
 
             <div class="website-loading">
-                <div class="loading-spinner"></div>
-
-                <p>Loading</p>
-
-                <small>
-                    ${escapeHTML(tab.url)}
-                </small>
+                Loading ${escapeHTML(tab.url)}...
             </div>
 
             <iframe
                 class="website-frame"
                 src="${escapeAttribute(tab.url)}"
-                title="Web page"
-                loading="eager">
+                allow="fullscreen"
+                referrerpolicy="strict-origin-when-cross-origin">
             </iframe>
 
         </div>
@@ -546,205 +536,133 @@ function renderWebsite(tab) {
                 loading.style.display = "none";
             }
         });
-
-        iframe.addEventListener("error", () => {
-            showWebsiteError(tab);
-        });
     }
 }
 
-function showWebsiteError(tab) {
-    const page = getTabPage(tab.id);
+/* =========================================================
+   BACK / FORWARD / RELOAD
+   ========================================================= */
 
-    if (!page) return;
-
-    page.innerHTML = `
-        <div class="website-error">
-            <div class="error-icon">!</div>
-
-            <h2>Unable to load this page</h2>
-
-            <p>
-                This website may not allow itself to
-                be displayed inside Chox.
-            </p>
-
-            <button onclick="openExternal('${escapeAttribute(tab.url)}')">
-                Open externally
-            </button>
-        </div>
-    `;
-}
-
-/* -----------------------------
-   CHOX VIDEO
------------------------------ */
-
-function openChoxVideoPage(tabId) {
-    const tab = getTab(tabId);
-
+function addHistory(tab, url) {
     if (!tab) return;
 
-    tab.type = "chox-video";
-    tab.url = "chox://video";
-    tab.title = "Chox Video";
+    tab.history =
+        tab.history.slice(
+            0,
+            tab.historyIndex + 1
+        );
 
-    switchTab(tab.id);
+    if (
+        tab.history[tab.history.length - 1] !== url
+    ) {
+        tab.history.push(url);
+    }
 
-    const page = getTabPage(tab.id);
+    tab.historyIndex =
+        tab.history.length - 1;
 
-    if (!page) return;
+    if (
+        !url.startsWith("chox://")
+    ) {
+        saveBrowsingHistory(
+            tab.title,
+            url
+        );
+    }
+}
 
-    if (typeof window.renderChoxVideo === "function") {
-        window.renderChoxVideo(tab.id);
+function goBack() {
+    const tab = getActiveTab();
+
+    if (!tab || tab.historyIndex <= 0) {
         return;
     }
 
-    renderChoxVideoFallback(tab);
+    tab.historyIndex--;
 
-    updateTabButton(tab);
-    updateAddressBar();
+    tab.url =
+        tab.history[tab.historyIndex];
+
+    loadCurrentTab(tab);
 }
 
-function renderChoxVideoFallback(tab) {
-    const page = getTabPage(tab.id);
+function goForward() {
+    const tab = getActiveTab();
 
-    if (!page) return;
-
-    page.innerHTML = `
-        <div class="chox-video-page">
-
-            <div class="video-sidebar">
-
-                <div class="video-brand">
-                    <span>CH</span>
-                    <strong>CHOX VIDEO</strong>
-                </div>
-
-                <button onclick="openChoxVideoPage('${tab.id}')">
-                    🏠 Home
-                </button>
-
-                <button onclick="searchChoxVideo('${tab.id}')">
-                    🔍 Search
-                </button>
-
-                <button onclick="openHistory()">
-                    ◷ History
-                </button>
-
-                <button onclick="openBookmarks()">
-                    ★ Favorites
-                </button>
-
-            </div>
-
-            <div class="video-main">
-
-                <div class="video-header">
-                    <h1>Chox Video</h1>
-
-                    <div class="video-search">
-                        <input
-                            id="choxVideoSearch-${tab.id}"
-                            placeholder="Search videos..."
-                        />
-
-                        <button
-                            onclick="searchChoxVideo('${tab.id}')">
-                            🔍
-                        </button>
-                    </div>
-                </div>
-
-                <div class="video-empty">
-                    <div class="video-big-icon">▶</div>
-
-                    <h2>Chox Video</h2>
-
-                    <p>
-                        Search for videos using Chox.
-                    </p>
-                </div>
-
-            </div>
-
-        </div>
-    `;
-
-    const input = document.querySelector(
-        `#choxVideoSearch-${tab.id}`
-    );
-
-    if (input) {
-        input.addEventListener("keydown", event => {
-            if (event.key === "Enter") {
-                searchChoxVideo(tab.id);
-            }
-        });
+    if (
+        !tab ||
+        tab.historyIndex >=
+            tab.history.length - 1
+    ) {
+        return;
     }
+
+    tab.historyIndex++;
+
+    tab.url =
+        tab.history[tab.historyIndex];
+
+    loadCurrentTab(tab);
 }
 
-function searchChoxVideo(tabId) {
-    const input = document.querySelector(
-        `#choxVideoSearch-${tabId}`
-    );
-
-    if (!input) return;
-
-    const query = input.value.trim();
-
-    if (!query) return;
-
-    performSearch(tabId, query + " site:youtube.com/watch");
-}
-
-/* -----------------------------
-   SEARCH
------------------------------ */
-
-function performSearch(tabId = activeTabId, customQuery = null) {
-    const tab = getTab(tabId);
+function reloadPage() {
+    const tab = getActiveTab();
 
     if (!tab) return;
 
-    let query = customQuery;
-
-    if (!query) {
-        const input =
-            document.querySelector(`#searchInput-${tabId}`) ||
-            $("#searchInput");
-
-        query = input?.value?.trim();
-    }
-
-    if (!query) return;
-
-    const url =
-        `results.html?q=${encodeURIComponent(query)}`;
-
-    tab.url = url;
-    tab.type = "search";
-    tab.title = `Search: ${query}`;
-
-    tab.history = tab.history.slice(
-        0,
-        tab.historyIndex + 1
-    );
-
-    tab.history.push(url);
-    tab.historyIndex++;
-
-    renderSearchPage(tab, query);
-
-    switchTab(tab.id);
-
-    updateTabButton(tab);
-    updateAddressBar();
+    loadCurrentTab(tab);
 }
 
+function loadCurrentTab(tab) {
+    if (tab.url === CHOX_HOME) {
+        tab.type = "home";
+        renderHome(tab);
+    }
+
+    else if (tab.url === "chox://video") {
+        openChoxVideoPage(tab.id);
+    }
+
+    else if (tab.url === "chox://bookmarks") {
+        openBookmarks();
+    }
+
+    else if (tab.url === "chox://history") {
+        openHistory();
+    }
+
+    else if (tab.url === "chox://ai") {
+        openChoxAI();
+    }
+
+    else if (
+        tab.url.startsWith("results.html")
+    ) {
+        const params =
+            new URLSearchParams(
+                tab.url.split("?")[1] || ""
+            );
+
+        renderSearchPage(
+            tab,
+            params.get("q") || ""
+        );
+    }
+
+    else {
+        tab.type = "website";
+        renderWebsite(tab);
+    }
+
+    updateEverything();
+}
+
+/* =========================================================
+   SEARCH RESULTS
+   ========================================================= */
+
 function renderSearchPage(tab, query) {
-    const page = getTabPage(tab.id);
+    const page = getPage(tab.id);
 
     if (!page) return;
 
@@ -759,44 +677,40 @@ function renderSearchPage(tab, query) {
                 </div>
 
                 <div class="results-search">
+
                     <input
                         id="resultsSearch-${tab.id}"
                         value="${escapeAttribute(query)}"
-                    />
+                    >
 
                     <button
-                        onclick="performSearch('${tab.id}')">
+                        onclick="
+                            performSearch(
+                                '${tab.id}',
+                                document.getElementById(
+                                    'resultsSearch-${tab.id}'
+                                ).value
+                            )
+                        ">
                         🔍
                     </button>
+
                 </div>
 
             </div>
 
             <div
-                id="resultsContainer-${tab.id}"
-                class="results-container">
+                class="results-container"
+                id="resultsContainer-${tab.id}">
 
                 <div class="results-loading">
-                    <div class="loading-spinner"></div>
-                    <p>Searching...</p>
+                    Searching...
                 </div>
 
             </div>
 
         </div>
     `;
-
-    const input = document.querySelector(
-        `#resultsSearch-${tab.id}`
-    );
-
-    if (input) {
-        input.addEventListener("keydown", event => {
-            if (event.key === "Enter") {
-                performSearch(tab.id, input.value.trim());
-            }
-        });
-    }
 
     loadSearchResults(tab.id, query);
 }
@@ -814,7 +728,7 @@ async function loadSearchResults(tabId, query) {
         );
 
         if (!response.ok) {
-            throw new Error("Search request failed");
+            throw new Error("Search failed");
         }
 
         const data = await response.json();
@@ -825,37 +739,87 @@ async function loadSearchResults(tabId, query) {
             data.items ||
             [];
 
-        if (!Array.isArray(results) || results.length === 0) {
+        if (!results.length) {
             container.innerHTML = `
                 <div class="results-empty">
                     <h2>No results found</h2>
-                    <p>Try a different search.</p>
+                    <p>Try another search.</p>
                 </div>
             `;
+
             return;
         }
 
         container.innerHTML = results
-            .map(result => createSearchResult(result))
+            .map(result => {
+                const title =
+                    result.title ||
+                    result.name ||
+                    "Untitled";
+
+                const url =
+                    result.url ||
+                    result.link ||
+                    "#";
+
+                const description =
+                    result.description ||
+                    result.snippet ||
+                    "";
+
+                return `
+                    <div class="search-result">
+
+                        <div class="result-url">
+                            ${escapeHTML(url)}
+                        </div>
+
+                        <a
+                            href="#"
+                            class="result-title"
+                            data-url="${escapeAttribute(url)}">
+                            ${escapeHTML(title)}
+                        </a>
+
+                        <p class="result-description">
+                            ${escapeHTML(description)}
+                        </p>
+
+                    </div>
+                `;
+            })
             .join("");
 
+        container
+            .querySelectorAll("[data-url]")
+            .forEach(link => {
+                link.addEventListener("click", event => {
+                    event.preventDefault();
+
+                    navigateTo(
+                        link.dataset.url
+                    );
+                });
+            });
+
     } catch (error) {
-        console.error("Chox search error:", error);
+        console.error(
+            "Chox search error:",
+            error
+        );
 
         container.innerHTML = `
             <div class="results-error">
 
-                <div class="error-icon">!</div>
-
-                <h2>Search unavailable</h2>
+                <h2>Search isn't available</h2>
 
                 <p>
-                    The Chox search server is not running,
-                    or the search request failed.
+                    Make sure the Chox search server
+                    is running.
                 </p>
 
-                <button onclick="location.reload()">
-                    Try again
+                <button onclick="reloadPage()">
+                    Try Again
                 </button>
 
             </div>
@@ -863,218 +827,142 @@ async function loadSearchResults(tabId, query) {
     }
 }
 
-function createSearchResult(result) {
-    const title =
-        result.title ||
-        result.name ||
-        "Untitled result";
+/* =========================================================
+   CHOX VIDEO
+   ========================================================= */
 
-    const url =
-        result.url ||
-        result.link ||
-        "#";
+function openChoxVideoPage(tabId = activeTabId) {
+    const tab = getTab(tabId);
 
-    const description =
-        result.description ||
-        result.snippet ||
-        "";
+    if (!tab) return;
 
-    return `
-        <article class="search-result">
+    tab.type = "chox-video";
+    tab.url = "chox://video";
+    tab.title = "Chox Video";
 
-            <div class="result-url">
-                ${escapeHTML(url)}
+    switchTab(tab.id);
+
+    const page = getPage(tab.id);
+
+    if (!page) return;
+
+    page.innerHTML = `
+        <div class="chox-video-page">
+
+            <div class="video-sidebar">
+
+                <div class="video-brand">
+                    <span>CH</span>
+                    <strong>CHOX VIDEO</strong>
+                </div>
+
+                <button
+                    onclick="openChoxVideoPage('${tab.id}')">
+                    🏠 Home
+                </button>
+
+                <button
+                    onclick="searchChoxVideo('${tab.id}')">
+                    🔍 Search
+                </button>
+
+                <button
+                    onclick="openHistory()">
+                    ◷ History
+                </button>
+
+                <button
+                    onclick="openBookmarks()">
+                    ★ Favorites
+                </button>
+
             </div>
 
-            <a
-                href="#"
-                class="result-title"
-                onclick="navigateFromResult('${escapeAttribute(url)}'); return false;">
-                ${escapeHTML(title)}
-            </a>
+            <div class="video-main">
 
-            <p class="result-description">
-                ${escapeHTML(description)}
-            </p>
+                <div class="video-header">
 
-        </article>
+                    <h1>Chox Video</h1>
+
+                    <div class="video-search">
+
+                        <input
+                            id="videoSearch-${tab.id}"
+                            placeholder="Search videos..."
+                        >
+
+                        <button
+                            onclick="
+                                searchChoxVideo('${tab.id}')
+                            ">
+                            🔍
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <div class="video-empty">
+
+                    <div class="video-big-icon">
+                        ▶
+                    </div>
+
+                    <h2>Chox Video</h2>
+
+                    <p>
+                        Search for videos using Chox.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
     `;
-}
 
-function navigateFromResult(url) {
-    const tab = getActiveTab();
+    const input = document.querySelector(
+        `#videoSearch-${tab.id}`
+    );
 
-    if (!tab) return;
-
-    if (!/^https?:\/\//i.test(url)) {
-        url = "https://" + url;
+    if (input) {
+        input.addEventListener("keydown", event => {
+            if (event.key === "Enter") {
+                searchChoxVideo(tab.id);
+            }
+        });
     }
 
-    navigateTab(
-        tab.id,
-        url,
-        "website",
-        url.replace(/^https?:\/\//i, "")
+    updateEverything();
+}
+
+function searchChoxVideo(tabId) {
+    const input = document.querySelector(
+        `#videoSearch-${tabId}`
+    );
+
+    if (!input) return;
+
+    const query = input.value.trim();
+
+    if (!query) return;
+
+    performSearch(
+        tabId,
+        query + " site:youtube.com/watch"
     );
 }
 
-/* -----------------------------
-   BACK / FORWARD
------------------------------ */
-
-function goBack() {
-    const tab = getActiveTab();
-
-    if (!tab) return;
-
-    if (tab.historyIndex <= 0) return;
-
-    tab.historyIndex--;
-
-    const url = tab.history[tab.historyIndex];
-
-    tab.url = url;
-
-    detectAndRenderURL(tab);
-}
-
-function goForward() {
-    const tab = getActiveTab();
-
-    if (!tab) return;
-
-    if (
-        tab.historyIndex >=
-        tab.history.length - 1
-    ) {
-        return;
-    }
-
-    tab.historyIndex++;
-
-    const url = tab.history[tab.historyIndex];
-
-    tab.url = url;
-
-    detectAndRenderURL(tab);
-}
-
-function detectAndRenderURL(tab) {
-    if (
-        tab.url === HOME_URL ||
-        tab.url === "chox://home"
-    ) {
-        tab.type = "home";
-        tab.title = "New Tab";
-        renderHome(tab);
-    }
-
-    else if (
-        tab.url === "chox://video"
-    ) {
-        tab.type = "chox-video";
-        tab.title = "Chox Video";
-        openChoxVideoPage(tab.id);
-    }
-
-    else if (
-        tab.url.startsWith("results.html")
-    ) {
-        tab.type = "search";
-
-        const params = new URLSearchParams(
-            tab.url.split("?")[1] || ""
-        );
-
-        const query = params.get("q") || "";
-
-        tab.title = `Search: ${query}`;
-
-        renderSearchPage(tab, query);
-    }
-
-    else {
-        tab.type = "website";
-
-        tab.title =
-            tab.url.replace(
-                /^https?:\/\//i,
-                ""
-            );
-
-        renderWebsite(tab);
-    }
-
-    updateTabButton(tab);
-    updateAddressBar();
-    updateNavigationButtons();
-}
-
-/* -----------------------------
-   HOME / RELOAD
------------------------------ */
-
-function goHome() {
-    const tab = getActiveTab();
-
-    if (!tab) return;
-
-    tab.url = HOME_URL;
-    tab.type = "home";
-    tab.title = "New Tab";
-
-    tab.history = tab.history.slice(
-        0,
-        tab.historyIndex + 1
-    );
-
-    tab.history.push(HOME_URL);
-    tab.historyIndex++;
-
-    renderHome(tab);
-
-    updateTabButton(tab);
-    updateAddressBar();
-    updateNavigationButtons();
-}
-
-function reloadPage() {
-    const tab = getActiveTab();
-
-    if (!tab) return;
-
-    if (tab.type === "home") {
-        renderHome(tab);
-    }
-
-    else if (tab.type === "chox-video") {
-        openChoxVideoPage(tab.id);
-    }
-
-    else if (tab.type === "search") {
-        const params = new URLSearchParams(
-            tab.url.split("?")[1] || ""
-        );
-
-        renderSearchPage(
-            tab,
-            params.get("q") || ""
-        );
-    }
-
-    else if (tab.type === "website") {
-        renderWebsite(tab);
-    }
-}
-
-/* -----------------------------
+/* =========================================================
    BOOKMARKS
------------------------------ */
+   ========================================================= */
 
 function getBookmarks() {
     try {
         return JSON.parse(
-            localStorage.getItem("choxBookmarks") || "[]"
+            localStorage.getItem(
+                "choxBookmarks"
+            ) || "[]"
         );
     } catch {
         return [];
@@ -1095,21 +983,18 @@ function toggleBookmark() {
 
     const bookmarks = getBookmarks();
 
-    const existing = bookmarks.findIndex(
+    const index = bookmarks.findIndex(
         item => item.url === tab.url
     );
 
-    if (existing >= 0) {
-        bookmarks.splice(existing, 1);
-        tab.bookmarked = false;
+    if (index >= 0) {
+        bookmarks.splice(index, 1);
     } else {
-        bookmarks.push({
+        bookmarks.unshift({
             title: tab.title,
             url: tab.url,
-            createdAt: Date.now()
+            time: Date.now()
         });
-
-        tab.bookmarked = true;
     }
 
     saveBookmarks(bookmarks);
@@ -1124,7 +1009,7 @@ function openBookmarks() {
     tab.url = "chox://bookmarks";
     tab.title = "Bookmarks";
 
-    const page = getTabPage(tab.id);
+    const page = getPage(tab.id);
 
     if (!page) return;
 
@@ -1143,44 +1028,54 @@ function openBookmarks() {
                 ? `
                     <div class="internal-empty">
                         <h2>No bookmarks yet</h2>
-                        <p>Pages you save will appear here.</p>
+                        <p>
+                            Saved pages will appear here.
+                        </p>
                     </div>
                 `
-                : `
-                    <div class="bookmark-list">
-                        ${bookmarks.map((bookmark, index) => `
-                            <div class="bookmark-item">
+                : bookmarks.map(
+                    (bookmark, index) => `
+                        <div class="bookmark-item">
 
-                                <button
-                                    onclick="navigateFromResult('${escapeAttribute(bookmark.url)}')">
+                            <button
+                                onclick="
+                                    navigateTo(
+                                        '${escapeAttribute(
+                                            bookmark.url
+                                        )}'
+                                    )
+                                ">
 
-                                    <strong>
-                                        ${escapeHTML(bookmark.title)}
-                                    </strong>
+                                <strong>
+                                    ${escapeHTML(
+                                        bookmark.title
+                                    )}
+                                </strong>
 
-                                    <small>
-                                        ${escapeHTML(bookmark.url)}
-                                    </small>
+                                <small>
+                                    ${escapeHTML(
+                                        bookmark.url
+                                    )}
+                                </small>
 
-                                </button>
+                            </button>
 
-                                <button
-                                    onclick="deleteBookmark(${index})"
-                                    title="Remove bookmark">
-                                    ×
-                                </button>
+                            <button
+                                onclick="
+                                    deleteBookmark(${index})
+                                ">
+                                ×
+                            </button>
 
-                            </div>
-                        `).join("")}
-                    </div>
-                `
+                        </div>
+                    `
+                ).join("")
             }
 
         </div>
     `;
 
-    updateTabButton(tab);
-    updateAddressBar();
+    updateEverything();
 }
 
 function deleteBookmark(index) {
@@ -1193,28 +1088,23 @@ function deleteBookmark(index) {
     openBookmarks();
 }
 
-/* -----------------------------
+/* =========================================================
    HISTORY
------------------------------ */
+   ========================================================= */
 
-function getChoxHistory() {
+function getBrowsingHistory() {
     try {
         return JSON.parse(
-            localStorage.getItem("choxHistory") || "[]"
+            localStorage.getItem(
+                "choxHistory"
+            ) || "[]"
         );
     } catch {
         return [];
     }
 }
 
-function saveChoxHistory(history) {
-    localStorage.setItem(
-        "choxHistory",
-        JSON.stringify(history)
-    );
-}
-
-function addToHistory(title, url) {
+function saveBrowsingHistory(title, url) {
     if (
         !url ||
         url.startsWith("chox://")
@@ -1222,19 +1112,26 @@ function addToHistory(title, url) {
         return;
     }
 
-    const history = getChoxHistory();
+    let history =
+        getBrowsingHistory();
 
-    const filtered = history.filter(
+    history = history.filter(
         item => item.url !== url
     );
 
-    filtered.unshift({
+    history.unshift({
         title: title || url,
         url,
         time: Date.now()
     });
 
-    saveChoxHistory(filtered.slice(0, 100));
+    history =
+        history.slice(0, 100);
+
+    localStorage.setItem(
+        "choxHistory",
+        JSON.stringify(history)
+    );
 }
 
 function openHistory() {
@@ -1246,71 +1143,84 @@ function openHistory() {
     tab.url = "chox://history";
     tab.title = "History";
 
-    const page = getTabPage(tab.id);
+    const page = getPage(tab.id);
 
     if (!page) return;
 
-    const history = getChoxHistory();
+    const history =
+        getBrowsingHistory();
 
     page.innerHTML = `
         <div class="internal-page">
 
             <div class="internal-header">
-                <span class="internal-icon">◷</span>
+
+                <span class="internal-icon">
+                    ◷
+                </span>
+
                 <h1>History</h1>
 
                 <button
-                    class="clear-history-button"
                     onclick="clearHistory()">
-                    Clear history
+                    Clear
                 </button>
+
             </div>
 
             ${
                 history.length === 0
                 ? `
                     <div class="internal-empty">
-                        <h2>No history</h2>
-                        <p>Your visited pages will appear here.</p>
+                        <h2>No history yet</h2>
                     </div>
                 `
-                : `
-                    <div class="history-list">
-                        ${history.map(item => `
-                            <button
-                                class="history-item"
-                                onclick="navigateFromResult('${escapeAttribute(item.url)}')">
+                : history.map(
+                    item => `
+                        <button
+                            class="history-item"
+                            onclick="
+                                navigateTo(
+                                    '${escapeAttribute(
+                                        item.url
+                                    )}'
+                                )
+                            ">
 
-                                <strong>
-                                    ${escapeHTML(item.title)}
-                                </strong>
+                            <strong>
+                                ${escapeHTML(
+                                    item.title
+                                )}
+                            </strong>
 
-                                <small>
-                                    ${escapeHTML(item.url)}
-                                </small>
+                            <small>
+                                ${escapeHTML(
+                                    item.url
+                                )}
+                            </small>
 
-                            </button>
-                        `).join("")}
-                    </div>
-                `
+                        </button>
+                    `
+                ).join("")
             }
 
         </div>
     `;
 
-    updateTabButton(tab);
-    updateAddressBar();
+    updateEverything();
 }
 
 function clearHistory() {
-    localStorage.removeItem("choxHistory");
+    localStorage.removeItem(
+        "choxHistory"
+    );
 
     openHistory();
 }
 
-/* -----------------------------
+/* =========================================================
    CHOX AI
------------------------------ */
+   ========================================================= */
 
 function openChoxAI() {
     const tab = getActiveTab();
@@ -1321,7 +1231,7 @@ function openChoxAI() {
     tab.url = "chox://ai";
     tab.title = "Chox AI";
 
-    const page = getTabPage(tab.id);
+    const page = getPage(tab.id);
 
     if (!page) return;
 
@@ -1329,20 +1239,25 @@ function openChoxAI() {
         <div class="ai-page">
 
             <div class="ai-header">
-                <div class="ai-logo">✦</div>
+
+                <div class="ai-logo">
+                    ✦
+                </div>
 
                 <div>
                     <h1>Chox AI</h1>
                     <p>Your AI assistant</p>
                 </div>
+
             </div>
 
             <div
-                id="aiMessages-${tab.id}"
-                class="ai-messages">
+                class="ai-messages"
+                id="aiMessages-${tab.id}">
 
                 <div class="ai-message">
                     <strong>Chox AI</strong>
+
                     <p>
                         Hey! What can I help you with?
                     </p>
@@ -1355,10 +1270,12 @@ function openChoxAI() {
                 <input
                     id="aiInput-${tab.id}"
                     placeholder="Ask Chox AI..."
-                />
+                >
 
                 <button
-                    onclick="sendAIMessage('${tab.id}')">
+                    onclick="
+                        sendAIMessage('${tab.id}')
+                    ">
                     Send
                 </button>
 
@@ -1379,8 +1296,7 @@ function openChoxAI() {
         });
     }
 
-    updateTabButton(tab);
-    updateAddressBar();
+    updateEverything();
 }
 
 async function sendAIMessage(tabId) {
@@ -1394,7 +1310,8 @@ async function sendAIMessage(tabId) {
 
     if (!input || !messages) return;
 
-    const message = input.value.trim();
+    const message =
+        input.value.trim();
 
     if (!message) return;
 
@@ -1415,108 +1332,156 @@ async function sendAIMessage(tabId) {
     `;
 
     try {
-        const response = await fetch("/api/chat", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                message
-            })
-        });
+        const response =
+            await fetch("/api/chat", {
+                method: "POST",
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+                body: JSON.stringify({
+                    message
+                })
+            });
 
         if (!response.ok) {
-            throw new Error("AI request failed");
+            throw new Error(
+                "AI request failed"
+            );
         }
 
-        const data = await response.json();
+        const data =
+            await response.json();
 
         const answer =
             data.answer ||
             data.output ||
             data.message ||
-            "I couldn't generate a response.";
+            "No response.";
 
         const aiMessages =
-            messages.querySelectorAll(".ai-message");
+            messages.querySelectorAll(
+                ".ai-message"
+            );
 
         const last =
-            aiMessages[aiMessages.length - 1];
+            aiMessages[
+                aiMessages.length - 1
+            ];
 
         if (last) {
-            last.querySelector("p").textContent = answer;
+            last.querySelector(
+                "p"
+            ).textContent = answer;
         }
 
     } catch (error) {
         console.error(error);
 
         const aiMessages =
-            messages.querySelectorAll(".ai-message");
+            messages.querySelectorAll(
+                ".ai-message"
+            );
 
         const last =
-            aiMessages[aiMessages.length - 1];
+            aiMessages[
+                aiMessages.length - 1
+            ];
 
         if (last) {
-            last.querySelector("p").textContent =
-                "Chox AI is currently unavailable.";
+            last.querySelector(
+                "p"
+            ).textContent =
+                "Chox AI is unavailable right now.";
         }
     }
 
-    messages.scrollTop = messages.scrollHeight;
+    messages.scrollTop =
+        messages.scrollHeight;
 }
 
-/* -----------------------------
+/* =========================================================
    SETTINGS
------------------------------ */
+   ========================================================= */
 
 function openSettings() {
     const overlay =
-        $("#settingsOverlay") ||
-        $(".settings-overlay");
+        document.querySelector(
+            "#settingsOverlay"
+        ) ||
+        document.querySelector(
+            ".settings-overlay"
+        );
 
     if (overlay) {
         overlay.classList.add("active");
+        overlay.style.display = "flex";
     }
 }
 
 function closeSettings() {
     const overlay =
-        $("#settingsOverlay") ||
-        $(".settings-overlay");
+        document.querySelector(
+            "#settingsOverlay"
+        ) ||
+        document.querySelector(
+            ".settings-overlay"
+        );
 
     if (overlay) {
         overlay.classList.remove("active");
+        overlay.style.display = "none";
     }
 }
 
 function loadSettings() {
-    const saved =
-        JSON.parse(
-            localStorage.getItem("choxSettings") || "{}"
-        );
-
-    if (saved.accent) {
-        document.documentElement.style
-            .setProperty(
-                "--accent",
-                saved.accent
+    try {
+        const settings =
+            JSON.parse(
+                localStorage.getItem(
+                    "choxSettings"
+                ) || "{}"
             );
-    }
 
-    if (saved.theme === "light") {
-        document.body.classList.add("chox-light");
-    }
+        if (settings.theme === "light") {
+            document.body.classList.add(
+                "chox-light"
+            );
+        }
 
-    if (saved.theme === "dark") {
-        document.body.classList.remove("chox-light");
+        if (settings.theme === "dark") {
+            document.body.classList.remove(
+                "chox-light"
+            );
+        }
+
+        if (settings.accent) {
+            document.documentElement.style
+                .setProperty(
+                    "--accent",
+                    settings.accent
+                );
+        }
+
+    } catch (error) {
+        console.error(
+            "Settings error:",
+            error
+        );
     }
 }
 
 function saveSetting(name, value) {
-    const settings =
-        JSON.parse(
-            localStorage.getItem("choxSettings") || "{}"
-        );
+    let settings = {};
+
+    try {
+        settings =
+            JSON.parse(
+                localStorage.getItem(
+                    "choxSettings"
+                ) || "{}"
+            );
+    } catch {}
 
     settings[name] = value;
 
@@ -1539,220 +1504,140 @@ function changeAccent(accent) {
     saveSetting("accent", accent);
 
     document.documentElement.style
-        .setProperty("--accent", accent);
+        .setProperty(
+            "--accent",
+            accent
+        );
 }
 
 function changeQuickLinks(value) {
-    saveSetting("quickLinks", value);
+    saveSetting(
+        "quickLinks",
+        value
+    );
 }
 
-/* -----------------------------
+/* =========================================================
    MENU
------------------------------ */
+   ========================================================= */
 
 function openMenu() {
     const menu =
-        $("#contextMenu") ||
-        $("#browserMenu") ||
-        $(".browser-menu");
+        document.querySelector(
+            "#contextMenu"
+        ) ||
+        document.querySelector(
+            ".browser-menu"
+        );
 
     if (!menu) return;
 
-    menu.classList.toggle("active");
+    menu.classList.toggle(
+        "active"
+    );
 }
 
-document.addEventListener("click", event => {
-    const menu =
-        $("#contextMenu") ||
-        $("#browserMenu") ||
-        $(".browser-menu");
+/* =========================================================
+   UPDATE UI
+   ========================================================= */
 
-    if (
-        menu &&
-        !menu.contains(event.target) &&
-        !event.target.closest(
-            '[onclick="openMenu()"]'
-        )
-    ) {
-        menu.classList.remove("active");
-    }
-});
-
-/* -----------------------------
-   EXTERNAL LINKS
------------------------------ */
-
-function openExternal(url) {
-    if (!url) return;
-
-    if (
-        window.choxDesktop &&
-        typeof window.choxDesktop.openExternal === "function"
-    ) {
-        window.choxDesktop.openExternal(url);
-        return;
-    }
-
-    window.open(url, "_blank", "noopener,noreferrer");
-}
-
-/* -----------------------------
-   YOUTUBE
------------------------------ */
-
-function getYouTubeId(url) {
-    if (!url) return null;
-
-    try {
-        const parsed = new URL(url);
-
-        if (parsed.hostname.includes("youtu.be")) {
-            return parsed.pathname.substring(1);
-        }
-
-        if (
-            parsed.hostname.includes("youtube.com")
-        ) {
-            return (
-                parsed.searchParams.get("v") ||
-                parsed.pathname.match(
-                    /\/embed\/([^/]+)/
-                )?.[1] ||
-                null
-            );
-        }
-    } catch {
-        return null;
-    }
-
-    return null;
-}
-
-function openYouTubeVideo(url) {
-    const id = getYouTubeId(url);
-
-    if (!id) {
-        openExternal(url);
-        return;
-    }
-
+function updateEverything() {
     const tab = getActiveTab();
 
     if (!tab) return;
 
-    const page = getTabPage(tab.id);
-
-    if (!page) return;
-
-    tab.type = "video";
-    tab.url = url;
-    tab.title = "Video";
-
-    page.innerHTML = `
-        <div class="video-player-page">
-
-            <button
-                class="video-back"
-                onclick="goBack()">
-                ← Back
-            </button>
-
-            <div class="video-player-wrapper">
-
-                <iframe
-                    src="https://www.youtube-nocookie.com/embed/${escapeAttribute(id)}"
-                    allowfullscreen
-                    referrerpolicy="strict-origin-when-cross-origin">
-                </iframe>
-
-            </div>
-
-        </div>
-    `;
-
-    updateTabButton(tab);
     updateAddressBar();
+    updateTabTitle();
+    updateNavigationButtons();
 }
 
-/* -----------------------------
-   KEYBOARD SHORTCUTS
------------------------------ */
+function updateAddressBar() {
+    const tab = getActiveTab();
 
-document.addEventListener("keydown", event => {
+    if (!tab) return;
 
-    // Ctrl + L
-    if (
-        (event.ctrlKey || event.metaKey) &&
-        event.key.toLowerCase() === "l"
-    ) {
-        event.preventDefault();
+    const address =
+        document.querySelector(
+            "#addressBar"
+        ) ||
+        document.querySelector(
+            "#urlBar"
+        );
 
-        const addressBar =
-            $("#addressBar") ||
-            $("#urlBar");
+    if (address) {
+        address.value = tab.url;
+    }
+}
 
-        if (addressBar) {
-            addressBar.focus();
-            addressBar.select();
-        }
+function updateTabTitle() {
+    const tab = getActiveTab();
+
+    if (!tab) return;
+
+    const button =
+        document.querySelector(
+            `.browser-tab[data-tab-id="${tab.id}"]`
+        );
+
+    if (!button) return;
+
+    const title =
+        button.querySelector(
+            ".tab-title"
+        );
+
+    if (title) {
+        title.textContent =
+            tab.title;
+    }
+}
+
+function updateNavigationButtons() {
+    const tab = getActiveTab();
+
+    if (!tab) return;
+
+    const back =
+        document.querySelector(
+            "#backButton"
+        );
+
+    const forward =
+        document.querySelector(
+            "#forwardButton"
+        );
+
+    if (back) {
+        back.disabled =
+            tab.historyIndex <= 0;
     }
 
-    // Ctrl + T
-    if (
-        (event.ctrlKey || event.metaKey) &&
-        event.key.toLowerCase() === "t"
-    ) {
-        event.preventDefault();
-        createNewTab();
+    if (forward) {
+        forward.disabled =
+            tab.historyIndex >=
+            tab.history.length - 1;
     }
+}
 
-    // Ctrl + W
-    if (
-        (event.ctrlKey || event.metaKey) &&
-        event.key.toLowerCase() === "w"
-    ) {
-        event.preventDefault();
-
-        if (activeTabId) {
-            closeTab(activeTabId);
-        }
-    }
-
-    // Alt + Left
-    if (
-        event.altKey &&
-        event.key === "ArrowLeft"
-    ) {
-        event.preventDefault();
-        goBack();
-    }
-
-    // Alt + Right
-    if (
-        event.altKey &&
-        event.key === "ArrowRight"
-    ) {
-        event.preventDefault();
-        goForward();
-    }
-
-});
-
-/* -----------------------------
+/* =========================================================
    HELPERS
------------------------------ */
+   ========================================================= */
 
-function getTabPage(tabId) {
-    return document.querySelector(
-        `#tab-page-${tabId}`
+function getTab(id) {
+    return tabs.find(
+        tab =>
+            String(tab.id) ===
+            String(id)
     );
 }
 
-function looksLikeURL(value) {
-    return (
-        /^https?:\/\//i.test(value) ||
-        /^www\./i.test(value) ||
-        /^[a-z0-9-]+\.[a-z]{2,}/i.test(value)
+function getActiveTab() {
+    return getTab(activeTabId);
+}
+
+function getPage(id) {
+    return document.querySelector(
+        `#tab-page-${id}`
     );
 }
 
@@ -1770,9 +1655,76 @@ function escapeAttribute(value) {
         .replace(/`/g, "&#096;");
 }
 
-/* -----------------------------
-   GLOBAL EXPORTS
------------------------------ */
+/* =========================================================
+   KEYBOARD SHORTCUTS
+   ========================================================= */
+
+function setupKeyboardShortcuts() {
+    document.addEventListener(
+        "keydown",
+        event => {
+
+            if (
+                (event.ctrlKey ||
+                    event.metaKey) &&
+                event.key.toLowerCase() === "l"
+            ) {
+                event.preventDefault();
+
+                const address =
+                    document.querySelector(
+                        "#addressBar"
+                    );
+
+                if (address) {
+                    address.focus();
+                    address.select();
+                }
+            }
+
+            if (
+                (event.ctrlKey ||
+                    event.metaKey) &&
+                event.key.toLowerCase() === "t"
+            ) {
+                event.preventDefault();
+                createNewTab();
+            }
+
+            if (
+                (event.ctrlKey ||
+                    event.metaKey) &&
+                event.key.toLowerCase() === "w"
+            ) {
+                event.preventDefault();
+
+                if (activeTabId) {
+                    closeTab(activeTabId);
+                }
+            }
+
+            if (
+                event.altKey &&
+                event.key === "ArrowLeft"
+            ) {
+                event.preventDefault();
+                goBack();
+            }
+
+            if (
+                event.altKey &&
+                event.key === "ArrowRight"
+            ) {
+                event.preventDefault();
+                goForward();
+            }
+        }
+    );
+}
+
+/* =========================================================
+   MAKE FUNCTIONS AVAILABLE TO HTML
+   ========================================================= */
 
 window.createNewTab = createNewTab;
 window.switchTab = switchTab;
@@ -1786,29 +1738,56 @@ window.reloadPage = reloadPage;
 window.openAddress = openAddress;
 window.performSearch = performSearch;
 
-window.openChoxVideoPage = openChoxVideoPage;
-window.searchChoxVideo = searchChoxVideo;
-window.openYouTubeVideo = openYouTubeVideo;
+window.openChoxVideoPage =
+    openChoxVideoPage;
 
-window.openBookmarks = openBookmarks;
-window.toggleBookmark = toggleBookmark;
-window.deleteBookmark = deleteBookmark;
+window.searchChoxVideo =
+    searchChoxVideo;
 
-window.openHistory = openHistory;
-window.clearHistory = clearHistory;
+window.openBookmarks =
+    openBookmarks;
 
-window.openChoxAI = openChoxAI;
-window.sendAIMessage = sendAIMessage;
+window.toggleBookmark =
+    toggleBookmark;
 
-window.openSettings = openSettings;
-window.closeSettings = closeSettings;
-window.loadSettings = loadSettings;
-window.saveSetting = saveSetting;
-window.changeTheme = changeTheme;
-window.changeAccent = changeAccent;
-window.changeQuickLinks = changeQuickLinks;
+window.deleteBookmark =
+    deleteBookmark;
 
-window.openMenu = openMenu;
-window.openExternal = openExternal;
+window.openHistory =
+    openHistory;
 
-window.navigateFromResult = navigateFromResult;
+window.clearHistory =
+    clearHistory;
+
+window.openChoxAI =
+    openChoxAI;
+
+window.sendAIMessage =
+    sendAIMessage;
+
+window.openSettings =
+    openSettings;
+
+window.closeSettings =
+    closeSettings;
+
+window.loadSettings =
+    loadSettings;
+
+window.saveSetting =
+    saveSetting;
+
+window.changeTheme =
+    changeTheme;
+
+window.changeAccent =
+    changeAccent;
+
+window.changeQuickLinks =
+    changeQuickLinks;
+
+window.openMenu =
+    openMenu;
+
+window.navigateTo =
+    navigateTo;
