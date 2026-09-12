@@ -2,2614 +2,1334 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+
     <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Chox Browser</title>
+    <title>Chox</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
-
-        html,
-        body {
-            width: 100%;
-            height: 100%;
-            margin: 0;
-            overflow: hidden;
-            font-family: Arial, Helvetica, sans-serif;
-            background: #101010;
-            color: #fff;
-        }
-
-        button,
-        input {
-            font: inherit;
-        }
-
-        /* =========================
-           MAIN APP
-        ========================= */
-
-        #app {
-            width: 100%;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            background: #111;
-        }
-
-        /* =========================
-           TAB BAR
-        ========================= */
-
-        .tab-bar {
-            height: 48px;
-            min-height: 48px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            padding: 6px 8px 0;
-            background: #171717;
-            border-bottom: 1px solid #292929;
-        }
-
-        .tabs {
-            flex: 1;
-            height: 100%;
-            display: flex;
-            align-items: flex-end;
-            gap: 4px;
-            overflow-x: auto;
-            overflow-y: hidden;
-            scrollbar-width: none;
-        }
-
-        .tabs::-webkit-scrollbar {
-            display: none;
-        }
-
-        .tab {
-            position: relative;
-            flex: 0 1 220px;
-            min-width: 130px;
-            max-width: 240px;
-            height: 38px;
-
-            display: flex;
-            align-items: center;
-            gap: 8px;
-
-            padding: 0 8px 0 14px;
-
-            border-radius: 10px 10px 0 0;
-            background: #202020;
-            color: #aaa;
-
-            cursor: pointer;
-            user-select: none;
-
-            transform: translateX(0);
-            opacity: 1;
-
-            transition:
-                transform 280ms cubic-bezier(.2,.8,.2,1),
-                opacity 180ms ease,
-                background 160ms ease,
-                color 160ms ease;
-        }
-
-        .tab:hover {
-            background: #292929;
-            color: #ddd;
-        }
-
-        .tab.active {
-            background: #2b2b2b;
-            color: #fff;
-        }
-
-        .tab-title {
-            flex: 1;
-            min-width: 0;
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            font-size: 13px;
-        }
-
-        .tab-close {
-            width: 25px;
-            height: 25px;
-            flex-shrink: 0;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            border: 0;
-            border-radius: 6px;
-
-            background: transparent;
-            color: #888;
-
-            cursor: pointer;
-            font-size: 17px;
-
-            transition:
-                background 140ms ease,
-                color 140ms ease;
-        }
-
-        .tab-close:hover {
-            background: rgba(255,255,255,.1);
-            color: white;
-        }
-
-        .new-tab {
-            width: 38px;
-            height: 34px;
-            flex-shrink: 0;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            margin-bottom: 2px;
-
-            border: 0;
-            border-radius: 9px;
-
-            background: transparent;
-            color: #aaa;
-
-            cursor: pointer;
-            font-size: 24px;
-            line-height: 1;
-
-            transition:
-                background 150ms ease,
-                color 150ms ease,
-                transform 150ms ease;
-        }
-
-        .new-tab:hover {
-            background: #292929;
-            color: white;
-        }
-
-        .new-tab:active {
-            transform: scale(.9);
-        }
-
-        .tab-moving {
-            transition:
-                transform 280ms cubic-bezier(.2,.8,.2,1);
-        }
-
-        .tab-closing {
-            opacity: 0;
-            transform: scale(.92);
-            transition:
-                opacity 180ms ease,
-                transform 180ms ease;
-        }
-
-        .tab-opening {
-            opacity: 0;
-            transform: translateX(12px) scale(.97);
-        }
-
-        /* =========================
-           TOOLBAR
-        ========================= */
-
-        .toolbar {
-            height: 52px;
-            min-height: 52px;
-
-            display: flex;
-            align-items: center;
-            gap: 7px;
-
-            padding: 7px 10px;
-
-            background: #1b1b1b;
-            border-bottom: 1px solid #292929;
-        }
-
-        .nav-button {
-            width: 36px;
-            height: 36px;
-
-            border: 0;
-            border-radius: 9px;
-
-            background: transparent;
-            color: #aaa;
-
-            cursor: pointer;
-            font-size: 18px;
-
-            transition:
-                background 150ms ease,
-                color 150ms ease;
-        }
-
-        .nav-button:hover {
-            background: #292929;
-            color: white;
-        }
-
-        .address-container {
-            flex: 1;
-            height: 36px;
-
-            display: flex;
-            align-items: center;
-
-            padding: 0 14px;
-
-            border-radius: 10px;
-
-            background: #252525;
-            border: 1px solid #303030;
-
-            transition:
-                border-color 150ms ease,
-                background 150ms ease;
-        }
-
-        .address-container:focus-within {
-            background: #202020;
-            border-color: #555;
-        }
-
-        #addressBar {
-            width: 100%;
-            height: 100%;
-
-            border: 0;
-            outline: 0;
-
-            background: transparent;
-            color: white;
-
-            font-size: 14px;
-        }
-
-        #addressBar::placeholder {
-            color: #777;
-        }
-
-        /* =========================
-           PAGE AREA
-        ========================= */
-
-        #pages {
-            position: relative;
-            flex: 1;
-            min-height: 0;
-            background: #111;
-        }
-
-        .tab-page {
-            position: absolute;
-            inset: 0;
-
-            display: none;
-
-            overflow: auto;
-
-            background: #111;
-        }
-
-        .tab-page.active {
-            display: block;
-        }
-
-        /* =========================
-           HOME PAGE
-        ========================= */
-
-        .home {
-            min-height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-
-            padding: 70px 20px;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-
-            margin-bottom: 12px;
-        }
-
-        .logo-circle {
-            width: 48px;
-            height: 48px;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            border: 3px solid #fff;
-            border-radius: 50%;
-
-            font-size: 22px;
-            font-weight: 800;
-        }
-
-        .logo-text {
-            font-size: 38px;
-            font-weight: 800;
-            letter-spacing: -2px;
-        }
-
-        .home-subtitle {
-            margin-bottom: 30px;
-            color: #777;
-            font-size: 14px;
-        }
-
-        .search-box {
-            width: min(700px, 90%);
-            height: 52px;
-
-            display: flex;
-            align-items: center;
-
-            padding: 0 8px 0 18px;
-
-            border: 1px solid #333;
-            border-radius: 15px;
-
-            background: #1c1c1c;
-
-            transition:
-                border-color 160ms ease,
-                box-shadow 160ms ease;
-        }
-
-        .search-box:focus-within {
-            border-color: #555;
-            box-shadow: 0 0 0 3px rgba(255,255,255,.04);
-        }
-
-        .search-box input {
-            flex: 1;
-
-            border: 0;
-            outline: 0;
-
-            background: transparent;
-            color: white;
-
-            font-size: 15px;
-        }
-
-        .search-button {
-            width: 40px;
-            height: 40px;
-
-            border: 0;
-            border-radius: 11px;
-
-            background: #fff;
-            color: #111;
-
-            cursor: pointer;
-            font-size: 17px;
-        }
-
-        .quick-links {
-            width: min(850px, 95%);
-
-            display: grid;
-            grid-template-columns: repeat(
-                auto-fit,
-                minmax(145px, 1fr)
-            );
-
-            gap: 12px;
-
-            margin-top: 35px;
-        }
-
-        .quick-link {
-            min-height: 100px;
-
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-
-            gap: 9px;
-
-            border: 1px solid #292929;
-            border-radius: 15px;
-
-            background: #191919;
-            color: #ddd;
-
-            cursor: pointer;
-
-            transition:
-                transform 160ms ease,
-                background 160ms ease,
-                border-color 160ms ease;
-        }
-
-        .quick-link:hover {
-            transform: translateY(-2px);
-            background: #222;
-            border-color: #3a3a3a;
-        }
-
-        .quick-icon {
-            font-size: 25px;
-        }
-
-        /* =========================
-           CHOX VIDEO
-        ========================= */
-
-        .video-app {
-            min-height: 100%;
-            display: flex;
-            background: #111;
-        }
-
-        .video-sidebar {
-            width: 210px;
-            flex-shrink: 0;
-
-            padding: 20px 12px;
-
-            background: #161616;
-            border-right: 1px solid #292929;
-        }
-
-        .video-brand {
-            padding: 8px 12px 20px;
-
-            font-size: 20px;
-            font-weight: 800;
-        }
-
-        .video-nav {
-            width: 100%;
-
-            display: flex;
-            align-items: center;
-            gap: 10px;
-
-            padding: 11px 12px;
-
-            border: 0;
-            border-radius: 9px;
-
-            background: transparent;
-            color: #aaa;
-
-            cursor: pointer;
-            text-align: left;
-
-            transition:
-                background 150ms ease,
-                color 150ms ease;
-        }
-
-        .video-nav:hover,
-        .video-nav.active {
-            background: #272727;
-            color: white;
-        }
-
-        .video-content {
-            flex: 1;
-            min-width: 0;
-
-            padding: 25px;
-            overflow: auto;
-        }
-
-        .video-heading {
-            margin: 0 0 8px;
-            font-size: 26px;
-        }
-
-        .video-description {
-            margin: 0 0 22px;
-            color: #777;
-        }
-
-        .video-search {
-            width: min(700px, 100%);
-            height: 45px;
-
-            display: flex;
-
-            margin-bottom: 25px;
-        }
-
-        .video-search input {
-            flex: 1;
-
-            padding: 0 14px;
-
-            border: 1px solid #333;
-            border-radius: 9px 0 0 9px;
-
-            outline: 0;
-
-            background: #1c1c1c;
-            color: white;
-        }
-
-        .video-search button {
-            width: 55px;
-
-            border: 0;
-            border-radius: 0 9px 9px 0;
-
-            background: white;
-            color: #111;
-
-            cursor: pointer;
-        }
-
-        .video-grid {
-            display: grid;
-
-            grid-template-columns:
-                repeat(auto-fill, minmax(240px, 1fr));
-
-            gap: 20px;
-        }
-
-        .video-card {
-            overflow: hidden;
-
-            border: 1px solid #292929;
-            border-radius: 12px;
-
-            background: #181818;
-
-            cursor: pointer;
-
-            transition:
-                transform 160ms ease,
-                border-color 160ms ease;
-        }
-
-        .video-card:hover {
-            transform: translateY(-2px);
-            border-color: #444;
-        }
-
-        .video-thumbnail {
-            width: 100%;
-            aspect-ratio: 16 / 9;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            background: #222;
-
-            color: #888;
-        }
-
-        .video-thumbnail img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .video-card-body {
-            padding: 13px;
-        }
-
-        .video-card-title {
-            display: -webkit-box;
-
-            overflow: hidden;
-
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-
-            font-size: 14px;
-            line-height: 1.4;
-        }
-
-        /* =========================
-           VIDEO PLAYER
-        ========================= */
-
-        .video-player-page {
-            padding: 25px;
-        }
-
-        .video-player {
-            width: min(100%, 1000px);
-            margin: 0 auto;
-        }
-
-        .video-player iframe {
-            width: 100%;
-            aspect-ratio: 16 / 9;
-
-            border: 0;
-            border-radius: 12px;
-
-            background: black;
-        }
-
-        .player-title {
-            margin-top: 18px;
-            font-size: 22px;
-            font-weight: 700;
-        }
-
-        .back-button {
-            margin-bottom: 15px;
-
-            padding: 9px 13px;
-
-            border: 0;
-            border-radius: 8px;
-
-            background: #252525;
-            color: #ddd;
-
-            cursor: pointer;
-        }
-
-        .back-button:hover {
-            background: #303030;
-        }
-
-        /* =========================
-           IFRAME PAGES
-        ========================= */
-
-        .browser-frame {
-            width: 100%;
-            height: 100%;
-
-            border: 0;
-
-            background: white;
-        }
-
-        /* =========================
-           EMPTY / MESSAGE
-        ========================= */
-
-        .empty-state {
-            padding: 50px 20px;
-
-            text-align: center;
-            color: #666;
-        }
-
-        /* =========================
-           RESPONSIVE
-        ========================= */
-
-        @media (max-width: 700px) {
-            .tab {
-                min-width: 115px;
-                max-width: 180px;
-            }
-
-            .video-sidebar {
-                width: 65px;
-            }
-
-            .video-brand {
-                font-size: 0;
-                text-align: center;
-            }
-
-            .video-nav {
-                justify-content: center;
-            }
-
-            .video-nav span:last-child {
-                display: none;
-            }
-
-            .video-content {
-                padding: 15px;
-            }
-
-            .home {
-                padding-top: 40px;
-            }
-
-            .logo-text {
-                font-size: 32px;
-            }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            .tab,
-            .tab-moving,
-            .tab-closing,
-            .tab-opening {
-                transition: none !important;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<div id="app">
+<div class="app">
 
-    <!-- =========================
-         TABS
-    ========================= -->
+    <!-- =====================================================
+         TAB BAR
+         ===================================================== -->
 
-    <div class="tab-bar">
+    <header class="tab-bar" id="tabBar">
 
         <div
-            class="tabs"
-            id="tabs"
-        ></div>
+            class="tab active"
+            id="tab-1"
+            data-tab-id="1"
+            onclick="switchTab('1')"
+        >
+            <span class="tab-icon">C</span>
+
+            <span class="tab-title">
+                New Tab
+            </span>
+
+            <button
+                class="tab-close"
+                onclick="event.stopPropagation(); closeTab('1')"
+                aria-label="Close tab"
+            >
+                ×
+            </button>
+        </div>
 
         <button
             class="new-tab"
-            id="newTabButton"
-            title="New tab"
-            type="button"
-        >+</button>
+            onclick="createNewTab()"
+            aria-label="New tab"
+        >
+            +
+        </button>
 
-    </div>
+    </header>
 
-    <!-- =========================
+
+    <!-- =====================================================
          TOOLBAR
-    ========================= -->
+         ===================================================== -->
 
     <div class="toolbar">
 
-        <button
-            class="nav-button"
-            onclick="goBack()"
-            title="Back"
-            type="button"
-        >←</button>
+        <div class="nav-buttons">
 
-        <button
-            class="nav-button"
-            onclick="goForward()"
-            title="Forward"
-            type="button"
-        >→</button>
+            <button
+                class="nav-button"
+                id="backButton"
+                onclick="goBack()"
+                title="Back"
+            >
+                ←
+            </button>
 
-        <button
-            class="nav-button"
-            onclick="reloadPage()"
-            title="Reload"
-            type="button"
-        >↻</button>
+            <button
+                class="nav-button"
+                id="forwardButton"
+                onclick="goForward()"
+                title="Forward"
+            >
+                →
+            </button>
 
-        <button
-            class="nav-button"
-            onclick="goHome()"
-            title="Home"
-            type="button"
-        >⌂</button>
+            <button
+                class="nav-button"
+                id="reloadButton"
+                onclick="reloadPage()"
+                title="Reload"
+            >
+                ↻
+            </button>
+
+            <button
+                class="nav-button"
+                onclick="goHome()"
+                title="Home"
+            >
+                ⌂
+            </button>
+
+        </div>
+
+
+        <!-- ADDRESS BAR -->
 
         <div class="address-container">
 
+            <span class="address-icon">
+                ◉
+            </span>
+
             <input
                 id="addressBar"
+                class="address-bar"
                 type="text"
-                placeholder="Search or enter address"
+                placeholder="Search Chox or enter a website..."
                 autocomplete="off"
                 spellcheck="false"
+                onkeydown="if(event.key === 'Enter') openAddress()"
             >
 
         </div>
 
+
+        <!-- TOOLBAR ACTIONS -->
+
+        <div class="toolbar-actions">
+
+            <button
+                class="nav-button"
+                id="bookmarkButton"
+                onclick="toggleBookmark()"
+                title="Bookmark"
+            >
+                ☆
+            </button>
+
+            <button
+                class="nav-button"
+                onclick="openSettings()"
+                title="Settings"
+            >
+                ⚙
+            </button>
+
+            <button
+                class="nav-button"
+                onclick="openMenu()"
+                title="Menu"
+            >
+                ⋮
+            </button>
+
+        </div>
+
     </div>
 
-    <!-- =========================
-         PAGES
-    ========================= -->
 
-    <div id="pages"></div>
+    <!-- =====================================================
+         PAGE CONTAINER
+         ===================================================== -->
+
+    <main
+        class="page-container"
+        id="pageContainer"
+    >
+
+        <!-- =================================================
+             HOME PAGE
+             ================================================= -->
+
+        <div
+            class="tab-page active"
+            id="page-1"
+            data-tab-id="1"
+        >
+
+            <section class="home">
+
+
+                <!-- TOP BRAND -->
+
+                <div class="home-brand">
+
+                    <div class="brand-mark">
+                        CH
+                    </div>
+
+                    <div class="brand-name">
+                        CH<span>OX</span>
+                    </div>
+
+                </div>
+
+
+                <p class="home-subtitle">
+                    Search. Browse. Explore.
+                </p>
+
+
+                <!-- SEARCH -->
+
+                <div class="home-search">
+
+                    <div class="search-box">
+
+                        <span class="search-symbol">
+                            ⌕
+                        </span>
+
+                        <input
+                            id="homeSearch"
+                            class="search-input"
+                            type="text"
+                            placeholder="Search the web..."
+                            autocomplete="off"
+                            spellcheck="false"
+                            onkeydown="if(event.key === 'Enter') performSearch()"
+                        >
+
+                        <button
+                            class="search-button"
+                            onclick="performSearch()"
+                        >
+                            Search
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- QUICK LINKS -->
+
+                <div class="quick-links">
+
+
+                    <button
+                        class="quick-link"
+                        onclick="openChoxVideoPage('1')"
+                    >
+
+                        <span class="quick-icon">
+                            ▶
+                        </span>
+
+                        <span>
+                            Chox Video
+                        </span>
+
+                    </button>
+
+
+                    <button
+                        class="quick-link"
+                        onclick="openBookmarks()"
+                    >
+
+                        <span class="quick-icon">
+                            ☆
+                        </span>
+
+                        <span>
+                            Bookmarks
+                        </span>
+
+                    </button>
+
+
+                    <button
+                        class="quick-link"
+                        onclick="openHistory()"
+                    >
+
+                        <span class="quick-icon">
+                            ◷
+                        </span>
+
+                        <span>
+                            History
+                        </span>
+
+                    </button>
+
+
+                    <button
+                        class="quick-link"
+                        onclick="openSettings()"
+                    >
+
+                        <span class="quick-icon">
+                            ⚙
+                        </span>
+
+                        <span>
+                            Settings
+                        </span>
+
+                    </button>
+
+
+                </div>
+
+
+                <!-- FEATURED PANEL -->
+
+                <section class="featured-panel">
+
+                    <div class="featured-glow"></div>
+
+                    <div class="featured-content">
+
+                        <span class="featured-label">
+                            CHOX
+                        </span>
+
+                        <h2>
+                            Your web.
+                            <br>
+                            Your way.
+                        </h2>
+
+                        <p>
+                            A fast, clean and customizable
+                            browsing experience.
+                        </p>
+
+                        <button
+                            class="featured-button"
+                            onclick="document.getElementById('homeSearch').focus()"
+                        >
+                            Start Searching
+                        </button>
+
+                    </div>
+
+                </section>
+
+
+                <!-- LOWER SECTIONS -->
+
+                <div class="home-sections">
+
+
+                    <!-- RECENT -->
+
+                    <section class="home-section">
+
+                        <div class="section-title">
+                            Recent
+                        </div>
+
+                        <div
+                            class="section-card"
+                            onclick="openHistory()"
+                        >
+
+                            <div class="section-card-icon">
+                                ◷
+                            </div>
+
+                            <div>
+                                <strong>
+                                    Your recent pages
+                                </strong>
+
+                                <small>
+                                    View your browsing history
+                                </small>
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- FAVORITES -->
+
+                    <section class="home-section">
+
+                        <div class="section-title">
+                            Favorites
+                        </div>
+
+                        <div
+                            class="section-card"
+                            onclick="openBookmarks()"
+                        >
+
+                            <div class="section-card-icon">
+                                ★
+                            </div>
+
+                            <div>
+                                <strong>
+                                    Saved pages
+                                </strong>
+
+                                <small>
+                                    Access your bookmarks
+                                </small>
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- CHOX AI -->
+
+                    <section class="home-section">
+
+                        <div class="section-title">
+                            Chox AI
+                        </div>
+
+                        <div
+                            class="section-card"
+                            onclick="openChoxAI()"
+                        >
+
+                            <div class="section-card-icon ai">
+                                ✦
+                            </div>
+
+                            <div>
+                                <strong>
+                                    Chox AI
+                                </strong>
+
+                                <small>
+                                    Your built-in AI assistant
+                                </small>
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                </div>
+
+
+                <!-- FOOTER -->
+
+                <footer class="home-footer">
+
+                    <span>
+                        CHOX
+                    </span>
+
+                    <span class="footer-dot">
+                        •
+                    </span>
+
+                    <span>
+                        Fast. Simple. Yours.
+                    </span>
+
+                </footer>
+
+
+            </section>
+
+        </div>
+
+    </main>
 
 </div>
 
 
-<script>
+<!-- =========================================================
+     CONTEXT MENU
+     ========================================================= -->
+
+<div
+    id="contextMenu"
+    class="context-menu"
+    style="display:none;"
+>
+
+    <button onclick="createNewTab()">
+        New Tab
+    </button>
+
+    <button onclick="reloadPage()">
+        Reload
+    </button>
+
+    <button onclick="goHome()">
+        Home
+    </button>
+
+    <button onclick="openBookmarks()">
+        Bookmarks
+    </button>
+
+    <button onclick="openHistory()">
+        History
+    </button>
+
+    <div class="context-divider"></div>
+
+    <button onclick="openSettings()">
+        Settings
+    </button>
+
+</div>
+
+
+<!-- =========================================================
+     EXTRA CHOX HOMEPAGE STYLING
+     ========================================================= -->
+
+<style>
 
 /* =========================================================
-   CHOX BROWSER
-========================================================= */
+   CHOX HOME
+   ========================================================= */
 
-let tabs = [];
-let activeTabId = null;
+.home {
+    min-height: 100%;
+    padding: 65px 7vw 80px;
 
+    position: relative;
 
-/* =========================================================
-   INITIALIZE
-========================================================= */
-
-document.addEventListener("DOMContentLoaded", () => {
-
-    const newTabButton =
-        document.getElementById("newTabButton");
-
-    newTabButton.addEventListener(
-        "click",
-        createNewTab
-    );
-
-    const addressBar =
-        document.getElementById("addressBar");
-
-    addressBar.addEventListener(
-        "keydown",
-        event => {
-
-            if (event.key === "Enter") {
-                navigateAddress();
-            }
-
-        }
-    );
-
-    createNewTab();
-
-});
-
-
-/* =========================================================
-   CREATE NEW TAB
-========================================================= */
-
-function createNewTab() {
-
-    const id =
-        "tab-" +
-        Date.now() +
-        "-" +
-        Math.random()
-            .toString(36)
-            .substring(2, 7);
-
-    const tab = {
-
-        id: id,
-
-        title: "New Tab",
-
-        url: "chox://home",
-
-        type: "home",
-
-        history: [
-            "chox://home"
-        ],
-
-        historyIndex: 0
-
-    };
-
-    tabs.push(tab);
-
-
-    /* CREATE TAB BUTTON */
-
-    const tabButton =
-        document.createElement("div");
-
-    tabButton.className =
-        "tab tab-opening";
-
-    tabButton.id =
-        id + "-button";
-
-    tabButton.innerHTML = `
-
-        <span class="tab-title">
-            New Tab
-        </span>
-
-        <button
-            class="tab-close"
-            type="button"
-            title="Close tab"
-        >×</button>
-
-    `;
-
-
-    const closeButton =
-        tabButton.querySelector(
-            ".tab-close"
+    background:
+        radial-gradient(
+            circle at 50% -10%,
+            rgba(190, 20, 30, .18),
+            transparent 36%
+        ),
+        radial-gradient(
+            circle at 0% 100%,
+            rgba(130, 10, 18, .09),
+            transparent 30%
+        ),
+        linear-gradient(
+            180deg,
+            #080808 0%,
+            #030303 100%
         );
-
-
-    closeButton.addEventListener(
-        "click",
-        event => {
-
-            event.stopPropagation();
-
-            closeTab(id);
-
-        }
-    );
-
-
-    tabButton.addEventListener(
-        "click",
-        () => {
-
-            switchTab(id);
-
-        }
-    );
-
-
-    const tabsContainer =
-        document.getElementById("tabs");
-
-    tabsContainer.appendChild(
-        tabButton
-    );
-
-
-    /* CREATE PAGE */
-
-    const page =
-        document.createElement("div");
-
-    page.className =
-        "tab-page";
-
-    page.id =
-        id + "-page";
-
-    document
-        .getElementById("pages")
-        .appendChild(page);
-
-
-    /* RENDER HOME */
-
-    renderHome(tab);
-
-
-    /* SWITCH TO TAB */
-
-    switchTab(id);
-
-
-    /* OPENING ANIMATION */
-
-    requestAnimationFrame(() => {
-
-        tabButton.classList.remove(
-            "tab-opening"
-        );
-
-    });
-
 }
 
 
 /* =========================================================
-   CLOSE TAB
-========================================================= */
+   BRAND
+   ========================================================= */
 
-function closeTab(id) {
+.home-brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-    if (tabs.length <= 1) {
+    gap: 14px;
 
-        return;
-
-    }
-
-
-    const button =
-        document.getElementById(
-            id + "-button"
-        );
-
-    const page =
-        document.getElementById(
-            id + "-page"
-        );
-
-
-    /*
-       Save old positions
-       for smooth FLIP animation.
-    */
-
-    const oldPositions =
-        new Map();
-
-    document
-        .querySelectorAll(".tab")
-        .forEach(element => {
-
-            oldPositions.set(
-                element.id,
-                element.getBoundingClientRect().left
-            );
-
-        });
-
-
-    const index =
-        tabs.findIndex(
-            tab => tab.id === id
-        );
-
-
-    const wasActive =
-        activeTabId === id;
-
-
-    tabs.splice(index, 1);
-
-
-    /* CLOSE ANIMATION */
-
-    if (button) {
-
-        button.classList.add(
-            "tab-closing"
-        );
-
-    }
-
-
-    setTimeout(() => {
-
-        if (button) {
-            button.remove();
-        }
-
-        if (page) {
-            page.remove();
-        }
-
-
-        /*
-           Move remaining tabs smoothly
-        */
-
-        document
-            .querySelectorAll(".tab")
-            .forEach(element => {
-
-                const oldLeft =
-                    oldPositions.get(
-                        element.id
-                    );
-
-                if (
-                    oldLeft === undefined
-                ) {
-                    return;
-                }
-
-
-                const newLeft =
-                    element
-                        .getBoundingClientRect()
-                        .left;
-
-
-                const distance =
-                    oldLeft - newLeft;
-
-
-                if (
-                    Math.abs(distance) > 1
-                ) {
-
-                    element.style.transform =
-                        `translateX(${distance}px)`;
-
-                    element.classList.add(
-                        "tab-moving"
-                    );
-
-
-                    requestAnimationFrame(() => {
-
-                        element.style.transform =
-                            "";
-
-                    });
-
-
-                    setTimeout(() => {
-
-                        element.classList.remove(
-                            "tab-moving"
-                        );
-
-                    }, 300);
-
-                }
-
-            });
-
-    }, 180);
-
-
-    /* SELECT ANOTHER TAB */
-
-    if (wasActive) {
-
-        const newIndex =
-            Math.min(
-                index,
-                tabs.length - 1
-            );
-
-
-        const nextTab =
-            tabs[newIndex];
-
-
-        if (nextTab) {
-
-            switchTab(
-                nextTab.id
-            );
-
-        }
-
-    }
-
+    margin-top: 15px;
 }
 
+.brand-mark {
+    width: 58px;
+    height: 58px;
 
-/* =========================================================
-   SWITCH TAB
-========================================================= */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-function switchTab(id) {
+    border-radius: 16px;
 
-    const tab =
-        tabs.find(
-            item => item.id === id
+    font-size: 19px;
+    font-weight: 900;
+    letter-spacing: -1px;
+
+    color: white;
+
+    background:
+        linear-gradient(
+            145deg,
+            #d21d28,
+            #790b12
         );
 
+    border: 1px solid rgba(255,255,255,.13);
 
-    if (!tab) {
-        return;
-    }
-
-
-    activeTabId = id;
-
-
-    /* HIDE ALL PAGES */
-
-    document
-        .querySelectorAll(".tab-page")
-        .forEach(page => {
-
-            page.classList.remove(
-                "active"
-            );
-
-        });
-
-
-    /* DEACTIVATE ALL TABS */
-
-    document
-        .querySelectorAll(".tab")
-        .forEach(button => {
-
-            button.classList.remove(
-                "active"
-            );
-
-        });
-
-
-    /* ACTIVATE PAGE */
-
-    const page =
-        document.getElementById(
-            id + "-page"
-        );
-
-
-    if (page) {
-
-        page.classList.add(
-            "active"
-        );
-
-    }
-
-
-    /* ACTIVATE TAB BUTTON */
-
-    const button =
-        document.getElementById(
-            id + "-button"
-        );
-
-
-    if (button) {
-
-        button.classList.add(
-            "active"
-        );
-
-    }
-
-
-    updateAddressBar();
-
+    box-shadow:
+        0 10px 35px rgba(0,0,0,.5),
+        0 0 35px rgba(180,18,28,.18),
+        inset 0 1px 0 rgba(255,255,255,.18);
 }
 
+.brand-name {
+    font-size: 48px;
+    line-height: 1;
 
-/* =========================================================
-   UPDATE TAB BUTTON
-========================================================= */
+    font-weight: 950;
+    letter-spacing: -4px;
 
-function updateTabButton(tab) {
+    color: #fff;
 
-    const button =
-        document.getElementById(
-            tab.id + "-button"
-        );
-
-
-    if (!button) {
-        return;
-    }
-
-
-    const title =
-        button.querySelector(
-            ".tab-title"
-        );
-
-
-    if (title) {
-
-        title.textContent =
-            tab.title || "New Tab";
-
-    }
-
+    text-shadow:
+        0 0 25px rgba(255,255,255,.06),
+        0 0 45px rgba(180,18,28,.15);
 }
 
-
-/* =========================================================
-   UPDATE ADDRESS BAR
-========================================================= */
-
-function updateAddressBar() {
-
-    const addressBar =
-        document.getElementById(
-            "addressBar"
-        );
-
-
-    const tab =
-        tabs.find(
-            item =>
-                item.id === activeTabId
-        );
-
-
-    if (!tab) {
-        return;
-    }
-
-
-    addressBar.value =
-        tab.url === "chox://home" ||
-        tab.url === "chox://video"
-
-            ? ""
-
-            : tab.url;
-
+.brand-name span {
+    color: #c81923;
 }
 
+.home-subtitle {
+    text-align: center;
 
-/* =========================================================
-   HOME PAGE
-========================================================= */
+    color: #777;
 
-function renderHome(tab) {
+    font-size: 14px;
 
-    const page =
-        document.getElementById(
-            tab.id + "-page"
-        );
-
-
-    if (!page) {
-        return;
-    }
-
-
-    page.innerHTML = `
-
-        <div class="home">
-
-            <div class="logo">
-
-                <div class="logo-circle">
-                    C
-                </div>
-
-                <div class="logo-text">
-                    Chox
-                </div>
-
-            </div>
-
-            <div class="home-subtitle">
-                Fast. Simple. Yours.
-            </div>
-
-
-            <div class="search-box">
-
-                <input
-                    id="home-search-${tab.id}"
-                    type="text"
-                    placeholder="Search Chox..."
-                    autocomplete="off"
-                >
-
-                <button
-                    type="button"
-                    onclick="homeSearch('${tab.id}')"
-                >⌕</button>
-
-            </div>
-
-
-            <div class="quick-links">
-
-                <button
-                    class="quick-link"
-                    type="button"
-                    onclick="openChoxVideoPage('${tab.id}')"
-                >
-
-                    <span class="quick-icon">
-                        ▶
-                    </span>
-
-                    <span>
-                        Chox Video
-                    </span>
-
-                </button>
-
-
-                <button
-                    class="quick-link"
-                    type="button"
-                    onclick="focusAddressBar()"
-                >
-
-                    <span class="quick-icon">
-                        🔍
-                    </span>
-
-                    <span>
-                        Search
-                    </span>
-
-                </button>
-
-
-                <button
-                    class="quick-link"
-                    type="button"
-                    onclick="createNewTab()"
-                >
-
-                    <span class="quick-icon">
-                        ＋
-                    </span>
-
-                    <span>
-                        New Tab
-                    </span>
-
-                </button>
-
-            </div>
-
-        </div>
-
-    `;
-
-
-    const searchInput =
-        document.getElementById(
-            "home-search-" + tab.id
-        );
-
-
-    if (searchInput) {
-
-        searchInput.addEventListener(
-            "keydown",
-            event => {
-
-                if (
-                    event.key === "Enter"
-                ) {
-
-                    homeSearch(
-                        tab.id
-                    );
-
-                }
-
-            }
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   HOME SEARCH
-========================================================= */
-
-function homeSearch(tabId) {
-
-    const input =
-        document.getElementById(
-            "home-search-" + tabId
-        );
-
-
-    if (!input) {
-        return;
-    }
-
-
-    const query =
-        input.value.trim();
-
-
-    if (!query) {
-        return;
-    }
-
-
-    navigateToSearch(
-        tabId,
-        query
-    );
-
+    margin: 14px 0 0;
 }
 
 
 /* =========================================================
    SEARCH
-========================================================= */
+   ========================================================= */
 
-function navigateToSearch(
-    tabId,
-    query
-) {
+.home-search {
+    width: min(780px, 100%);
 
-    const tab =
-        tabs.find(
-            item => item.id === tabId
+    margin: 35px auto 0;
+}
+
+.search-box {
+    min-height: 62px;
+
+    display: flex;
+    align-items: center;
+
+    padding: 6px;
+
+    border-radius: 18px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #181818,
+            #0c0c0c
         );
 
+    border: 1px solid rgba(255,255,255,.10);
 
-    if (!tab) {
-        return;
-    }
+    box-shadow:
+        0 20px 60px rgba(0,0,0,.55),
+        0 0 45px rgba(170,15,25,.08),
+        inset 0 1px 0 rgba(255,255,255,.055);
 
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease,
+        transform .2s ease;
+}
 
-    const encoded =
-        encodeURIComponent(
-            query
+.search-box:focus-within {
+    border-color: rgba(200,25,35,.60);
+
+    box-shadow:
+        0 20px 60px rgba(0,0,0,.60),
+        0 0 45px rgba(180,18,28,.16),
+        inset 0 1px 0 rgba(255,255,255,.06);
+}
+
+.search-symbol {
+    width: 38px;
+
+    text-align: center;
+
+    color: #777;
+
+    font-size: 23px;
+}
+
+.search-input {
+    flex: 1;
+
+    height: 48px;
+
+    border: 0;
+    outline: none;
+
+    background: transparent;
+
+    color: white;
+
+    font-size: 16px;
+}
+
+.search-input::placeholder {
+    color: #666;
+}
+
+.search-button {
+    height: 48px;
+
+    padding: 0 24px;
+
+    border: 0;
+    border-radius: 13px;
+
+    color: white;
+
+    font-size: 14px;
+    font-weight: 750;
+
+    cursor: pointer;
+
+    background:
+        linear-gradient(
+            180deg,
+            #ce1c27,
+            #850c13
         );
 
+    box-shadow:
+        0 7px 20px rgba(0,0,0,.35),
+        inset 0 1px 0 rgba(255,255,255,.16);
 
-    tab.url =
-        "results.html?q=" +
-        encoded;
+    transition: .18s ease;
+}
 
-    tab.type =
-        "search";
+.search-button:hover {
+    transform: translateY(-1px);
 
-    tab.title =
-        "Search: " + query;
-
-
-    const page =
-        document.getElementById(
-            tab.id + "-page"
+    background:
+        linear-gradient(
+            180deg,
+            #e1242e,
+            #9a1018
         );
 
-
-    page.innerHTML = `
-
-        <iframe
-            class="browser-frame"
-            src="results.html?q=${encoded}"
-        ></iframe>
-
-    `;
-
-
-    updateTabButton(tab);
-
-    switchTab(tab.id);
-
+    box-shadow:
+        0 10px 25px rgba(0,0,0,.45),
+        0 0 25px rgba(180,18,28,.20);
 }
 
 
 /* =========================================================
-   CHOX VIDEO
-========================================================= */
+   QUICK LINKS
+   ========================================================= */
 
-function openChoxVideoPage(tabId) {
+.quick-links {
+    width: min(850px, 100%);
 
-    const tab =
-        tabs.find(
-            item => item.id === tabId
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 12px;
+
+    margin: 35px auto;
+}
+
+.quick-link {
+    min-height: 108px;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 10px;
+
+    border-radius: 15px;
+
+    border: 1px solid rgba(255,255,255,.07);
+
+    background:
+        linear-gradient(
+            145deg,
+            #151515,
+            #090909
         );
 
+    color: #ddd;
 
-    if (!tab) {
-        return;
-    }
+    font-family: inherit;
 
+    cursor: pointer;
 
-    tab.type =
-        "chox-video";
+    box-shadow:
+        0 10px 30px rgba(0,0,0,.35),
+        inset 0 1px 0 rgba(255,255,255,.035);
 
-    tab.url =
-        "chox://video";
+    transition:
+        transform .2s ease,
+        border-color .2s ease,
+        background .2s ease,
+        box-shadow .2s ease;
+}
 
-    tab.title =
-        "Chox Video";
+.quick-link:hover {
+    transform: translateY(-4px);
 
+    border-color: rgba(190,20,30,.42);
 
-    const page =
-        document.getElementById(
-            tab.id + "-page"
+    background:
+        linear-gradient(
+            145deg,
+            #191112,
+            #0b0808
         );
 
+    box-shadow:
+        0 18px 40px rgba(0,0,0,.5),
+        0 0 25px rgba(180,18,28,.10);
+}
 
-    page.innerHTML = `
+.quick-icon {
+    width: 42px;
+    height: 42px;
 
-        <div class="video-app">
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-            <aside class="video-sidebar">
+    border-radius: 12px;
 
-                <div class="video-brand">
-                    Chox Video
-                </div>
+    color: white;
 
-                <button
-                    class="video-nav active"
-                    onclick="showVideoHome('${tab.id}')"
-                >
-                    🏠
-                    <span>Home</span>
-                </button>
+    font-size: 17px;
 
-                <button
-                    class="video-nav"
-                    onclick="focusVideoSearch('${tab.id}')"
-                >
-                    🔍
-                    <span>Search</span>
-                </button>
-
-                <button
-                    class="video-nav"
-                    onclick="showVideoMessage('${tab.id}', 'History')"
-                >
-                    🕘
-                    <span>History</span>
-                </button>
-
-                <button
-                    class="video-nav"
-                    onclick="showVideoMessage('${tab.id}', 'Favorites')"
-                >
-                    ★
-                    <span>Favorites</span>
-                </button>
-
-                <button
-                    class="video-nav"
-                    onclick="showVideoMessage('${tab.id}', 'Subscriptions')"
-                >
-                    ♥
-                    <span>Subscriptions</span>
-                </button>
-
-            </aside>
-
-
-            <main class="video-content">
-
-                <h1 class="video-heading">
-                    Chox Video
-                </h1>
-
-                <p class="video-description">
-                    Search and watch supported videos through Chox.
-                </p>
-
-
-                <div class="video-search">
-
-                    <input
-                        id="video-search-${tab.id}"
-                        type="text"
-                        placeholder="Search videos..."
-                        autocomplete="off"
-                    >
-
-                    <button
-                        type="button"
-                        onclick="searchVideos('${tab.id}')"
-                    >⌕</button>
-
-                </div>
-
-
-                <div
-                    id="video-results-${tab.id}"
-                    class="video-grid"
-                >
-
-                    <div class="empty-state">
-                        Search for a video to get started.
-                    </div>
-
-                </div>
-
-            </main>
-
-        </div>
-
-    `;
-
-
-    const searchInput =
-        document.getElementById(
-            "video-search-" + tab.id
+    background:
+        linear-gradient(
+            145deg,
+            #d01b26,
+            #750a11
         );
 
-
-    if (searchInput) {
-
-        searchInput.addEventListener(
-            "keydown",
-            event => {
-
-                if (
-                    event.key === "Enter"
-                ) {
-
-                    searchVideos(
-                        tab.id
-                    );
-
-                }
-
-            }
-        );
-
-    }
-
-
-    updateTabButton(tab);
-
-    switchTab(tab.id);
-
+    box-shadow:
+        0 6px 20px rgba(170,15,25,.20),
+        inset 0 1px 0 rgba(255,255,255,.15);
 }
 
 
 /* =========================================================
-   VIDEO HOME
-========================================================= */
+   FEATURED PANEL
+   ========================================================= */
 
-function showVideoHome(tabId) {
+.featured-panel {
+    width: min(1050px, 100%);
 
-    openChoxVideoPage(
-        tabId
-    );
+    min-height: 260px;
 
+    margin: 55px auto 0;
+
+    position: relative;
+
+    overflow: hidden;
+
+    border-radius: 20px;
+
+    border: 1px solid rgba(190,20,30,.30);
+
+    background:
+        radial-gradient(
+            circle at 80% 20%,
+            rgba(190,20,30,.20),
+            transparent 40%
+        ),
+        linear-gradient(
+            135deg,
+            #181010,
+            #090909 60%,
+            #050505
+        );
+
+    box-shadow:
+        0 25px 70px rgba(0,0,0,.6),
+        0 0 45px rgba(170,15,25,.07),
+        inset 0 1px 0 rgba(255,255,255,.05);
+}
+
+.featured-panel::before {
+    content: "";
+
+    position: absolute;
+
+    top: -100px;
+    right: -100px;
+
+    width: 320px;
+    height: 320px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(210,25,35,.22),
+            transparent 65%
+        );
+
+    pointer-events: none;
+}
+
+.featured-content {
+    position: relative;
+    z-index: 2;
+
+    padding: 45px 50px;
+}
+
+.featured-label {
+    display: inline-block;
+
+    padding: 7px 13px;
+
+    border-radius: 999px;
+
+    color: #e9aeb1;
+
+    background: rgba(180,18,28,.13);
+
+    border: 1px solid rgba(190,20,30,.28);
+
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+}
+
+.featured-content h2 {
+    margin: 20px 0 10px;
+
+    font-size: clamp(34px, 5vw, 58px);
+
+    line-height: .98;
+
+    letter-spacing: -3px;
+
+    color: white;
+}
+
+.featured-content p {
+    max-width: 480px;
+
+    margin: 0 0 25px;
+
+    color: #999;
+
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.featured-button {
+    padding: 12px 20px;
+
+    border: 1px solid rgba(255,255,255,.10);
+
+    border-radius: 10px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #c91b26,
+            #810c13
+        );
+
+    color: white;
+
+    font-family: inherit;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 8px 25px rgba(0,0,0,.4),
+        inset 0 1px 0 rgba(255,255,255,.14);
+
+    transition: .18s ease;
+}
+
+.featured-button:hover {
+    transform: translateY(-2px);
+
+    background:
+        linear-gradient(
+            180deg,
+            #df222c,
+            #9a1018
+        );
 }
 
 
 /* =========================================================
-   VIDEO SEARCH
-========================================================= */
+   HOME SECTIONS
+   ========================================================= */
 
-async function searchVideos(tabId) {
+.home-sections {
+    width: min(1050px, 100%);
 
-    const input =
-        document.getElementById(
-            "video-search-" + tabId
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 15px;
+
+    margin: 35px auto 0;
+}
+
+.home-section {
+    min-width: 0;
+}
+
+.section-title {
+    margin-bottom: 10px;
+
+    padding-left: 13px;
+
+    position: relative;
+
+    color: white;
+
+    font-size: 15px;
+    font-weight: 750;
+}
+
+.section-title::before {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    top: 50%;
+
+    width: 3px;
+    height: 17px;
+
+    transform: translateY(-50%);
+
+    border-radius: 5px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #df222c,
+            #790a11
         );
 
+    box-shadow:
+        0 0 10px rgba(180,18,28,.3);
+}
 
-    const results =
-        document.getElementById(
-            "video-results-" + tabId
+.section-card {
+    min-height: 78px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+
+    padding: 15px;
+
+    border-radius: 13px;
+
+    border: 1px solid rgba(255,255,255,.07);
+
+    background:
+        linear-gradient(
+            145deg,
+            #131313,
+            #080808
         );
 
+    cursor: pointer;
 
-    if (!input || !results) {
-        return;
-    }
+    transition: .18s ease;
+}
 
+.section-card:hover {
+    transform: translateY(-2px);
 
-    const query =
-        input.value.trim();
+    border-color: rgba(180,18,28,.35);
 
+    box-shadow:
+        0 10px 30px rgba(0,0,0,.4);
+}
 
-    if (!query) {
-        return;
-    }
+.section-card-icon {
+    width: 40px;
+    height: 40px;
 
+    flex-shrink: 0;
 
-    results.innerHTML = `
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-        <div class="empty-state">
-            Searching...
-        </div>
+    border-radius: 10px;
 
-    `;
+    background:
+        linear-gradient(
+            145deg,
+            #bd1721,
+            #700910
+        );
 
+    color: white;
 
-    try {
+    font-size: 16px;
+}
 
-        const response =
-            await fetch(
-                "/api/search?q=" +
-                encodeURIComponent(
-                    query
-                )
-            );
+.section-card-icon.ai {
+    background:
+        linear-gradient(
+            145deg,
+            #d3232e,
+            #7b0b12
+        );
+}
 
+.section-card strong {
+    display: block;
 
-        if (!response.ok) {
-            throw new Error(
-                "Search failed"
-            );
-        }
+    color: #eee;
 
+    font-size: 13px;
+}
 
-        const data =
-            await response.json();
+.section-card small {
+    display: block;
 
+    margin-top: 4px;
 
-        const items =
-            Array.isArray(data)
-                ? data
-                : (
-                    data.results ||
-                    data.web ||
-                    []
-                );
+    color: #6f6f6f;
 
-
-        const videoItems =
-            items.filter(item => {
-
-                const url =
-                    item.url ||
-                    item.link ||
-                    "";
-
-
-                return (
-                    url.includes(
-                        "youtube.com/watch"
-                    ) ||
-                    url.includes(
-                        "youtu.be/"
-                    )
-                );
-
-            });
-
-
-        if (!videoItems.length) {
-
-            results.innerHTML = `
-
-                <div class="empty-state">
-                    No supported videos found.
-                </div>
-
-            `;
-
-            return;
-
-        }
-
-
-        results.innerHTML =
-            videoItems
-                .map(item => {
-
-                    const url =
-                        item.url ||
-                        item.link ||
-                        "";
-
-
-                    const title =
-                        item.title ||
-                        "Video";
-
-
-                    const videoId =
-                        getYouTubeId(
-                            url
-                        );
-
-
-                    const thumbnail =
-                        videoId
-                            ? `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`
-                            : "";
-
-
-                    return `
-
-                        <div
-                            class="video-card"
-                            onclick="watchVideo('${escapeHtml(videoId || "")}', '${escapeHtml(title)}')"
-                        >
-
-                            <div class="video-thumbnail">
-
-                                ${
-                                    thumbnail
-
-                                    ? `
-                                        <img
-                                            src="${thumbnail}"
-                                            alt=""
-                                        >
-                                      `
-
-                                    : "▶"
-                                }
-
-                            </div>
-
-                            <div class="video-card-body">
-
-                                <div class="video-card-title">
-                                    ${escapeHtml(title)}
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    `;
-
-                })
-                .join("");
-
-
-    } catch (error) {
-
-        console.error(error);
-
-
-        results.innerHTML = `
-
-            <div class="empty-state">
-                Search is unavailable right now.
-            </div>
-
-        `;
-
-    }
-
+    font-size: 11px;
 }
 
 
 /* =========================================================
-   WATCH VIDEO
-========================================================= */
+   FOOTER
+   ========================================================= */
 
-function watchVideo(
-    videoId,
-    title
-) {
+.home-footer {
+    display: flex;
 
-    if (!videoId) {
-        return;
-    }
+    align-items: center;
+    justify-content: center;
 
+    gap: 10px;
 
-    const tab =
-        tabs.find(
-            item =>
-                item.id === activeTabId
-        );
+    margin-top: 60px;
 
+    color: #4f4f4f;
 
-    if (!tab) {
-        return;
-    }
+    font-size: 11px;
 
+    letter-spacing: .5px;
+}
 
-    tab.type =
-        "video-player";
+.home-footer span:first-child {
+    color: #9d151e;
 
-    tab.title =
-        title || "Video";
+    font-weight: 800;
+}
 
-    tab.url =
-        "https://www.youtube.com/watch?v=" +
-        videoId;
-
-
-    const page =
-        document.getElementById(
-            tab.id + "-page"
-        );
-
-
-    page.innerHTML = `
-
-        <div class="video-player-page">
-
-            <button
-                class="back-button"
-                onclick="openChoxVideoPage('${tab.id}')"
-            >
-                ← Back to Chox Video
-            </button>
-
-
-            <div class="video-player">
-
-                <iframe
-                    src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(videoId)}"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowfullscreen
-                ></iframe>
-
-
-                <div class="player-title">
-                    ${escapeHtml(title || "Video")}
-                </div>
-
-            </div>
-
-        </div>
-
-    `;
-
-
-    updateTabButton(tab);
-
-    updateAddressBar();
-
+.footer-dot {
+    color: #333;
 }
 
 
 /* =========================================================
-   YOUTUBE ID
-========================================================= */
+   CONTEXT MENU
+   ========================================================= */
 
-function getYouTubeId(url) {
+.context-menu {
+    position: fixed;
 
-    if (!url) {
-        return null;
-    }
+    z-index: 9999;
 
+    min-width: 190px;
 
-    try {
+    padding: 6px;
 
-        const parsed =
-            new URL(url);
+    border-radius: 12px;
 
+    background:
+        linear-gradient(
+            145deg,
+            #181818,
+            #0a0a0a
+        );
 
-        if (
-            parsed.hostname.includes(
-                "youtube.com"
-            )
-        ) {
+    border: 1px solid rgba(255,255,255,.09);
 
-            return parsed.searchParams.get(
-                "v"
-            );
+    box-shadow:
+        0 20px 60px rgba(0,0,0,.7);
+}
 
-        }
+.context-menu button {
+    width: 100%;
 
+    padding: 10px 12px;
 
-        if (
-            parsed.hostname.includes(
-                "youtu.be"
-            )
-        ) {
+    text-align: left;
 
-            return parsed.pathname
-                .replace("/", "");
+    border: 0;
 
-        }
+    border-radius: 8px;
 
-    } catch (error) {
+    background: transparent;
 
-        return null;
+    color: #ccc;
 
-    }
+    cursor: pointer;
 
+    font-family: inherit;
+}
 
-    return null;
+.context-menu button:hover {
+    background: rgba(180,18,28,.15);
 
+    color: white;
+}
+
+.context-divider {
+    height: 1px;
+
+    margin: 5px 0;
+
+    background: rgba(255,255,255,.07);
 }
 
 
 /* =========================================================
-   ADDRESS NAVIGATION
-========================================================= */
+   MOBILE
+   ========================================================= */
 
-function navigateAddress() {
+@media (max-width: 800px) {
 
-    const addressBar =
-        document.getElementById(
-            "addressBar"
-        );
-
-
-    const value =
-        addressBar.value.trim();
-
-
-    if (!value) {
-        return;
+    .home {
+        padding:
+            45px 20px 70px;
     }
 
-
-    const tab =
-        tabs.find(
-            item =>
-                item.id === activeTabId
-        );
-
-
-    if (!tab) {
-        return;
+    .brand-name {
+        font-size: 40px;
     }
 
-
-    if (
-        value === "chox://home"
-    ) {
-
-        goHome();
-
-        return;
-
+    .brand-mark {
+        width: 50px;
+        height: 50px;
     }
 
-
-    if (
-        value === "chox://video"
-    ) {
-
-        openChoxVideoPage(
-            tab.id
-        );
-
-        return;
-
+    .quick-links {
+        grid-template-columns:
+            repeat(2, 1fr);
     }
 
-
-    let url =
-        value;
-
-
-    if (
-        !/^https?:\/\//i.test(
-            url
-        )
-    ) {
-
-        if (
-            url.includes(".") &&
-            !url.includes(" ")
-        ) {
-
-            url =
-                "https://" +
-                url;
-
-        } else {
-
-            navigateToSearch(
-                tab.id,
-                value
-            );
-
-            return;
-
-        }
-
+    .home-sections {
+        grid-template-columns: 1fr;
     }
 
+    .featured-content {
+        padding: 35px 30px;
+    }
+}
 
-    openWebsite(
-        tab.id,
-        url
-    );
+@media (max-width: 500px) {
 
+    .home-brand {
+        gap: 10px;
+    }
+
+    .brand-name {
+        font-size: 34px;
+        letter-spacing: -3px;
+    }
+
+    .brand-mark {
+        width: 45px;
+        height: 45px;
+
+        border-radius: 12px;
+
+        font-size: 15px;
+    }
+
+    .search-box {
+        min-height: 55px;
+    }
+
+    .search-button {
+        padding: 0 15px;
+    }
+
+    .quick-links {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .quick-link {
+        min-height: 95px;
+    }
+
+    .featured-content h2 {
+        font-size: 36px;
+    }
 }
 
 
 /* =========================================================
-   OPEN WEBSITE
-========================================================= */
+   REDUCED MOTION
+   ========================================================= */
 
-function openWebsite(
-    tabId,
-    url
-) {
+@media (prefers-reduced-motion: reduce) {
 
-    const tab =
-        tabs.find(
-            item => item.id === tabId
-        );
-
-
-    if (!tab) {
-        return;
+    *,
+    *::before,
+    *::after {
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
     }
-
-
-    tab.url =
-        url;
-
-    tab.type =
-        "website";
-
-    tab.title =
-        url;
-
-
-    const page =
-        document.getElementById(
-            tab.id + "-page"
-        );
-
-
-    page.innerHTML = `
-
-        <iframe
-            class="browser-frame"
-            src="${escapeHtml(url)}"
-            sandbox="allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-presentation allow-same-origin allow-scripts allow-top-navigation-by-user-activation"
-        ></iframe>
-
-    `;
-
-
-    updateTabButton(tab);
-
-    updateAddressBar();
-
 }
 
+</style>
 
-/* =========================================================
-   HOME
-========================================================= */
 
-function goHome() {
+<!-- =========================================================
+     CHOX JAVASCRIPT
+     ========================================================= -->
 
-    const tab =
-        tabs.find(
-            item =>
-                item.id === activeTabId
-        );
-
-
-    if (!tab) {
-        return;
-    }
-
-
-    tab.url =
-        "chox://home";
-
-    tab.type =
-        "home";
-
-    tab.title =
-        "New Tab";
-
-
-    renderHome(tab);
-
-    updateTabButton(tab);
-
-    updateAddressBar();
-
-}
-
-
-/* =========================================================
-   RELOAD
-========================================================= */
-
-function reloadPage() {
-
-    const tab =
-        tabs.find(
-            item =>
-                item.id === activeTabId
-        );
-
-
-    if (!tab) {
-        return;
-    }
-
-
-    if (
-        tab.type === "home"
-    ) {
-
-        renderHome(tab);
-
-        return;
-
-    }
-
-
-    if (
-        tab.type === "chox-video"
-    ) {
-
-        openChoxVideoPage(
-            tab.id
-        );
-
-        return;
-
-    }
-
-
-    const page =
-        document.getElementById(
-            tab.id + "-page"
-        );
-
-
-    const iframe =
-        page?.querySelector(
-            "iframe"
-        );
-
-
-    if (iframe) {
-
-        iframe.src =
-            iframe.src;
-
-    }
-
-}
-
-
-/* =========================================================
-   BACK
-========================================================= */
-
-function goBack() {
-
-    const tab =
-        tabs.find(
-            item =>
-                item.id === activeTabId
-        );
-
-
-    if (!tab) {
-        return;
-    }
-
-
-    const page =
-        document.getElementById(
-            tab.id + "-page"
-        );
-
-
-    const iframe =
-        page?.querySelector(
-            "iframe"
-        );
-
-
-    if (iframe) {
-
-        try {
-
-            iframe.contentWindow.history.back();
-
-        } catch (error) {
-
-            console.log(
-                "Unable to navigate iframe history."
-            );
-
-        }
-
-    }
-
-}
-
-
-/* =========================================================
-   FORWARD
-========================================================= */
-
-function goForward() {
-
-    const tab =
-        tabs.find(
-            item =>
-                item.id === activeTabId
-        );
-
-
-    if (!tab) {
-        return;
-    }
-
-
-    const page =
-        document.getElementById(
-            tab.id + "-page"
-        );
-
-
-    const iframe =
-        page?.querySelector(
-            "iframe"
-        );
-
-
-    if (iframe) {
-
-        try {
-
-            iframe.contentWindow.history.forward();
-
-        } catch (error) {
-
-            console.log(
-                "Unable to navigate iframe history."
-            );
-
-        }
-
-    }
-
-}
-
-
-/* =========================================================
-   ADDRESS BAR FOCUS
-========================================================= */
-
-function focusAddressBar() {
-
-    const addressBar =
-        document.getElementById(
-            "addressBar"
-        );
-
-
-    addressBar.focus();
-
-    addressBar.select();
-
-}
-
-
-/* =========================================================
-   VIDEO SEARCH FOCUS
-========================================================= */
-
-function focusVideoSearch(tabId) {
-
-    const input =
-        document.getElementById(
-            "video-search-" + tabId
-        );
-
-
-    if (input) {
-
-        input.focus();
-
-    }
-
-}
-
-
-/* =========================================================
-   VIDEO MESSAGE
-========================================================= */
-
-function showVideoMessage(
-    tabId,
-    name
-) {
-
-    const results =
-        document.getElementById(
-            "video-results-" + tabId
-        );
-
-
-    if (!results) {
-        return;
-    }
-
-
-    results.innerHTML = `
-
-        <div class="empty-state">
-
-            <h2>
-                ${escapeHtml(name)}
-            </h2>
-
-            <p>
-                This section is ready for local Chox Video data.
-            </p>
-
-        </div>
-
-    `;
-
-}
-
-
-/* =========================================================
-   ESCAPE HTML
-========================================================= */
-
-function escapeHtml(value) {
-
-    return String(value)
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
-        );
-
-}
-
-
-/* =========================================================
-   KEYBOARD SHORTCUTS
-========================================================= */
-
-document.addEventListener(
-    "keydown",
-    event => {
-
-        /*
-           Ctrl + T
-        */
-
-        if (
-            event.ctrlKey &&
-            event.key.toLowerCase() === "t"
-        ) {
-
-            event.preventDefault();
-
-            createNewTab();
-
-        }
-
-
-        /*
-           Ctrl + W
-        */
-
-        if (
-            event.ctrlKey &&
-            event.key.toLowerCase() === "w"
-        ) {
-
-            event.preventDefault();
-
-            if (activeTabId) {
-
-                closeTab(
-                    activeTabId
-                );
-
-            }
-
-        }
-
-
-        /*
-           Ctrl + L
-        */
-
-        if (
-            event.ctrlKey &&
-            event.key.toLowerCase() === "l"
-        ) {
-
-            event.preventDefault();
-
-            focusAddressBar();
-
-        }
-
-    }
-);
-
-</script>
+<script src="script.js"></script>
 
 </body>
 </html>
